@@ -1,0 +1,28 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --ink: #0f172a;
+  --brand: #1d4ed8;
+}
+
+body {
+  margin: 0;
+  font-family: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  color: var(--ink);
+  background:
+    radial-gradient(circle at 85% 15%, rgba(59, 130, 246, 0.18) 0%, rgba(59, 130, 246, 0) 36%),
+    radial-gradient(circle at 0% 100%, rgba(16, 185, 129, 0.18) 0%, rgba(16, 185, 129, 0) 30%),
+    linear-gradient(160deg, #f8fafc 0%, #eef2ff 45%, #f0fdf4 100%);
+  min-height: 100vh;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+.glass {
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(14px);
+}
