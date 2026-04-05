@@ -10,7 +10,7 @@ import {
 	ShieldCheck,
 	X
 } from "lucide-react";
-import { login, requestActivationOtp, verifyActivationOtp } from "../services/authService";
+import { login, requestActivationOtp, verifyActivationOtp } from "../../services/authService";
 
 const MODES = {
 	LOGIN: "login",
