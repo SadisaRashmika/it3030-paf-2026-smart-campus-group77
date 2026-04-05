@@ -8,7 +8,14 @@ async function request(path, options = {}) {
   });
 
   if (!response.ok) {
-    const message = await response.text();
+    let message = "";
+    const raw = await response.text();
+    try {
+      const parsed = JSON.parse(raw);
+      message = parsed.message || parsed.error || raw;
+    } catch {
+      message = raw;
+    }
     throw new Error(message || `Request failed: ${response.status}`);
   }
 
@@ -21,19 +28,51 @@ async function request(path, options = {}) {
 
 const loginForm = document.getElementById("login-form");
 const authMessage = document.getElementById("auth-message");
-const activationCard = document.getElementById("activation-card");
+const authCard = document.getElementById("auth-card");
+const activationStep1 = document.getElementById("activation-step-1");
+const activationStep2 = document.getElementById("activation-step-2");
 const adminCard = document.getElementById("admin-card");
+const lecturerCard = document.getElementById("lecturer-card");
+const studentCard = document.getElementById("student-card");
+
+const openActivationBtn = document.getElementById("open-activation");
+const backToLogin1Btn = document.getElementById("back-to-login-1");
+const backToStep1Btn = document.getElementById("back-to-step-1");
 
 const sendOtpForm = document.getElementById("send-otp-form");
 const verifyForm = document.getElementById("verify-form");
 const activationMessage = document.getElementById("activation-message");
+const verifyMessage = document.getElementById("verify-message");
 
 const refreshUsersBtn = document.getElementById("refresh-users");
 const adminMessage = document.getElementById("admin-message");
 const usersTable = document.getElementById("users-table");
+const lecturerMessage = document.getElementById("lecturer-message");
+const studentMessage = document.getElementById("student-message");
+
+const logoutAdminBtn = document.getElementById("logout-admin");
+const logoutLecturerBtn = document.getElementById("logout-lecturer");
+const logoutStudentBtn = document.getElementById("logout-student");
 
 function showCard(element, visible) {
   element.classList.toggle("hidden", !visible);
+}
+
+function setMessage(element, text, isSuccess = false) {
+  element.textContent = text;
+  element.classList.toggle("success", isSuccess);
+}
+
+function showLoginOnly() {
+  showCard(authCard, true);
+  showCard(activationStep1, false);
+  showCard(activationStep2, false);
+}
+
+function hideDashboards() {
+  showCard(adminCard, false);
+  showCard(lecturerCard, false);
+  showCard(studentCard, false);
 }
 
 function renderUsers(users) {
@@ -65,17 +104,77 @@ async function loadUsers() {
 async function checkSession() {
   try {
     const me = await request("/api/public/auth/me", { method: "GET" });
-    showCard(activationCard, true);
-    if (me.role === "ROLE_ADMIN") {
-      showCard(adminCard, true);
-      await loadUsers();
-    }
-    authMessage.textContent = `Logged in as ${me.email} (${me.role})`;
+    showCard(authCard, false);
+    showCard(activationStep1, false);
+    showCard(activationStep2, false);
+    hideDashboards();
+    await openRoleDashboard(me.role, me.email);
   } catch {
-    showCard(activationCard, true);
-    showCard(adminCard, false);
+    showLoginOnly();
+    hideDashboards();
   }
 }
+
+async function openRoleDashboard(role, email) {
+  if (role === "ROLE_ADMIN") {
+    showCard(adminCard, true);
+    await loadUsers();
+    setMessage(adminMessage, `Logged in as ${email} (ADMIN)`, true);
+    return;
+  }
+
+  if (role === "ROLE_LECTURER") {
+    showCard(lecturerCard, true);
+    try {
+      const result = await request("/api/lecturer/dashboard", { method: "GET" });
+      setMessage(lecturerMessage, result.message || `Logged in as ${email} (LECTURER)`, true);
+    } catch (error) {
+      setMessage(lecturerMessage, error.message, false);
+    }
+    return;
+  }
+
+  if (role === "ROLE_STUDENT") {
+    showCard(studentCard, true);
+    try {
+      const result = await request("/api/student/dashboard", { method: "GET" });
+      setMessage(studentMessage, result.message || `Logged in as ${email} (STUDENT)`, true);
+    } catch (error) {
+      setMessage(studentMessage, error.message, false);
+    }
+    return;
+  }
+
+  setMessage(authMessage, "Unknown role", false);
+}
+
+async function logout() {
+  try {
+    await request("/api/public/auth/logout", { method: "POST" });
+  } catch {
+    // no-op
+  }
+  setMessage(authMessage, "Logged out", true);
+  showLoginOnly();
+  hideDashboards();
+}
+
+openActivationBtn.addEventListener("click", () => {
+  showCard(activationStep1, true);
+  showCard(activationStep2, false);
+  setMessage(activationMessage, "", false);
+  setMessage(verifyMessage, "", false);
+});
+
+backToLogin1Btn.addEventListener("click", () => {
+  showLoginOnly();
+});
+
+backToStep1Btn.addEventListener("click", () => {
+  showCard(activationStep2, false);
+  showCard(activationStep1, true);
+  setMessage(verifyMessage, "", false);
+});
 
 loginForm.addEventListener("submit", async (event) => {
   event.preventDefault();
@@ -88,16 +187,13 @@ loginForm.addEventListener("submit", async (event) => {
       body: JSON.stringify({ email, password })
     });
 
-    authMessage.textContent = `Welcome ${result.email}`;
-    showCard(activationCard, true);
-    if (result.role === "ROLE_ADMIN") {
-      showCard(adminCard, true);
-      await loadUsers();
-    } else {
-      showCard(adminCard, false);
-    }
+    showCard(authCard, false);
+    showCard(activationStep1, false);
+    showCard(activationStep2, false);
+    hideDashboards();
+    await openRoleDashboard(result.role, result.email);
   } catch (error) {
-    authMessage.textContent = error.message;
+    setMessage(authMessage, error.message, false);
   }
 });
 
@@ -111,9 +207,11 @@ sendOtpForm.addEventListener("submit", async (event) => {
       method: "POST",
       body: JSON.stringify({ userId, email })
     });
-    activationMessage.textContent = result.message;
+    setMessage(activationMessage, result.message, true);
+    showCard(activationStep1, false);
+    showCard(activationStep2, true);
   } catch (error) {
-    activationMessage.textContent = error.message;
+    setMessage(activationMessage, error.message, false);
   }
 });
 
@@ -129,9 +227,9 @@ verifyForm.addEventListener("submit", async (event) => {
       method: "POST",
       body: JSON.stringify({ userId, email, otp, newPassword })
     });
-    activationMessage.textContent = result.message;
+    setMessage(verifyMessage, result.message, true);
   } catch (error) {
-    activationMessage.textContent = error.message;
+    setMessage(verifyMessage, error.message, false);
   }
 });
 
@@ -139,4 +237,10 @@ refreshUsersBtn.addEventListener("click", async () => {
   await loadUsers();
 });
 
+logoutAdminBtn.addEventListener("click", logout);
+logoutLecturerBtn.addEventListener("click", logout);
+logoutStudentBtn.addEventListener("click", logout);
+
+showLoginOnly();
+hideDashboards();
 checkSession();

@@ -83,6 +83,12 @@ h1 {
   gap: 10px;
 }
 
+.button-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
 .form-grid.compact {
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   align-items: end;
@@ -118,6 +124,13 @@ button {
   font-weight: 600;
 }
 
+.secondary-btn {
+  margin-top: 10px;
+  background: #fff;
+  color: var(--ink);
+  border: 1px solid var(--line);
+}
+
 button:hover {
   filter: brightness(1.05);
 }
@@ -127,6 +140,13 @@ button:hover {
   margin-top: 8px;
   color: var(--danger);
   font-weight: 600;
+}
+
+#auth-message.success,
+#activation-message.success,
+#verify-message.success,
+#admin-message.success {
+  color: var(--accent);
 }
 
 .admin-header {

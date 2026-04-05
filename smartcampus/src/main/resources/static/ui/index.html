@@ -11,8 +11,8 @@
   <main class="shell">
     <header class="hero">
       <p class="eyebrow">SmartCampus</p>
-      <h1>Activation and Admin Console</h1>
-      <p class="subtitle">No browser popup prompts. Log in from this UI and manage activation, roles, and suspicious accounts.</p>
+      <h1>Campus Access</h1>
+      <p class="subtitle">Log in or activate your account in two quick steps.</p>
     </header>
 
     <section class="card" id="auth-card">
@@ -28,12 +28,13 @@
         </label>
         <button type="submit">Login</button>
       </form>
+      <button type="button" id="open-activation" class="secondary-btn">Activate Account</button>
       <div class="message" id="auth-message"></div>
     </section>
 
-    <section class="card hidden" id="activation-card">
-      <h2>Account Activation</h2>
-      <form id="send-otp-form" class="form-grid compact">
+    <section class="card hidden" id="activation-step-1">
+      <h2>Activate Account - Step 1</h2>
+      <form id="send-otp-form" class="form-grid">
         <label>
           Student/Lecturer ID
           <input id="activation-user-id" type="text" placeholder="STU001 or LEC001" required>
@@ -42,10 +43,17 @@
           Campus Email
           <input id="activation-email" type="email" placeholder="student@example.edu" required>
         </label>
-        <button type="submit">Send OTP</button>
+        <div class="button-row">
+          <button type="submit">Request OTP</button>
+          <button type="button" id="back-to-login-1" class="secondary-btn">Back</button>
+        </div>
       </form>
+      <div class="message" id="activation-message"></div>
+    </section>
 
-      <form id="verify-form" class="form-grid compact">
+    <section class="card hidden" id="activation-step-2">
+      <h2>Activate Account - Step 2</h2>
+      <form id="verify-form" class="form-grid">
         <label>
           OTP
           <input id="activation-otp" type="text" maxlength="6" placeholder="6-digit OTP" required>
@@ -54,15 +62,21 @@
           New Password
           <input id="activation-password" type="password" placeholder="Create password" required>
         </label>
-        <button type="submit">Verify and Activate</button>
+        <div class="button-row">
+          <button type="submit">Verify and Set Password</button>
+          <button type="button" id="back-to-step-1" class="secondary-btn">Back</button>
+        </div>
       </form>
-      <div class="message" id="activation-message"></div>
+      <div class="message" id="verify-message"></div>
     </section>
 
     <section class="card hidden" id="admin-card">
       <div class="admin-header">
         <h2>Admin User Management</h2>
-        <button id="refresh-users" type="button">Refresh Users</button>
+        <div class="button-row">
+          <button id="refresh-users" type="button">Refresh Users</button>
+          <button id="logout-admin" type="button" class="secondary-btn">Logout</button>
+        </div>
       </div>
       <div class="message" id="admin-message"></div>
       <div class="table-wrap">
@@ -81,6 +95,24 @@
           <tbody id="users-table"></tbody>
         </table>
       </div>
+    </section>
+
+    <section class="card hidden" id="lecturer-card">
+      <div class="admin-header">
+        <h2>Lecturer Dashboard</h2>
+        <button id="logout-lecturer" type="button" class="secondary-btn">Logout</button>
+      </div>
+      <p class="subtitle">Welcome lecturer. This is your dashboard area.</p>
+      <div class="message" id="lecturer-message"></div>
+    </section>
+
+    <section class="card hidden" id="student-card">
+      <div class="admin-header">
+        <h2>Student Dashboard</h2>
+        <button id="logout-student" type="button" class="secondary-btn">Logout</button>
+      </div>
+      <p class="subtitle">Welcome student. This is your dashboard area.</p>
+      <div class="message" id="student-message"></div>
     </section>
   </main>
   <script src="/ui/app.js"></script>
