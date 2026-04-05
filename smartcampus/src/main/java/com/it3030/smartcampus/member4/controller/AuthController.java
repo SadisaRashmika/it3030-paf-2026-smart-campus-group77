@@ -15,9 +15,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.it3030.smartcampus.member4.dto.AuthUserResponse;
 import com.it3030.smartcampus.member4.dto.LoginRequest;
+import com.it3030.smartcampus.member4.repository.UserRepository;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -30,15 +32,19 @@ import jakarta.validation.Valid;
 public class AuthController {
 
 	private final AuthenticationManager authenticationManager;
+	private final UserRepository userRepository;
 
-	public AuthController(AuthenticationManager authenticationManager) {
+	public AuthController(AuthenticationManager authenticationManager, UserRepository userRepository) {
 		this.authenticationManager = authenticationManager;
+		this.userRepository = userRepository;
 	}
 
 	@PostMapping("/login")
 	public ResponseEntity<AuthUserResponse> login(@Valid @RequestBody LoginRequest request, HttpServletRequest httpRequest) {
+		String principal = resolveLoginPrincipal(request);
+
 		Authentication authentication = authenticationManager.authenticate(
-				new UsernamePasswordAuthenticationToken(request.email().trim().toLowerCase(), request.password()));
+				new UsernamePasswordAuthenticationToken(principal, request.password()));
 
 		SecurityContext context = SecurityContextHolder.createEmptyContext();
 		context.setAuthentication(authentication);
@@ -47,8 +53,7 @@ public class AuthController {
 		HttpSession session = httpRequest.getSession(true);
 		session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, context);
 
-		String role = authentication.getAuthorities().stream().findFirst().map(a -> a.getAuthority()).orElse("ROLE_UNKNOWN");
-		return ResponseEntity.ok(new AuthUserResponse(authentication.getName(), role, true));
+		return ResponseEntity.ok(toAuthUserResponse(authentication));
 	}
 
 	@PostMapping("/logout")
@@ -67,7 +72,48 @@ public class AuthController {
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 		}
 
+		return ResponseEntity.ok(toAuthUserResponse(authentication));
+	}
+
+	private AuthUserResponse toAuthUserResponse(Authentication authentication) {
+		String email = authentication.getName();
 		String role = authentication.getAuthorities().stream().findFirst().map(a -> a.getAuthority()).orElse("ROLE_UNKNOWN");
-		return ResponseEntity.ok(new AuthUserResponse(authentication.getName(), role, true));
+		String userId = userRepository.findByEmail(email).map(u -> u.getUserId()).orElse("UNKNOWN");
+		return new AuthUserResponse(email, userId, role, true);
+	}
+
+	private String resolveLoginPrincipal(LoginRequest request) {
+		String email = normalize(request.email());
+		String userId = normalize(request.userId());
+		String identifier = normalize(request.identifier());
+
+		if (identifier != null && email == null && userId == null) {
+			if (identifier.contains("@")) {
+				email = identifier;
+			} else {
+				userId = identifier;
+			}
+		}
+
+		if (userId != null) {
+			return userRepository.findByUserId(userId.toUpperCase())
+					.map(u -> u.getEmail())
+					.orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid user ID or password"));
+		}
+
+		if (email != null) {
+			return email.toLowerCase();
+		}
+
+		throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Provide either email or user ID");
+	}
+
+	private String normalize(String value) {
+		if (value == null) {
+			return null;
+		}
+
+		String trimmed = value.trim();
+		return trimmed.isEmpty() ? null : trimmed;
 	}
 }

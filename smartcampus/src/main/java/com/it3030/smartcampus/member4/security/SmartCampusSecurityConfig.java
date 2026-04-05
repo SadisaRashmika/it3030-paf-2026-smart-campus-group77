@@ -15,9 +15,14 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.it3030.smartcampus.member4.model.UserAccount;
 import com.it3030.smartcampus.member4.repository.UserRepository;
+
+import java.util.List;
 
 @Configuration
 @EnableMethodSecurity
@@ -42,6 +47,7 @@ public class SmartCampusSecurityConfig {
 
 	@Bean
 	SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+		http.cors(cors -> cors.configurationSource(corsConfigurationSource()));
 		http.csrf(csrf -> csrf.disable());
 		http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED));
 		http.authorizeHttpRequests(authorize -> authorize
@@ -55,6 +61,19 @@ public class SmartCampusSecurityConfig {
 		http.exceptionHandling(exception -> exception.authenticationEntryPoint((request, response, authException) ->
 				response.sendError(HttpStatus.UNAUTHORIZED.value(), "Unauthorized")));
 		return http.build();
+	}
+
+	@Bean
+	CorsConfigurationSource corsConfigurationSource() {
+		CorsConfiguration config = new CorsConfiguration();
+		config.setAllowedOriginPatterns(List.of("http://localhost:*", "http://127.0.0.1:*"));
+		config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+		config.setAllowedHeaders(List.of("*"));
+		config.setAllowCredentials(true);
+
+		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+		source.registerCorsConfiguration("/**", config);
+		return source;
 	}
 
 	private UserDetails toUserDetails(UserAccount user, PasswordEncoder passwordEncoder) {
