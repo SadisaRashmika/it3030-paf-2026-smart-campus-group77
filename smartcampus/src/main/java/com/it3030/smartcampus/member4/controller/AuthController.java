@@ -18,8 +18,12 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.it3030.smartcampus.member4.dto.AuthUserResponse;
+import com.it3030.smartcampus.member4.dto.ForgotPasswordRequest;
+import com.it3030.smartcampus.member4.dto.ForgotPasswordResetRequest;
 import com.it3030.smartcampus.member4.dto.LoginRequest;
+import com.it3030.smartcampus.member4.dto.MessageResponse;
 import com.it3030.smartcampus.member4.repository.UserRepository;
+import com.it3030.smartcampus.member4.service.PasswordResetService;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -33,10 +37,12 @@ public class AuthController {
 
 	private final AuthenticationManager authenticationManager;
 	private final UserRepository userRepository;
+	private final PasswordResetService passwordResetService;
 
-	public AuthController(AuthenticationManager authenticationManager, UserRepository userRepository) {
+	public AuthController(AuthenticationManager authenticationManager, UserRepository userRepository, PasswordResetService passwordResetService) {
 		this.authenticationManager = authenticationManager;
 		this.userRepository = userRepository;
+		this.passwordResetService = passwordResetService;
 	}
 
 	@PostMapping("/login")
@@ -64,6 +70,18 @@ public class AuthController {
 			session.invalidate();
 		}
 		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+	}
+
+	@PostMapping("/forgot-password/send-otp")
+	public ResponseEntity<MessageResponse> sendForgotPasswordOtp(@Valid @RequestBody ForgotPasswordRequest request) {
+		passwordResetService.sendOtp(request);
+		return ResponseEntity.ok(new MessageResponse("OTP sent to your email"));
+	}
+
+	@PostMapping("/forgot-password/reset")
+	public ResponseEntity<MessageResponse> resetForgottenPassword(@Valid @RequestBody ForgotPasswordResetRequest request) {
+		passwordResetService.resetPassword(request);
+		return ResponseEntity.ok(new MessageResponse("Password reset successful. You can now login."));
 	}
 
 	@GetMapping("/me")

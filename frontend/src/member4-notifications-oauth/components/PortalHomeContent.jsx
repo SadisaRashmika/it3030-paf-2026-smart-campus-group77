@@ -82,28 +82,15 @@ export default function PortalHomeContent({ user, onLogin, onNavigate }) {
 						</>
 					)}
 
-					<div className="flex flex-wrap gap-3 pt-1">
-						{user ? (
-							<span className="inline-flex items-center gap-2 rounded-lg bg-slate-900 px-3 py-2 text-xs font-semibold text-white">
-								<UserCheck size={14} /> Logged in as {role}
-							</span>
-						) : (
-							<>
-								<button
-									onClick={() => onLogin("login")}
-									className="rounded-xl border border-blue-200 bg-white px-4 py-2 text-sm font-semibold text-blue-700 transition hover:bg-blue-50"
-								>
-									Sign In
-								</button>
-								<button
-									onClick={() => onLogin("activate")}
-									className="rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-800"
-								>
-									Activate Account
-								</button>
-							</>
-						)}
-					</div>
+					{user ? (
+						<span className="inline-flex items-center gap-2 rounded-lg bg-slate-900 px-3 py-2 text-xs font-semibold text-white">
+							<UserCheck size={14} /> Logged in as {role}
+						</span>
+					) : (
+						<p className="pt-1 text-sm font-medium text-slate-500">
+							Use the login button in the header to sign in or activate your account.
+						</p>
+					)}
 				</div>
 			</div>
 

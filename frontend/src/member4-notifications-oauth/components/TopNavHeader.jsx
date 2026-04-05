@@ -1,4 +1,4 @@
-import { ChevronDown, LogOut, Menu, Shield, X } from "lucide-react";
+import { ChevronDown, LogOut, Menu, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 const tabs = [
@@ -31,28 +31,28 @@ export default function TopNavHeader({ activeTab, onTabClick, user, onLogin, onL
 	const initials = user?.email ? user.email.slice(0, 2).toUpperCase() : "SC";
 
 	return (
-		<header className="sticky top-0 z-30 border-b border-slate-200/70 bg-white/80 backdrop-blur-xl">
-			<div className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between gap-3 px-4 sm:px-6">
+		<header className="sticky top-0 z-30 border-b border-amber-200/70 bg-amber-50/90 backdrop-blur-xl">
+			<div className="mx-auto flex h-20 w-full max-w-7xl items-center justify-between gap-3 px-4 sm:px-6">
 				<div className="flex items-center gap-3 sm:gap-6">
-					<div className="flex items-center gap-2">
-						<span className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-blue-600 to-cyan-500 text-white shadow-md">
-							<Shield size={17} />
-						</span>
+					<div className="flex items-center gap-3">
+						<img src="/assets/logoPAF.png" alt="SmartCampus logo" className="h-11 w-auto max-w-[120px] object-contain" />
 						<div>
-							<p className="font-display text-sm font-bold text-slate-900 sm:text-base">SmartCampus</p>
-							<p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-500">Uni Portal</p>
+							<p className="font-display text-base font-extrabold text-slate-900 sm:text-lg">SmartCampus</p>
+							<p className="text-[11px] font-bold uppercase tracking-[0.2em] text-amber-700/80">Uni Portal</p>
 						</div>
 					</div>
 
-					<nav className="hidden items-center gap-1 xl:flex">
+					<nav className="hidden items-center gap-2 xl:flex">
 						{visibleTabs.map((tab) => {
 							const active = activeTab === tab.key;
 							return (
 								<button
 									key={tab.key}
 									onClick={() => onTabClick(tab.key)}
-									className={`rounded-lg px-3.5 py-2 text-sm font-semibold transition ${
-										active ? "bg-slate-900 text-white" : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
+									className={`rounded-xl border px-4 py-2.5 text-sm font-bold transition ${
+										active
+											? "border-amber-500 bg-gradient-to-b from-amber-400 to-amber-500 text-amber-950 shadow-[0_6px_14px_rgba(245,158,11,0.35)]"
+											: "border-amber-200 bg-white/85 text-slate-800 hover:border-amber-300 hover:bg-amber-100/60"
 									}`}
 								>
 									{tab.label}
@@ -68,14 +68,14 @@ export default function TopNavHeader({ activeTab, onTabClick, user, onLogin, onL
 							<div ref={userMenuRef} className="relative hidden sm:block">
 								<button
 									onClick={() => setMenuOpen((prev) => !prev)}
-									className="flex items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 py-1.5 pl-1.5 pr-2.5 transition hover:bg-slate-100"
+									className="flex items-center gap-2 rounded-xl border border-amber-200 bg-white py-1.5 pl-1.5 pr-2.5 transition hover:bg-amber-50"
 								>
-									<span className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-indigo-600 to-violet-500 text-xs font-bold text-white">
+									<span className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-amber-500 to-amber-300 text-xs font-bold text-amber-950">
 										{initials}
 									</span>
 									<span className="text-left">
-										<span className="block text-xs font-bold text-slate-900">{user.email}</span>
-										<span className="block text-[10px] uppercase tracking-wide text-slate-500">{roleLabel}</span>
+										<span className="block text-sm font-bold text-slate-900">{user.email}</span>
+										<span className="block text-[11px] font-semibold uppercase tracking-wide text-slate-500">{roleLabel}</span>
 									</span>
 									<ChevronDown size={14} className={`text-slate-500 transition ${menuOpen ? "rotate-180" : ""}`} />
 								</button>
@@ -96,7 +96,7 @@ export default function TopNavHeader({ activeTab, onTabClick, user, onLogin, onL
 
 							<button
 								onClick={() => setMobileOpen((prev) => !prev)}
-								className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-slate-200 text-slate-700 transition hover:bg-slate-100 xl:hidden"
+								className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-amber-200 text-slate-700 transition hover:bg-amber-100 xl:hidden"
 							>
 								{mobileOpen ? <X size={18} /> : <Menu size={18} />}
 							</button>
@@ -105,13 +105,13 @@ export default function TopNavHeader({ activeTab, onTabClick, user, onLogin, onL
 						<div className="flex items-center gap-2">
 							<button
 								onClick={() => onLogin("login")}
-								className="rounded-lg border border-blue-200 px-3.5 py-2 text-sm font-semibold text-blue-700 transition hover:bg-blue-50"
+								className="rounded-xl border border-amber-300 bg-white px-4 py-2.5 text-sm font-bold text-amber-800 transition hover:bg-amber-100"
 							>
 								Login
 							</button>
 							<button
 								onClick={() => onLogin("activate")}
-								className="rounded-lg bg-slate-900 px-3.5 py-2 text-sm font-semibold text-white transition hover:bg-slate-800"
+								className="rounded-xl bg-gradient-to-b from-amber-400 to-amber-500 px-4 py-2.5 text-sm font-bold text-amber-950 shadow-[0_6px_14px_rgba(245,158,11,0.35)] transition hover:brightness-105"
 							>
 								Activate
 							</button>
@@ -121,10 +121,10 @@ export default function TopNavHeader({ activeTab, onTabClick, user, onLogin, onL
 			</div>
 
 			{mobileOpen && user ? (
-				<div className="border-t border-slate-200 bg-white px-4 py-3 xl:hidden">
-					<div className="mb-2 rounded-xl bg-slate-50 px-3 py-2">
-						<p className="text-xs font-bold text-slate-800">{user.email}</p>
-						<p className="text-[10px] uppercase tracking-wide text-slate-500">{roleLabel}</p>
+				<div className="border-t border-amber-200 bg-amber-50/90 px-4 py-3 xl:hidden">
+					<div className="mb-2 rounded-xl bg-white px-3 py-2">
+						<p className="text-sm font-bold text-slate-800">{user.email}</p>
+						<p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">{roleLabel}</p>
 					</div>
 					<div className="space-y-1">
 						{visibleTabs.map((tab) => {
@@ -136,8 +136,10 @@ export default function TopNavHeader({ activeTab, onTabClick, user, onLogin, onL
 										onTabClick(tab.key);
 										setMobileOpen(false);
 									}}
-									className={`w-full rounded-lg px-3 py-2 text-left text-sm font-semibold transition ${
-										active ? "bg-slate-900 text-white" : "text-slate-700 hover:bg-slate-100"
+									className={`w-full rounded-xl border px-3 py-2.5 text-left text-sm font-bold transition ${
+										active
+											? "border-amber-500 bg-amber-400 text-amber-950"
+											: "border-amber-200 bg-white text-slate-700 hover:bg-amber-100"
 									}`}
 								>
 									{tab.label}

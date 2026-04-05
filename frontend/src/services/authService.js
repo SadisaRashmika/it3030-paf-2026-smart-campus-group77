@@ -29,6 +29,20 @@ export function verifyActivationOtp(payload) {
   });
 }
 
+export function requestForgotPasswordOtp(payload) {
+  return requestJson("/api/public/auth/forgot-password/send-otp", {
+    method: "POST",
+    body: JSON.stringify(payload)
+  });
+}
+
+export function resetForgotPassword(payload) {
+  return requestJson("/api/public/auth/forgot-password/reset", {
+    method: "POST",
+    body: JSON.stringify(payload)
+  });
+}
+
 export function getAdminUsers() {
   return requestJson("/api/admin/users");
 }
