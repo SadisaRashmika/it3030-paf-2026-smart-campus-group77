@@ -28,31 +28,32 @@ async function request(path, options = {}) {
 
 const loginForm = document.getElementById("login-form");
 const authMessage = document.getElementById("auth-message");
-const authCard = document.getElementById("auth-card");
+const authModal = document.getElementById("auth-modal");
+const openLoginBtn = document.getElementById("open-login");
+const closeLoginBtn = document.getElementById("close-login");
+const userChip = document.getElementById("user-chip");
+const userEmail = document.getElementById("user-email");
+const userMeta = document.getElementById("user-meta");
+const logoutBtn = document.getElementById("logout-btn");
+const tabButtons = Array.from(document.querySelectorAll(".tab-btn"));
+const heroTitle = document.getElementById("hero-title");
+const heroSubtitle = document.getElementById("hero-subtitle");
+
 const activationStep1 = document.getElementById("activation-step-1");
 const activationStep2 = document.getElementById("activation-step-2");
-const adminCard = document.getElementById("admin-card");
-const lecturerCard = document.getElementById("lecturer-card");
-const studentCard = document.getElementById("student-card");
+const panelHome = document.getElementById("panel-home");
+const panelTab1 = document.getElementById("panel-tab1");
+const panelTab2 = document.getElementById("panel-tab2");
+const panelTab3 = document.getElementById("panel-tab3");
 
 const openActivationBtn = document.getElementById("open-activation");
-const backToLogin1Btn = document.getElementById("back-to-login-1");
-const backToStep1Btn = document.getElementById("back-to-step-1");
 
 const sendOtpForm = document.getElementById("send-otp-form");
 const verifyForm = document.getElementById("verify-form");
 const activationMessage = document.getElementById("activation-message");
 const verifyMessage = document.getElementById("verify-message");
-
-const refreshUsersBtn = document.getElementById("refresh-users");
-const adminMessage = document.getElementById("admin-message");
-const usersTable = document.getElementById("users-table");
-const lecturerMessage = document.getElementById("lecturer-message");
-const studentMessage = document.getElementById("student-message");
-
-const logoutAdminBtn = document.getElementById("logout-admin");
-const logoutLecturerBtn = document.getElementById("logout-lecturer");
-const logoutStudentBtn = document.getElementById("logout-student");
+let currentUser = null;
+let pendingTab = "home";
 
 function showCard(element, visible) {
   element.classList.toggle("hidden", !visible);
@@ -63,89 +64,81 @@ function setMessage(element, text, isSuccess = false) {
   element.classList.toggle("success", isSuccess);
 }
 
-function showLoginOnly() {
-  showCard(authCard, true);
+function closeModal() {
+  showCard(authModal, false);
+}
+
+function openModal() {
+  showCard(authModal, true);
+}
+
+function resetActivationPanels() {
   showCard(activationStep1, false);
   showCard(activationStep2, false);
 }
 
-function hideDashboards() {
-  showCard(adminCard, false);
-  showCard(lecturerCard, false);
-  showCard(studentCard, false);
+function showActivationStep(step) {
+  showCard(activationStep1, step === 1);
+  showCard(activationStep2, step === 2);
 }
 
-function renderUsers(users) {
-  usersTable.innerHTML = users
-    .map((user) => `
-      <tr>
-        <td>${user.id}</td>
-        <td>${user.userId}</td>
-        <td>${user.email}</td>
-        <td>${user.role}</td>
-        <td>${user.status}</td>
-        <td>${user.otpRequestCount}</td>
-        <td>${user.failedOtpAttempts}</td>
-      </tr>
-    `)
-    .join("");
+const panels = {
+  home: panelHome,
+  tab1: panelTab1,
+  tab2: panelTab2,
+  tab3: panelTab3
+};
+
+function setActiveTab(tabKey) {
+  Object.entries(panels).forEach(([key, panel]) => {
+    panel.classList.toggle("active", key === tabKey);
+  });
+
+  tabButtons.forEach((button) => {
+    button.classList.toggle("active", button.dataset.tab === tabKey);
+  });
 }
 
-async function loadUsers() {
-  try {
-    const users = await request("/api/admin/users");
-    renderUsers(users);
-    adminMessage.textContent = "";
-  } catch (error) {
-    adminMessage.textContent = error.message;
+function updateHero(user) {
+  if (!user) {
+    heroTitle.textContent = "Welcome to SmartCampus";
+    heroSubtitle.textContent = "Use the top navigation to switch between sections.";
+    return;
   }
+
+  const cleanRole = (user.role || "ROLE_UNKNOWN").replace("ROLE_", "");
+  heroTitle.textContent = `Welcome ${cleanRole}`;
+  heroSubtitle.textContent = `Logged in as ${cleanRole} | ID: ${user.userId || "UNKNOWN"}`;
+}
+
+function setAuthState(user) {
+  currentUser = user;
+
+  if (!user) {
+    showCard(openLoginBtn, true);
+    showCard(userChip, false);
+    showCard(logoutBtn, false);
+    setActiveTab("home");
+    updateHero(null);
+    return;
+  }
+
+  const cleanRole = (user.role || "ROLE_UNKNOWN").replace("ROLE_", "");
+  userEmail.textContent = user.email;
+  userMeta.textContent = `${cleanRole} | ${user.userId || "UNKNOWN"}`;
+  showCard(openLoginBtn, false);
+  showCard(userChip, true);
+  showCard(logoutBtn, true);
+  updateHero(user);
 }
 
 async function checkSession() {
   try {
     const me = await request("/api/public/auth/me", { method: "GET" });
-    showCard(authCard, false);
-    showCard(activationStep1, false);
-    showCard(activationStep2, false);
-    hideDashboards();
-    await openRoleDashboard(me.role, me.email);
+    setAuthState(me);
   } catch {
-    showLoginOnly();
-    hideDashboards();
+    setAuthState(null);
   }
-}
-
-async function openRoleDashboard(role, email) {
-  if (role === "ROLE_ADMIN") {
-    showCard(adminCard, true);
-    await loadUsers();
-    setMessage(adminMessage, `Logged in as ${email} (ADMIN)`, true);
-    return;
-  }
-
-  if (role === "ROLE_LECTURER") {
-    showCard(lecturerCard, true);
-    try {
-      const result = await request("/api/lecturer/dashboard", { method: "GET" });
-      setMessage(lecturerMessage, result.message || `Logged in as ${email} (LECTURER)`, true);
-    } catch (error) {
-      setMessage(lecturerMessage, error.message, false);
-    }
-    return;
-  }
-
-  if (role === "ROLE_STUDENT") {
-    showCard(studentCard, true);
-    try {
-      const result = await request("/api/student/dashboard", { method: "GET" });
-      setMessage(studentMessage, result.message || `Logged in as ${email} (STUDENT)`, true);
-    } catch (error) {
-      setMessage(studentMessage, error.message, false);
-    }
-    return;
-  }
-
-  setMessage(authMessage, "Unknown role", false);
 }
 
 async function logout() {
@@ -154,47 +147,66 @@ async function logout() {
   } catch {
     // no-op
   }
-  setMessage(authMessage, "Logged out", true);
-  showLoginOnly();
-  hideDashboards();
+
+  pendingTab = "home";
+  setAuthState(null);
+  closeModal();
+  setMessage(authMessage, "", false);
+  resetActivationPanels();
 }
 
-openActivationBtn.addEventListener("click", () => {
-  showCard(activationStep1, true);
-  showCard(activationStep2, false);
-  setMessage(activationMessage, "", false);
-  setMessage(verifyMessage, "", false);
+openLoginBtn.addEventListener("click", () => {
+  pendingTab = "home";
+  openModal();
+  resetActivationPanels();
 });
 
-backToLogin1Btn.addEventListener("click", () => {
-  showLoginOnly();
+closeLoginBtn.addEventListener("click", () => {
+  closeModal();
+  resetActivationPanels();
 });
 
-backToStep1Btn.addEventListener("click", () => {
-  showCard(activationStep2, false);
-  showCard(activationStep1, true);
-  setMessage(verifyMessage, "", false);
+authModal.addEventListener("click", (event) => {
+  if (event.target === authModal) {
+    closeModal();
+  }
 });
 
 loginForm.addEventListener("submit", async (event) => {
   event.preventDefault();
-  const email = document.getElementById("login-email").value;
+  const identifier = document.getElementById("login-identifier").value.trim();
   const password = document.getElementById("login-password").value;
+
+  if (!identifier) {
+    setMessage(authMessage, "Enter email or user ID.", false);
+    return;
+  }
+
+  const isEmailIdentifier = identifier.includes("@");
+  const email = isEmailIdentifier ? identifier : "";
+  const userId = isEmailIdentifier ? "" : identifier;
 
   try {
     const result = await request("/api/public/auth/login", {
       method: "POST",
-      body: JSON.stringify({ email, password })
+      body: JSON.stringify({ identifier, userId, email, password })
     });
 
-    showCard(authCard, false);
-    showCard(activationStep1, false);
-    showCard(activationStep2, false);
-    hideDashboards();
-    await openRoleDashboard(result.role, result.email);
+    setAuthState(result);
+    setActiveTab(pendingTab);
+    pendingTab = "home";
+    closeModal();
+    resetActivationPanels();
+    setMessage(authMessage, "", false);
   } catch (error) {
     setMessage(authMessage, error.message, false);
   }
+});
+
+openActivationBtn.addEventListener("click", () => {
+  showActivationStep(1);
+  setMessage(activationMessage, "", false);
+  setMessage(verifyMessage, "", false);
 });
 
 sendOtpForm.addEventListener("submit", async (event) => {
@@ -208,8 +220,7 @@ sendOtpForm.addEventListener("submit", async (event) => {
       body: JSON.stringify({ userId, email })
     });
     setMessage(activationMessage, result.message, true);
-    showCard(activationStep1, false);
-    showCard(activationStep2, true);
+    showActivationStep(2);
   } catch (error) {
     setMessage(activationMessage, error.message, false);
   }
@@ -228,19 +239,32 @@ verifyForm.addEventListener("submit", async (event) => {
       body: JSON.stringify({ userId, email, otp, newPassword })
     });
     setMessage(verifyMessage, result.message, true);
+    setMessage(authMessage, "Activation successful. You can now login.", true);
+    showActivationStep(1);
   } catch (error) {
     setMessage(verifyMessage, error.message, false);
   }
 });
 
-refreshUsersBtn.addEventListener("click", async () => {
-  await loadUsers();
+tabButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    const requestedTab = button.dataset.tab;
+    if (requestedTab !== "home" && !currentUser) {
+      pendingTab = requestedTab;
+      setMessage(authMessage, "Please login to access this tab.", false);
+      openModal();
+      resetActivationPanels();
+      setActiveTab("home");
+      return;
+    }
+
+    setActiveTab(requestedTab);
+  });
 });
 
-logoutAdminBtn.addEventListener("click", logout);
-logoutLecturerBtn.addEventListener("click", logout);
-logoutStudentBtn.addEventListener("click", logout);
+logoutBtn.addEventListener("click", logout);
 
-showLoginOnly();
-hideDashboards();
+setActiveTab("home");
+setAuthState(null);
+resetActivationPanels();
 checkSession();

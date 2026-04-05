@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import AuthModal from "./components/AuthModal";
-import PortalTabContent from "./components/PortalTabContent";
-import TopNavHeader from "./components/TopNavHeader";
+import AuthModal from "./member4-notifications-oauth/components/AuthModal";
+import PortalTabContent from "./member4-notifications-oauth/components/PortalTabContent";
+import TopNavHeader from "./member4-notifications-oauth/components/TopNavHeader";
 import { getAdminUsers, getCurrentUser, getSuspiciousUsers, logout } from "./services/authService";
 
 export default function App() {
