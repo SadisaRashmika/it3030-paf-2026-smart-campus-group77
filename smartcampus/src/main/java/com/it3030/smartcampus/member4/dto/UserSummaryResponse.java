@@ -3,7 +3,7 @@ package com.it3030.smartcampus.member4.dto;
 import com.it3030.smartcampus.member4.model.Role;
 
 public record UserSummaryResponse(
-		Long id,
+		Integer id,
 		String userId,
 		String email,
 		Role role,

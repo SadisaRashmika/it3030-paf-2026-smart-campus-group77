@@ -41,17 +41,17 @@ public class AdminController {
 	}
 
 	@PatchMapping("/users/{userId}/role")
-	public ResponseEntity<UserSummaryResponse> assignRole(@PathVariable Long userId, @Valid @RequestBody UpdateRoleRequest request) {
+	public ResponseEntity<UserSummaryResponse> assignRole(@PathVariable Integer userId, @Valid @RequestBody UpdateRoleRequest request) {
 		return ResponseEntity.ok(activationService.updateRole(userId, request.role()));
 	}
 
 	@PatchMapping("/users/{userId}/deactivate")
-	public ResponseEntity<UserSummaryResponse> deactivate(@PathVariable Long userId) {
+	public ResponseEntity<UserSummaryResponse> deactivate(@PathVariable Integer userId) {
 		return ResponseEntity.ok(activationService.deactivate(userId));
 	}
 
 	@DeleteMapping("/users/{userId}")
-	public ResponseEntity<Void> delete(@PathVariable Long userId) {
+	public ResponseEntity<Void> delete(@PathVariable Integer userId) {
 		activationService.delete(userId);
 		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 	}
