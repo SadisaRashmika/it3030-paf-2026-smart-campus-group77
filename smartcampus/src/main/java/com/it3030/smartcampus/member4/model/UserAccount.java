@@ -20,7 +20,7 @@ public class UserAccount {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+	private Integer id;
 
 	@Column(name = "user_id", nullable = false, unique = true, length = 20)
 	private String userId;
@@ -147,7 +147,7 @@ public class UserAccount {
 		this.otpExpiresAt = null;
 	}
 
-	public Long getId() {
+	public Integer getId() {
 		return id;
 	}
 

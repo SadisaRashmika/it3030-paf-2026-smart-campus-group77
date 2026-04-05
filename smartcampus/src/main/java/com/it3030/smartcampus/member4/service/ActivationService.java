@@ -111,7 +111,7 @@ public class ActivationService {
 		return toSummary(user);
 	}
 
-	public UserSummaryResponse updateRole(Long userId, Role role) {
+	public UserSummaryResponse updateRole(Integer userId, Role role) {
 		UserAccount user = userRepository.findById(userId)
 				.orElseThrow(() -> new IllegalArgumentException("User not found"));
 		user.setRole(role);
@@ -119,7 +119,7 @@ public class ActivationService {
 		return toSummary(user);
 	}
 
-	public UserSummaryResponse deactivate(Long userId) {
+	public UserSummaryResponse deactivate(Integer userId) {
 		UserAccount user = userRepository.findById(userId)
 				.orElseThrow(() -> new IllegalArgumentException("User not found"));
 		user.deactivate();
@@ -127,7 +127,7 @@ public class ActivationService {
 		return toSummary(user);
 	}
 
-	public void delete(Long userId) {
+	public void delete(Integer userId) {
 		userRepository.deleteById(userId);
 	}
 

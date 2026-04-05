@@ -7,10 +7,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.it3030.smartcampus.member4.model.UserAccount;
 
-public interface UserRepository extends JpaRepository<UserAccount, Long> {
+public interface UserRepository extends JpaRepository<UserAccount, Integer> {
 
 	@Override
-	Optional<UserAccount> findById(Long id);
+	Optional<UserAccount> findById(Integer id);
 
 	Optional<UserAccount> findByUserId(String userId);
 
