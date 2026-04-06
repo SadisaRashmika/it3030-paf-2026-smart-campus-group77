@@ -12,5 +12,6 @@ public record UserSummaryResponse(
 		boolean suspicious,
 		int otpRequestCount,
 		int failedOtpAttempts,
+		String suspiciousReason,
 		String status) {
 }

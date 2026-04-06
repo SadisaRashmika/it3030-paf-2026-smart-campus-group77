@@ -1,7 +1,7 @@
-import { BellRing, Mail, Search, X } from "lucide-react";
+import { BellRing, Clock3, Mail, Search, X } from "lucide-react";
 import { useMemo, useState } from "react";
 
-export default function AdminUserManagementPanel({ users, onAssignLecturerWork }) {
+export default function AdminUserManagementPanel({ users, assignments = [], onAssignLecturerWork }) {
 	const [workForm, setWorkForm] = useState({
 		lecturerIds: [],
 		workTitle: "",
@@ -320,6 +320,50 @@ export default function AdminUserManagementPanel({ users, onAssignLecturerWork }
 					{workActionMessage ? (
 						<p className="mt-3 rounded-lg bg-slate-50 px-3 py-2 text-xs font-medium text-slate-700">{workActionMessage}</p>
 					) : null}
+				</article>
+
+				<article className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+					<div className="mb-3 flex items-center justify-between gap-3">
+						<p className="inline-flex items-center gap-2 text-sm font-bold text-slate-800">
+							<Clock3 size={16} /> Assigned Work View
+						</p>
+						<span className="rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-semibold text-slate-600">
+							{assignments.length} Records
+						</span>
+					</div>
+
+					<div className="space-y-2">
+						{assignments.length === 0 ? (
+							<p className="rounded-lg bg-slate-50 px-3 py-2 text-sm text-slate-600">
+								No work assignments yet. Submit the form above to see records here.
+							</p>
+						) : (
+							assignments.map((assignment) => (
+								<div key={assignment.assignmentId} className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-xs">
+									<div className="flex flex-wrap items-start justify-between gap-3">
+										<div>
+											<p className="font-bold text-slate-800">{assignment.workTitle}</p>
+											<p className="mt-1 text-slate-600">{assignment.description}</p>
+											<p className="mt-1 text-slate-700">Location: {assignment.location}</p>
+											<p className="mt-1 text-slate-700">
+												Schedule: {assignment.startDate || "-"}{assignment.endDate ? ` to ${assignment.endDate}` : ""}
+												{assignment.startTime ? ` | ${assignment.startTime}` : ""}
+												{assignment.endTime ? ` to ${assignment.endTime}` : ""}
+											</p>
+											<p className="mt-1 text-slate-700">
+												Recipients: {assignment.recipientNames?.length ? assignment.recipientNames.join(", ") : "-"}
+											</p>
+										</div>
+										<div className="text-right text-[11px] font-medium text-slate-500">
+											<p>ID: #{assignment.assignmentId}</p>
+											<p className="mt-1">Email: {assignment.sendEmail ? "Yes" : "No"}</p>
+											<p className="mt-1">Created: {assignment.createdAt ? new Date(assignment.createdAt).toLocaleString() : "-"}</p>
+										</div>
+									</div>
+								</div>
+							))
+						)}
+					</div>
 				</article>
 			</div>
 		</section>

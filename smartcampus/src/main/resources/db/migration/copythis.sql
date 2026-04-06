@@ -158,7 +158,7 @@ VALUES
 INSERT INTO users (name, user_id, email, password, role, is_active, suspicious, otp_request_count, failed_otp_attempts)
 VALUES 
 ('Kasun Kalhara', 'STU001', 'xxxxxxxx@gmail.com', 'hashed_password', 'STUDENT', FALSE, FALSE, 0, 0),  -- Not activated yet
-('Sumudu Perera', 'STU002', 'xxxxxxxx.com', 'hashed_password', 'STUDENT', FALSE, FALSE, 0, 0),  -- Not activated yet
+('Sumudu Perera', 'STU002', 'xxxxxxxx@gmail.com', 'hashed_password', 'STUDENT', FALSE, FALSE, 0, 0),  -- Not activated yet
 ('Sithmi Amarasiri', 'STU003', 'student3@example.com', 'hashed_password', 'STUDENT', FALSE, FALSE, 0, 0),  -- Not activated yet
 ('Vindiya Perera', 'STU004', 'student4@example.com', 'hashed_password', 'STUDENT', FALSE, FALSE, 0, 0),  -- Not activated yet
 ('Senal Galagedara', 'STU005', 'student5@example.com', 'hashed_password', 'STUDENT', FALSE, FALSE, 0, 0);  -- Not activated yet

@@ -8,6 +8,7 @@ import {
   deleteUser,
   getAdminUsers,
   getCurrentUser,
+  getLecturerAssignments,
   getSuspiciousUsers,
   logout
 } from "./services/authService";
@@ -18,6 +19,7 @@ export default function App() {
   const [authModal, setAuthModal] = useState({ open: false, mode: "login" });
   const [adminUsers, setAdminUsers] = useState([]);
   const [suspiciousUsers, setSuspiciousUsers] = useState([]);
+  const [lecturerAssignments, setLecturerAssignments] = useState([]);
   const [loadingAdminData, setLoadingAdminData] = useState(false);
   const [appError, setAppError] = useState("");
 
@@ -30,9 +32,14 @@ export default function App() {
 
     try {
       setLoadingAdminData(true);
-      const [users, suspicious] = await Promise.all([getAdminUsers(), getSuspiciousUsers()]);
+      const [users, suspicious, assignments] = await Promise.all([
+        getAdminUsers(),
+        getSuspiciousUsers(),
+        getLecturerAssignments()
+      ]);
       setAdminUsers(users);
       setSuspiciousUsers(suspicious);
+      setLecturerAssignments(assignments);
     } catch (error) {
       setAppError(error.message);
     } finally {
@@ -76,6 +83,7 @@ export default function App() {
     setActiveTab("home");
     setAdminUsers([]);
     setSuspiciousUsers([]);
+    setLecturerAssignments([]);
   };
 
   const handleAssignLecturerWork = async (payload) => {
@@ -117,6 +125,7 @@ export default function App() {
           onNavigate={setActiveTab}
           adminUsers={adminUsers}
           suspiciousUsers={suspiciousUsers}
+          lecturerAssignments={lecturerAssignments}
           loadingAdminData={loadingAdminData}
           reloadAdminData={fetchAdminData}
           onAssignLecturerWork={handleAssignLecturerWork}
