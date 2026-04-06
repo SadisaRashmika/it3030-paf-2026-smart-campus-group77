@@ -4,6 +4,7 @@ import com.it3030.smartcampus.member4.model.Role;
 
 public record UserSummaryResponse(
 		Integer id,
+		String name,
 		String userId,
 		String email,
 		Role role,

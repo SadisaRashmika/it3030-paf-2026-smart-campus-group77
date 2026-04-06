@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.it3030.smartcampus.member4.dto.ActivationRequest;
 import com.it3030.smartcampus.member4.dto.ActivationResponse;
+import com.it3030.smartcampus.member4.dto.MessageResponse;
 import com.it3030.smartcampus.member4.dto.OtpVerificationRequest;
 import com.it3030.smartcampus.member4.dto.UserSummaryResponse;
 import com.it3030.smartcampus.member4.service.ActivationService;
@@ -42,5 +43,11 @@ public class ActivationController {
 	@GetMapping("/status")
 	public ResponseEntity<UserSummaryResponse> status(@RequestParam String userId) {
 		return ResponseEntity.ok(activationService.getStatus(userId));
+	}
+
+	@GetMapping("/report-suspicious")
+	public ResponseEntity<MessageResponse> reportSuspicious(@RequestParam String userId, @RequestParam String email) {
+		String message = activationService.reportSuspicious(userId, email);
+		return ResponseEntity.ok(new MessageResponse(message));
 	}
 }

@@ -22,6 +22,7 @@ import com.it3030.smartcampus.member4.dto.ForgotPasswordRequest;
 import com.it3030.smartcampus.member4.dto.ForgotPasswordResetRequest;
 import com.it3030.smartcampus.member4.dto.LoginRequest;
 import com.it3030.smartcampus.member4.dto.MessageResponse;
+import com.it3030.smartcampus.member4.model.UserAccount;
 import com.it3030.smartcampus.member4.repository.UserRepository;
 import com.it3030.smartcampus.member4.service.PasswordResetService;
 
@@ -94,10 +95,29 @@ public class AuthController {
 	}
 
 	private AuthUserResponse toAuthUserResponse(Authentication authentication) {
-		String email = authentication.getName();
+		String principal = authentication.getName();
 		String role = authentication.getAuthorities().stream().findFirst().map(a -> a.getAuthority()).orElse("ROLE_UNKNOWN");
-		String userId = userRepository.findByEmail(email).map(u -> u.getUserId()).orElse("UNKNOWN");
-		return new AuthUserResponse(email, userId, role, true);
+		UserAccount user = findAuthenticatedUser(principal)
+				.orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Authenticated user not found"));
+
+		String email = user.getEmail();
+		String userId = user.getUserId();
+		String name = user.getName();
+		return new AuthUserResponse(name, email, userId, role, true);
+	}
+
+	private java.util.Optional<UserAccount> findAuthenticatedUser(String principal) {
+		if (principal == null || principal.isBlank()) {
+			return java.util.Optional.empty();
+		}
+
+		String normalized = principal.trim();
+		if (normalized.contains("@")) {
+			return userRepository.findByEmail(normalized.toLowerCase());
+		}
+
+		return userRepository.findByUserId(normalized.toUpperCase())
+				.or(() -> userRepository.findByEmail(normalized.toLowerCase()));
 	}
 
 	private String resolveLoginPrincipal(LoginRequest request) {

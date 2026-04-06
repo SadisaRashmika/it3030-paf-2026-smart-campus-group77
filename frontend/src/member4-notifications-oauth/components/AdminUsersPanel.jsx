@@ -1,21 +1,78 @@
-import { AlertTriangle, RefreshCcw, Users } from "lucide-react";
+import { AlertTriangle, Search, Trash2, Users } from "lucide-react";
+import { useMemo, useState } from "react";
 
-export default function AdminUsersPanel({ users, suspiciousUsers, loading, onReload }) {
+const ACCOUNT_FILTERS = ["all", "student", "lecturer"];
+
+export default function AdminUsersPanel({
+	users,
+	suspiciousUsers,
+	loading,
+	onDeleteUser
+}) {
+	const [accountFilter, setAccountFilter] = useState("all");
+	const [searchTerm, setSearchTerm] = useState("");
+	const [deletingUserId, setDeletingUserId] = useState(null);
+	const [actionError, setActionError] = useState("");
+
+	const filteredUsers = useMemo(() => {
+		const normalizedSearch = searchTerm.trim().toLowerCase();
+
+		if (accountFilter === "all") {
+			return users.filter((user) => {
+				if (!normalizedSearch) {
+					return true;
+				}
+				const haystack = `${user.name || ""} ${user.userId || ""} ${user.email || ""}`.toLowerCase();
+				return haystack.includes(normalizedSearch);
+			});
+		}
+
+		return users.filter((user) => {
+			const role = (user.role || "").toLowerCase();
+			if (!role.includes(accountFilter)) {
+				return false;
+			}
+			if (!normalizedSearch) {
+				return true;
+			}
+			const haystack = `${user.name || ""} ${user.userId || ""} ${user.email || ""}`.toLowerCase();
+			return haystack.includes(normalizedSearch);
+		});
+	}, [users, accountFilter, searchTerm]);
+
+	const handleDeleteUser = async (userId) => {
+		if (!onDeleteUser) {
+			setActionError("Delete action is not available.");
+			return;
+		}
+
+		setActionError("");
+		setDeletingUserId(userId);
+		try {
+			await onDeleteUser(userId);
+		} catch (error) {
+			setActionError(error.message || "Unable to delete user.");
+		} finally {
+			setDeletingUserId(null);
+		}
+	};
+
 	return (
 		<section className="space-y-4">
 			<div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
 				<div className="flex flex-wrap items-center justify-between gap-3">
 					<div>
 						<p className="text-xs font-bold uppercase tracking-widest text-slate-500">Admin Controls</p>
-						<h2 className="mt-1 text-2xl font-bold text-slate-900">User Management Snapshot</h2>
+						<h2 className="mt-1 text-2xl font-bold text-slate-900">Manage Users</h2>
+						<p className="mt-1 text-sm text-slate-600">
+							Create lecturer staff logins, assign lecturer work, and trigger in-app notifications and emails.
+						</p>
 					</div>
-					<button
-						onClick={onReload}
-						disabled={loading}
-						className="inline-flex items-center gap-2 rounded-lg border border-blue-200 px-3 py-2 text-sm font-semibold text-blue-700 transition hover:bg-blue-50 disabled:opacity-60"
-					>
-						<RefreshCcw size={14} className={loading ? "animate-spin" : ""} /> Refresh
-					</button>
+					{loading ? (
+						<span className="rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-xs font-bold text-amber-700">
+							Refreshing
+						</span>
+					) : null}
 				</div>
 
 				<div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -32,20 +89,66 @@ export default function AdminUsersPanel({ users, suspiciousUsers, loading, onRel
 
 			<div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
 				<article className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-					<p className="mb-3 inline-flex items-center gap-2 text-sm font-bold text-slate-800">
-						<Users size={16} /> All Accounts
-					</p>
+					<div className="mb-3 flex flex-wrap items-center justify-between gap-3">
+						<p className="inline-flex items-center gap-2 text-sm font-bold text-slate-800">
+							<Users size={16} /> All Accounts
+						</p>
+						<div className="inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-slate-50 p-1">
+							{ACCOUNT_FILTERS.map((filter) => {
+								const selected = accountFilter === filter;
+								const label = filter === "all" ? "All" : filter === "student" ? "Student" : "Lecturer";
+								return (
+									<button
+										key={filter}
+										type="button"
+										onClick={() => setAccountFilter(filter)}
+										className={`rounded-md px-2.5 py-1 text-xs font-semibold transition ${
+											selected
+												? "bg-white text-slate-900 shadow-sm"
+												: "text-slate-600 hover:text-slate-800"
+										}`}
+									>
+										{label}
+									</button>
+								);
+							})}
+						</div>
+					</div>
+					<div className="mb-3">
+						<div className="relative">
+							<Search size={14} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+							<input
+								value={searchTerm}
+								onChange={(event) => setSearchTerm(event.target.value)}
+								placeholder="Search by name, ID, or email"
+								className="w-full rounded-xl border border-slate-200 bg-white py-2.5 pl-9 pr-3 text-sm text-slate-700 outline-none ring-amber-200 focus:ring"
+							/>
+						</div>
+					</div>
 					<div className="space-y-2">
-						{users.length === 0 ? (
+						{filteredUsers.length === 0 ? (
 							<p className="rounded-lg bg-slate-50 px-3 py-2 text-sm text-slate-600">No users returned by API.</p>
 						) : (
-							users.map((user) => (
+							filteredUsers.map((user) => (
 								<div key={user.id} className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-xs">
-									<p className="font-bold text-slate-800">{user.userId} - {user.email}</p>
-									<p className="mt-1 text-slate-600">{user.role} | {user.status}</p>
+									<div className="flex items-start justify-between gap-3">
+										<div>
+											<p className="font-bold text-slate-800">{user.name || user.userId} - {user.email}</p>
+											<p className="mt-1 text-slate-600">{user.role} | {user.status}</p>
+										</div>
+										<button
+											type="button"
+											onClick={() => handleDeleteUser(user.id)}
+											disabled={deletingUserId === user.id}
+											className="inline-flex items-center gap-1 rounded-md border border-rose-200 bg-white px-2 py-1 font-semibold text-rose-700 transition hover:bg-rose-50 disabled:cursor-not-allowed disabled:opacity-60"
+										>
+											<Trash2 size={12} /> {deletingUserId === user.id ? "Deleting" : "Delete"}
+										</button>
+									</div>
 								</div>
 							))
 						)}
+						{actionError ? <p className="rounded-lg bg-rose-50 px-3 py-2 text-sm text-rose-700">{actionError}</p> : null}
 					</div>
 				</article>
 
@@ -59,8 +162,20 @@ export default function AdminUsersPanel({ users, suspiciousUsers, loading, onRel
 						) : (
 							suspiciousUsers.map((user) => (
 								<div key={user.id} className="rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-xs">
-									<p className="font-bold text-rose-800">{user.userId} - {user.email}</p>
-									<p className="mt-1 text-rose-700">OTP Requests: {user.otpRequestCount} | Failed OTP: {user.failedOtpAttempts}</p>
+									<div className="flex items-start justify-between gap-3">
+										<div>
+											<p className="font-bold text-rose-800">{user.name || user.userId} - {user.email}</p>
+											<p className="mt-1 text-rose-700">OTP Requests: {user.otpRequestCount} | Failed OTP: {user.failedOtpAttempts}</p>
+										</div>
+										<button
+											type="button"
+											onClick={() => handleDeleteUser(user.id)}
+											disabled={deletingUserId === user.id}
+											className="inline-flex items-center gap-1 rounded-md border border-rose-300 bg-white px-2 py-1 font-semibold text-rose-700 transition hover:bg-rose-100 disabled:cursor-not-allowed disabled:opacity-60"
+										>
+											<Trash2 size={12} /> {deletingUserId === user.id ? "Deleting" : "Delete"}
+										</button>
+									</div>
 								</div>
 							))
 						)}

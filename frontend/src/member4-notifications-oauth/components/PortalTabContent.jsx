@@ -1,4 +1,6 @@
 import { CalendarClock, Briefcase, BookOpenText, MessageSquareText } from "lucide-react";
+import AdminRoleManagementPanel from "./AdminRoleManagementPanel";
+import AdminUserManagementPanel from "./AdminUserManagementPanel";
 import AdminUsersPanel from "./AdminUsersPanel";
 import PortalHomeContent from "./PortalHomeContent";
 
@@ -10,7 +12,10 @@ export default function PortalTabContent({
 	adminUsers,
 	suspiciousUsers,
 	loadingAdminData,
-	reloadAdminData
+	reloadAdminData,
+	onAssignLecturerWork,
+	onCreateStaffLogin,
+	onDeleteUser
 }) {
 	if (tab === "home") {
 		return <PortalHomeContent user={user} onLogin={onLogin} onNavigate={onNavigate} />;
@@ -18,24 +23,37 @@ export default function PortalTabContent({
 
 	if (!user) {
 		return (
-			<section className="rounded-2xl border border-amber-300 bg-amber-50 p-8">
-				<h2 className="text-2xl font-bold text-amber-900">Login Required</h2>
-				<p className="mt-2 text-sm text-amber-800">Please login to access this area.</p>
+			<section className="rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
+				<h2 className="text-2xl font-bold text-slate-900">Login Required</h2>
+				<p className="mt-2 text-sm text-slate-600">Please login to access this area.</p>
 			</section>
 		);
 	}
 
 	const role = user.role?.replace("ROLE_", "").toLowerCase();
 
-	if (role === "admin" && tab !== "home") {
+	if (role === "admin" && tab === "timetable") {
 		return (
 			<AdminUsersPanel
 				users={adminUsers}
 				suspiciousUsers={suspiciousUsers}
 				loading={loadingAdminData}
-				onReload={reloadAdminData}
+				onDeleteUser={onDeleteUser}
 			/>
 		);
+	}
+
+	if (role === "admin" && tab === "resource") {
+		return (
+			<AdminUserManagementPanel
+				users={adminUsers}
+				onAssignLecturerWork={onAssignLecturerWork}
+			/>
+		);
+	}
+
+	if (role === "admin" && tab === "jobs") {
+		return <AdminRoleManagementPanel onCreateStaffLogin={onCreateStaffLogin} />;
 	}
 
 	if (tab === "resource") {
