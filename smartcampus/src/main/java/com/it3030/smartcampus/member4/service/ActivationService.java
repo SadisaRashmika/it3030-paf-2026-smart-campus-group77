@@ -20,6 +20,7 @@ import com.it3030.smartcampus.member4.dto.ActivationResponse;
 import com.it3030.smartcampus.member4.dto.AssignLecturerWorkRequest;
 import com.it3030.smartcampus.member4.dto.CreateStaffLoginRequest;
 import com.it3030.smartcampus.member4.dto.LecturerWorkAssignmentResponse;
+import com.it3030.smartcampus.member4.dto.LecturerWorkAssignmentViewResponse;
 import com.it3030.smartcampus.member4.dto.OtpVerificationRequest;
 import com.it3030.smartcampus.member4.dto.UserSummaryResponse;
 import com.it3030.smartcampus.member4.model.Notification;
@@ -214,6 +215,30 @@ public class ActivationService {
 				.toList();
 	}
 
+	public List<LecturerWorkAssignmentViewResponse> listLecturerAssignments() {
+		return lecturerWorkAssignmentRepository.findAllByOrderByCreatedAtDesc().stream()
+				.map(assignment -> new LecturerWorkAssignmentViewResponse(
+						assignment.getId(),
+						assignment.getWorkTitle(),
+						assignment.getDescription(),
+						assignment.getLocation(),
+						assignment.getStartDate(),
+						assignment.getEndDate(),
+						assignment.getStartTime(),
+						assignment.getEndTime(),
+						assignment.isSendEmail(),
+						assignment.getCreatedAt(),
+						assignment.getLecturers().stream()
+								.map(lecturer -> lecturer.getName() == null || lecturer.getName().isBlank() ? lecturer.getUserId() : lecturer.getName())
+								.sorted(String::compareToIgnoreCase)
+								.toList(),
+						assignment.getLecturers().stream()
+								.map(UserAccount::getUserId)
+								.sorted(String::compareToIgnoreCase)
+								.toList()))
+				.toList();
+	}
+
 	public UserSummaryResponse getStatus(String userId) {
 		UserAccount user = userRepository.findByUserId(UserAccount.normalizeUserId(userId))
 				.orElseThrow(() -> new IllegalArgumentException("User not found"));
@@ -247,6 +272,14 @@ public class ActivationService {
 		return toSummary(user);
 	}
 
+	public UserSummaryResponse clearSuspicious(Integer userId) {
+		UserAccount user = userRepository.findById(userId)
+				.orElseThrow(() -> new IllegalArgumentException("User not found"));
+		user.clearSuspicious();
+		userRepository.save(user);
+		return toSummary(user);
+	}
+
 	public void delete(Integer userId) {
 		userRepository.deleteById(userId);
 	}
@@ -256,6 +289,17 @@ public class ActivationService {
 		if (user.isSuspicious()) {
 			status = status + "_SUSPICIOUS";
 		}
+		String suspiciousReason = null;
+		if (user.isSuspicious()) {
+			if (user.getFailedOtpAttempts() >= suspiciousThreshold) {
+				suspiciousReason = "Too many failed OTP attempts";
+			} else if (!user.isActive() && user.getOtpRequestCount() >= suspiciousThreshold) {
+				suspiciousReason = "Too many OTP requests before activation";
+			} else {
+				suspiciousReason = "Reported from suspicious-account email link";
+			}
+		}
+
 		return new UserSummaryResponse(
 				user.getId(),
 				user.getName(),
@@ -266,6 +310,7 @@ public class ActivationService {
 				user.isSuspicious(),
 				user.getOtpRequestCount(),
 				user.getFailedOtpAttempts(),
+				suspiciousReason,
 				status);
 	}
 

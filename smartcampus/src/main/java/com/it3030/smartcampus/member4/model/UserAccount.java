@@ -162,6 +162,11 @@ public class UserAccount {
 		this.suspicious = true;
 	}
 
+	public void clearSuspicious() {
+		this.suspicious = false;
+		this.failedOtpAttempts = 0;
+	}
+
 	public void recordFailedOtp() {
 		this.failedOtpAttempts++;
 	}

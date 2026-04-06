@@ -93,6 +93,10 @@ export function assignLecturerWork(payload) {
   });
 }
 
+export function getLecturerAssignments() {
+  return requestJson("/api/admin/lecturers/assignments");
+}
+
 export function deleteUser(userId) {
   return requestJson(`/api/admin/users/${userId}`, {
     method: "DELETE"

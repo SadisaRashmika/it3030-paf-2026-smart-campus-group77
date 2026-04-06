@@ -1,4 +1,4 @@
-import { AlertTriangle, Search, Trash2, Users } from "lucide-react";
+import { AlertTriangle, HelpCircle, Search, Trash2, Users } from "lucide-react";
 import { useMemo, useState } from "react";
 
 const ACCOUNT_FILTERS = ["all", "student", "lecturer"];
@@ -13,6 +13,8 @@ export default function AdminUsersPanel({
 	const [searchTerm, setSearchTerm] = useState("");
 	const [deletingUserId, setDeletingUserId] = useState(null);
 	const [actionError, setActionError] = useState("");
+	const [showWhySuspicious, setShowWhySuspicious] = useState(false);
+	const [pendingDeleteUser, setPendingDeleteUser] = useState(null);
 
 	const filteredUsers = useMemo(() => {
 		const normalizedSearch = searchTerm.trim().toLowerCase();
@@ -40,16 +42,25 @@ export default function AdminUsersPanel({
 		});
 	}, [users, accountFilter, searchTerm]);
 
-	const handleDeleteUser = async (userId) => {
+	const handleDeleteUser = async (user) => {
 		if (!onDeleteUser) {
 			setActionError("Delete action is not available.");
 			return;
 		}
 
+		setPendingDeleteUser(user);
+	};
+
+	const confirmDeleteUser = async () => {
+		if (!pendingDeleteUser) {
+			return;
+		}
+
 		setActionError("");
-		setDeletingUserId(userId);
+		setDeletingUserId(pendingDeleteUser.id);
 		try {
-			await onDeleteUser(userId);
+			await onDeleteUser(pendingDeleteUser.id);
+			setPendingDeleteUser(null);
 		} catch (error) {
 			setActionError(error.message || "Unable to delete user.");
 		} finally {
@@ -58,6 +69,7 @@ export default function AdminUsersPanel({
 	};
 
 	return (
+		<>
 		<section className="space-y-4">
 			<div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
 				<div className="flex flex-wrap items-center justify-between gap-3">
@@ -138,7 +150,7 @@ export default function AdminUsersPanel({
 										</div>
 										<button
 											type="button"
-											onClick={() => handleDeleteUser(user.id)}
+											onClick={() => handleDeleteUser(user)}
 											disabled={deletingUserId === user.id}
 											className="inline-flex items-center gap-1 rounded-md border border-rose-200 bg-white px-2 py-1 font-semibold text-rose-700 transition hover:bg-rose-50 disabled:cursor-not-allowed disabled:opacity-60"
 										>
@@ -153,9 +165,26 @@ export default function AdminUsersPanel({
 				</article>
 
 				<article className="rounded-2xl border border-rose-200 bg-white p-5 shadow-sm">
-					<p className="mb-3 inline-flex items-center gap-2 text-sm font-bold text-rose-700">
-						<AlertTriangle size={16} /> Suspicious Activity
-					</p>
+					<div className="mb-3 flex items-center justify-between gap-3">
+						<p className="inline-flex items-center gap-2 text-sm font-bold text-rose-700">
+							<AlertTriangle size={16} /> Suspicious Activity
+						</p>
+						<button
+							type="button"
+							onClick={() => setShowWhySuspicious((prev) => !prev)}
+							className="inline-flex items-center gap-1 rounded-md border border-rose-200 bg-white px-2.5 py-1 text-xs font-semibold text-rose-700 transition hover:bg-rose-50"
+						>
+							<HelpCircle size={13} /> Why Suspicious?
+						</button>
+					</div>
+					{showWhySuspicious ? (
+						<div className="mb-3 rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-xs text-rose-800">
+							<p className="font-semibold">Accounts are flagged suspicious when:</p>
+							<p className="mt-1">1. Too many OTP requests before activation.</p>
+							<p>2. Too many failed OTP verification attempts.</p>
+							<p>3. User clicks the suspicious-report link in onboarding email.</p>
+						</div>
+					) : null}
 					<div className="space-y-2">
 						{suspiciousUsers.length === 0 ? (
 							<p className="rounded-lg bg-emerald-50 px-3 py-2 text-sm text-emerald-700">No suspicious accounts currently flagged.</p>
@@ -166,10 +195,11 @@ export default function AdminUsersPanel({
 										<div>
 											<p className="font-bold text-rose-800">{user.name || user.userId} - {user.email}</p>
 											<p className="mt-1 text-rose-700">OTP Requests: {user.otpRequestCount} | Failed OTP: {user.failedOtpAttempts}</p>
+											{user.suspiciousReason ? <p className="mt-1 font-semibold text-rose-800">Reason: {user.suspiciousReason}</p> : null}
 										</div>
 										<button
 											type="button"
-											onClick={() => handleDeleteUser(user.id)}
+											onClick={() => handleDeleteUser(user)}
 											disabled={deletingUserId === user.id}
 											className="inline-flex items-center gap-1 rounded-md border border-rose-300 bg-white px-2 py-1 font-semibold text-rose-700 transition hover:bg-rose-100 disabled:cursor-not-allowed disabled:opacity-60"
 										>
@@ -183,5 +213,40 @@ export default function AdminUsersPanel({
 				</article>
 			</div>
 		</section>
+
+		{pendingDeleteUser ? (
+			<div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/45 p-4 backdrop-blur-sm">
+				<div className="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-5 shadow-2xl">
+					<h3 className="text-base font-bold text-slate-900">Confirm Delete</h3>
+					<p className="mt-2 text-sm text-slate-700">
+						Are you sure you want to delete <span className="font-semibold">{pendingDeleteUser.name || pendingDeleteUser.userId}</span> ({pendingDeleteUser.userId})?
+					</p>
+					{pendingDeleteUser.suspiciousReason ? (
+						<p className="mt-2 rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-xs text-rose-700">
+							Reason: {pendingDeleteUser.suspiciousReason}
+						</p>
+					) : null}
+
+					<div className="mt-4 flex justify-end gap-2">
+						<button
+							type="button"
+							onClick={() => setPendingDeleteUser(null)}
+							className="rounded-lg border border-slate-200 px-3 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+						>
+							Cancel
+						</button>
+						<button
+							type="button"
+							onClick={confirmDeleteUser}
+							disabled={deletingUserId === pendingDeleteUser.id}
+							className="inline-flex items-center rounded-lg border border-rose-200 bg-rose-600 px-3 py-2 text-sm font-bold text-white transition hover:bg-rose-700 disabled:cursor-not-allowed disabled:opacity-60"
+						>
+							{deletingUserId === pendingDeleteUser.id ? "Deleting..." : "Delete User"}
+						</button>
+					</div>
+				</div>
+			</div>
+		) : null}
+		</>
 	);
 }

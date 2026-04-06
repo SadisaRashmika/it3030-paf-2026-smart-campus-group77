@@ -11,6 +11,7 @@ export default function PortalTabContent({
 	onNavigate,
 	adminUsers,
 	suspiciousUsers,
+	lecturerAssignments,
 	loadingAdminData,
 	reloadAdminData,
 	onAssignLecturerWork,
@@ -47,6 +48,7 @@ export default function PortalTabContent({
 		return (
 			<AdminUserManagementPanel
 				users={adminUsers}
+				assignments={lecturerAssignments}
 				onAssignLecturerWork={onAssignLecturerWork}
 			/>
 		);
