@@ -8,6 +8,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -95,14 +96,14 @@ public class AuthController {
 	}
 
 	private AuthUserResponse toAuthUserResponse(Authentication authentication) {
-		String principal = authentication.getName();
-		String role = authentication.getAuthorities().stream().findFirst().map(a -> a.getAuthority()).orElse("ROLE_UNKNOWN");
+		String principal = resolvePrincipal(authentication);
 		UserAccount user = findAuthenticatedUser(principal)
 				.orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Authenticated user not found"));
 
 		String email = user.getEmail();
 		String userId = user.getUserId();
 		String name = user.getName();
+		String role = user.getRole().authority();
 		return new AuthUserResponse(name, email, userId, role, true);
 	}
 
@@ -118,6 +119,17 @@ public class AuthController {
 
 		return userRepository.findByUserId(normalized.toUpperCase())
 				.or(() -> userRepository.findByEmail(normalized.toLowerCase()));
+	}
+
+	private String resolvePrincipal(Authentication authentication) {
+		if (authentication != null && authentication.getPrincipal() instanceof OAuth2User oauth2User) {
+			Object emailAttr = oauth2User.getAttributes().get("email");
+			if (emailAttr instanceof String email && !email.isBlank()) {
+				return email.trim().toLowerCase();
+			}
+		}
+
+		return authentication.getName();
 	}
 
 	private String resolveLoginPrincipal(LoginRequest request) {

@@ -102,3 +102,24 @@ export function deleteUser(userId) {
     method: "DELETE"
   });
 }
+
+export function startGoogleLogin() {
+  const configuredBase = import.meta.env?.VITE_API_URL ? String(import.meta.env.VITE_API_URL).trim() : "";
+  const oauthPath = "/oauth2/authorization/google";
+
+  if (!configuredBase) {
+    window.location.assign(oauthPath);
+    return;
+  }
+
+  try {
+    const parsed = new URL(configuredBase, window.location.origin);
+    const backendOrigin = `${parsed.protocol}//${parsed.host}`;
+    window.location.assign(`${backendOrigin}${oauthPath}`);
+  } catch {
+    const normalized = configuredBase
+      .replace(/\/api\/?$/i, "")
+      .replace(/\/$/, "");
+    window.location.assign(`${normalized}${oauthPath}`);
+  }
+}

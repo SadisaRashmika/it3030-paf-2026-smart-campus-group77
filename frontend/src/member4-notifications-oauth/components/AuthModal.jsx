@@ -4,13 +4,14 @@ import {
 	CheckCircle2,
 	Eye,
 	EyeOff,
+	Globe,
 	Hash,
 	Lock,
 	Mail,
 	ShieldCheck,
 	X
 } from "lucide-react";
-import { login, requestActivationOtp, requestForgotPasswordOtp, resetForgotPassword, verifyActivationOtp } from "../../services/authService";
+import { login, requestActivationOtp, requestForgotPasswordOtp, resetForgotPassword, startGoogleLogin, verifyActivationOtp } from "../../services/authService";
 
 const MODES = {
 	LOGIN: "login",
@@ -282,6 +283,7 @@ export default function AuthModal({ isOpen, onClose, onAuthenticated, initialMod
 							updateForm={updateForm}
 							loading={loading}
 							onLogin={onLogin}
+							onGoogleLogin={startGoogleLogin}
 							onActivate={() => switchMode(MODES.ACTIVATE)}
 							onForgotPassword={() => switchMode(MODES.FORGOT)}
 						/>
@@ -312,7 +314,7 @@ export default function AuthModal({ isOpen, onClose, onAuthenticated, initialMod
 	);
 }
 
-function LoginForm({ forms, updateForm, loading, onLogin, onActivate, onForgotPassword }) {
+function LoginForm({ forms, updateForm, loading, onLogin, onGoogleLogin, onActivate, onForgotPassword }) {
 	return (
 		<form className="space-y-4" onSubmit={onLogin}>
 			<Field
@@ -349,6 +351,20 @@ function LoginForm({ forms, updateForm, loading, onLogin, onActivate, onForgotPa
 			</div>
 
 			<SubmitButton loading={loading} label="Sign In" loadingLabel="Signing in..." />
+
+			<div className="flex items-center gap-3">
+				<span className="h-px flex-1 bg-slate-200" />
+				<span className="text-[11px] font-semibold uppercase tracking-wide text-slate-400">or</span>
+				<span className="h-px flex-1 bg-slate-200" />
+			</div>
+
+			<button
+				type="button"
+				onClick={onGoogleLogin}
+				className="flex w-full items-center justify-center gap-2 rounded-2xl border border-slate-300 bg-white px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+			>
+				<Globe size={16} /> Continue with Google
+			</button>
 		</form>
 	);
 }
