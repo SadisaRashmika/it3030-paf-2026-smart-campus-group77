@@ -2,7 +2,15 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import AuthModal from "./member4-notifications-oauth/components/AuthModal";
 import PortalTabContent from "./member4-notifications-oauth/components/PortalTabContent";
 import TopNavHeader from "./member4-notifications-oauth/components/TopNavHeader";
-import { getAdminUsers, getCurrentUser, getSuspiciousUsers, logout } from "./services/authService";
+import {
+  assignLecturerWork,
+  createStaffLogin,
+  deleteUser,
+  getAdminUsers,
+  getCurrentUser,
+  getSuspiciousUsers,
+  logout
+} from "./services/authService";
 
 export default function App() {
   const [user, setUser] = useState(null);
@@ -70,6 +78,23 @@ export default function App() {
     setSuspiciousUsers([]);
   };
 
+  const handleAssignLecturerWork = async (payload) => {
+    const result = await assignLecturerWork(payload);
+    await fetchAdminData();
+    return result;
+  };
+
+  const handleCreateStaffLogin = async (payload) => {
+    const result = await createStaffLogin(payload);
+    await fetchAdminData();
+    return result;
+  };
+
+  const handleDeleteUser = async (userId) => {
+    await deleteUser(userId);
+    await fetchAdminData();
+  };
+
   return (
     <div className="min-h-screen">
       <TopNavHeader
@@ -94,6 +119,9 @@ export default function App() {
           suspiciousUsers={suspiciousUsers}
           loadingAdminData={loadingAdminData}
           reloadAdminData={fetchAdminData}
+          onAssignLecturerWork={handleAssignLecturerWork}
+          onCreateStaffLogin={handleCreateStaffLogin}
+          onDeleteUser={handleDeleteUser}
         />
       </main>
 

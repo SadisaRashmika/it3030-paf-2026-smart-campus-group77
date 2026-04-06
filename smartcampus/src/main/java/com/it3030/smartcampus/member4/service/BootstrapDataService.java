@@ -29,10 +29,15 @@ public class BootstrapDataService {
 							   String email,
 							   String rawPassword) {
 		userRepository.findByEmail(email).ifPresentOrElse(existing -> {
+			existing.setName("Koffy Doggy");
 			existing.setPasswordHash(passwordEncoder.encode(rawPassword));
 			existing.setRole(com.it3030.smartcampus.member4.model.Role.ADMIN);
 			existing.activate(existing.getPasswordHash());
 			userRepository.save(existing);
-		}, () -> userRepository.save(UserAccount.adminSeed(adminUserId, email, passwordEncoder.encode(rawPassword))));
+		}, () -> {
+			UserAccount admin = UserAccount.adminSeed(adminUserId, email, passwordEncoder.encode(rawPassword));
+			admin.setName("Koffy Doggy");
+			userRepository.save(admin);
+		});
 	}
 }

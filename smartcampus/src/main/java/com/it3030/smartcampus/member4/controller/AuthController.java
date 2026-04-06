@@ -18,8 +18,13 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.it3030.smartcampus.member4.dto.AuthUserResponse;
+import com.it3030.smartcampus.member4.dto.ForgotPasswordRequest;
+import com.it3030.smartcampus.member4.dto.ForgotPasswordResetRequest;
 import com.it3030.smartcampus.member4.dto.LoginRequest;
+import com.it3030.smartcampus.member4.dto.MessageResponse;
+import com.it3030.smartcampus.member4.model.UserAccount;
 import com.it3030.smartcampus.member4.repository.UserRepository;
+import com.it3030.smartcampus.member4.service.PasswordResetService;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -33,10 +38,12 @@ public class AuthController {
 
 	private final AuthenticationManager authenticationManager;
 	private final UserRepository userRepository;
+	private final PasswordResetService passwordResetService;
 
-	public AuthController(AuthenticationManager authenticationManager, UserRepository userRepository) {
+	public AuthController(AuthenticationManager authenticationManager, UserRepository userRepository, PasswordResetService passwordResetService) {
 		this.authenticationManager = authenticationManager;
 		this.userRepository = userRepository;
+		this.passwordResetService = passwordResetService;
 	}
 
 	@PostMapping("/login")
@@ -66,6 +73,18 @@ public class AuthController {
 		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 	}
 
+	@PostMapping("/forgot-password/send-otp")
+	public ResponseEntity<MessageResponse> sendForgotPasswordOtp(@Valid @RequestBody ForgotPasswordRequest request) {
+		passwordResetService.sendOtp(request);
+		return ResponseEntity.ok(new MessageResponse("OTP sent to your email"));
+	}
+
+	@PostMapping("/forgot-password/reset")
+	public ResponseEntity<MessageResponse> resetForgottenPassword(@Valid @RequestBody ForgotPasswordResetRequest request) {
+		passwordResetService.resetPassword(request);
+		return ResponseEntity.ok(new MessageResponse("Password reset successful. You can now login."));
+	}
+
 	@GetMapping("/me")
 	public ResponseEntity<AuthUserResponse> me(Authentication authentication) {
 		if (authentication == null || !authentication.isAuthenticated() || authentication instanceof AnonymousAuthenticationToken) {
@@ -76,10 +95,29 @@ public class AuthController {
 	}
 
 	private AuthUserResponse toAuthUserResponse(Authentication authentication) {
-		String email = authentication.getName();
+		String principal = authentication.getName();
 		String role = authentication.getAuthorities().stream().findFirst().map(a -> a.getAuthority()).orElse("ROLE_UNKNOWN");
-		String userId = userRepository.findByEmail(email).map(u -> u.getUserId()).orElse("UNKNOWN");
-		return new AuthUserResponse(email, userId, role, true);
+		UserAccount user = findAuthenticatedUser(principal)
+				.orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Authenticated user not found"));
+
+		String email = user.getEmail();
+		String userId = user.getUserId();
+		String name = user.getName();
+		return new AuthUserResponse(name, email, userId, role, true);
+	}
+
+	private java.util.Optional<UserAccount> findAuthenticatedUser(String principal) {
+		if (principal == null || principal.isBlank()) {
+			return java.util.Optional.empty();
+		}
+
+		String normalized = principal.trim();
+		if (normalized.contains("@")) {
+			return userRepository.findByEmail(normalized.toLowerCase());
+		}
+
+		return userRepository.findByUserId(normalized.toUpperCase())
+				.or(() -> userRepository.findByEmail(normalized.toLowerCase()));
 	}
 
 	private String resolveLoginPrincipal(LoginRequest request) {

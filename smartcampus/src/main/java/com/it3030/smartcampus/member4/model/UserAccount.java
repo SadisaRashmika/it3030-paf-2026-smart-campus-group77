@@ -22,6 +22,9 @@ public class UserAccount {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 
+	@Column(nullable = false)
+	private String name;
+
 	@Column(name = "user_id", nullable = false, unique = true, length = 20)
 	private String userId;
 
@@ -64,7 +67,8 @@ public class UserAccount {
 	protected UserAccount() {
 	}
 
-	private UserAccount(String userId, String email, Role role, String passwordHash, boolean active) {
+	private UserAccount(String name, String userId, String email, Role role, String passwordHash, boolean active) {
+		this.name = name;
 		this.userId = userId;
 		this.email = email;
 		this.role = role;
@@ -76,11 +80,11 @@ public class UserAccount {
 	}
 
 	public static UserAccount candidate(String userId, String email, Role role) {
-		return new UserAccount(normalizeUserId(userId), normalize(email), role, "PENDING", false);
+		return new UserAccount(defaultName(userId, email), normalizeUserId(userId), normalize(email), role, "PENDING", false);
 	}
 
 	public static UserAccount activeUser(String userId, String email, String passwordHash, Role role) {
-		return new UserAccount(normalizeUserId(userId), normalize(email), role, passwordHash, true);
+		return new UserAccount(defaultName(userId, email), normalizeUserId(userId), normalize(email), role, passwordHash, true);
 	}
 
 	public static UserAccount adminSeed(String userId, String email, String passwordHash) {
@@ -101,6 +105,34 @@ public class UserAccount {
 
 	public static String normalizeUserId(String userId) {
 		return userId == null ? null : userId.trim().toUpperCase();
+	}
+
+	private static String defaultName(String userId, String email) {
+		String source = email != null && email.contains("@") ? email.substring(0, email.indexOf('@')) : userId;
+		if (source == null || source.isBlank()) {
+			return "Unknown User";
+		}
+
+		String candidate = source.replaceAll("[._-]+", " ").trim();
+		if (candidate.isBlank()) {
+			return normalizeUserId(userId);
+		}
+
+		String[] parts = candidate.split("\\s+");
+		StringBuilder builder = new StringBuilder();
+		for (String part : parts) {
+			if (part.isBlank()) {
+				continue;
+			}
+			if (!builder.isEmpty()) {
+				builder.append(' ');
+			}
+			builder.append(Character.toUpperCase(part.charAt(0)));
+			if (part.length() > 1) {
+				builder.append(part.substring(1).toLowerCase());
+			}
+		}
+		return builder.isEmpty() ? normalizeUserId(userId) : builder.toString();
 	}
 
 	public void requestOtp(String otp, Instant expiresAt) {
@@ -151,6 +183,10 @@ public class UserAccount {
 		return id;
 	}
 
+	public String getName() {
+		return name;
+	}
+
 	public String getUserId() {
 		return userId;
 	}
@@ -169,6 +205,10 @@ public class UserAccount {
 
 	public void setPasswordHash(String passwordHash) {
 		this.passwordHash = passwordHash;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public boolean isActive() {

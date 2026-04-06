@@ -1,4 +1,4 @@
-const DEFAULT_API_URL = "http://localhost:8081";
+const DEFAULT_API_URL = "";
 
 function resolveApiUrl() {
   if (import.meta.env?.VITE_API_URL) {
@@ -8,7 +8,10 @@ function resolveApiUrl() {
 }
 
 export async function requestJson(path, options = {}) {
-  const response = await fetch(`${resolveApiUrl()}${path}`, {
+  const apiBase = resolveApiUrl();
+  const url = apiBase ? `${apiBase}${path}` : path;
+
+  const response = await fetch(url, {
     credentials: "include",
     headers: {
       "Content-Type": "application/json",

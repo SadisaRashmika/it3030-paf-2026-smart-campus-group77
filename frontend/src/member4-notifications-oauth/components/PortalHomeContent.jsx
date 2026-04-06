@@ -28,7 +28,7 @@ const modules = [
 		title: "Job and Intern Finder",
 		description: "Discover role-matched internships and academic opportunities.",
 		icon: Briefcase,
-		iconClass: "text-amber-600 bg-amber-100"
+		iconClass: "text-indigo-600 bg-indigo-100"
 	},
 	{
 		key: "ticket",
@@ -54,11 +54,11 @@ export default function PortalHomeContent({ user, onLogin, onNavigate }) {
 	return (
 		<section className="space-y-6">
 			<div className="glass relative overflow-hidden rounded-3xl border border-slate-200 p-7 shadow-glass sm:p-10">
-				<div className="pointer-events-none absolute -right-20 -top-20 h-56 w-56 rounded-full bg-blue-100/70 blur-3xl" />
-				<div className="pointer-events-none absolute -bottom-20 -left-20 h-56 w-56 rounded-full bg-emerald-100/60 blur-3xl" />
+				<div className="pointer-events-none absolute -right-20 -top-20 h-56 w-56 rounded-full bg-amber-100/70 blur-3xl" />
+				<div className="pointer-events-none absolute -bottom-20 -left-20 h-56 w-56 rounded-full bg-orange-100/60 blur-3xl" />
 
 				<div className="relative max-w-3xl space-y-4">
-					<span className="inline-flex items-center gap-2 rounded-full border border-blue-200 bg-blue-50 px-3 py-1 text-xs font-bold uppercase tracking-wide text-blue-700">
+					<span className="inline-flex items-center gap-2 rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-xs font-bold uppercase tracking-wide text-amber-700">
 						<Sparkles size={13} /> University Support Platform
 					</span>
 
@@ -82,28 +82,15 @@ export default function PortalHomeContent({ user, onLogin, onNavigate }) {
 						</>
 					)}
 
-					<div className="flex flex-wrap gap-3 pt-1">
-						{user ? (
-							<span className="inline-flex items-center gap-2 rounded-lg bg-slate-900 px-3 py-2 text-xs font-semibold text-white">
-								<UserCheck size={14} /> Logged in as {role}
-							</span>
-						) : (
-							<>
-								<button
-									onClick={() => onLogin("login")}
-									className="rounded-xl border border-blue-200 bg-white px-4 py-2 text-sm font-semibold text-blue-700 transition hover:bg-blue-50"
-								>
-									Sign In
-								</button>
-								<button
-									onClick={() => onLogin("activate")}
-									className="rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-800"
-								>
-									Activate Account
-								</button>
-							</>
-						)}
-					</div>
+					{user ? (
+						<span className="inline-flex items-center gap-2 rounded-lg border border-amber-300 bg-amber-100 px-3 py-2 text-xs font-semibold text-amber-900">
+							<UserCheck size={14} /> Logged in as {role}
+						</span>
+					) : (
+						<p className="pt-1 text-sm font-medium text-slate-500">
+							Use the login button in the header to sign in or activate your account.
+						</p>
+					)}
 				</div>
 			</div>
 
