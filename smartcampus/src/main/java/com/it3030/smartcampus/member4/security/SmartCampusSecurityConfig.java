@@ -3,6 +3,7 @@ package com.it3030.smartcampus.member4.security;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.oauth2.client.web.DefaultOAuth2AuthorizationRequestResolver;
@@ -59,7 +60,7 @@ public class SmartCampusSecurityConfig {
 	SecurityFilterChain securityFilterChain(HttpSecurity http,
 										DatabaseBackedOAuth2UserService databaseBackedOAuth2UserService,
 										DatabaseBackedOidcUserService databaseBackedOidcUserService,
-										ClientRegistrationRepository clientRegistrationRepository,
+										ObjectProvider<ClientRegistrationRepository> clientRegistrationRepositoryProvider,
 										@Value("${app.frontend.base-url:http://localhost:8081/ui/index.html}") String frontendBaseUrl) throws Exception {
 		http.cors(cors -> cors.configurationSource(corsConfigurationSource()));
 		http.csrf(csrf -> csrf.disable());
@@ -70,20 +71,23 @@ public class SmartCampusSecurityConfig {
 				.requestMatchers("/api/lecturer/**").hasRole("LECTURER")
 				.requestMatchers("/api/student/**").hasRole("STUDENT")
 				.anyRequest().authenticated());
-		http.oauth2Login(oauth2 -> oauth2
-				.authorizationEndpoint(endpoint -> endpoint.authorizationRequestResolver(
-						authorizationRequestResolver(clientRegistrationRepository)))
-				.userInfoEndpoint(userInfo -> userInfo
-						.userService(databaseBackedOAuth2UserService)
-						.oidcUserService(databaseBackedOidcUserService))
-				.successHandler((request, response, authentication) -> {
-					String target = buildAuthRedirectUrl(frontendBaseUrl, "google-success", null);
-					response.sendRedirect(target);
-				})
-				.failureHandler((request, response, exception) -> {
-					String target = buildAuthRedirectUrl(frontendBaseUrl, "google-failed", exception == null ? null : exception.getMessage());
-					response.sendRedirect(target);
-				}));
+		ClientRegistrationRepository clientRegistrationRepository = clientRegistrationRepositoryProvider.getIfAvailable();
+		if (clientRegistrationRepository != null) {
+			http.oauth2Login(oauth2 -> oauth2
+					.authorizationEndpoint(endpoint -> endpoint.authorizationRequestResolver(
+							authorizationRequestResolver(clientRegistrationRepository)))
+					.userInfoEndpoint(userInfo -> userInfo
+							.userService(databaseBackedOAuth2UserService)
+							.oidcUserService(databaseBackedOidcUserService))
+					.successHandler((request, response, authentication) -> {
+						String target = buildAuthRedirectUrl(frontendBaseUrl, "google-success", null);
+						response.sendRedirect(target);
+					})
+					.failureHandler((request, response, exception) -> {
+						String target = buildAuthRedirectUrl(frontendBaseUrl, "google-failed", exception == null ? null : exception.getMessage());
+						response.sendRedirect(target);
+					}));
+		}
 		http.formLogin(form -> form.disable());
 		http.httpBasic(basic -> basic.disable());
 		http.exceptionHandling(exception -> exception.authenticationEntryPoint((request, response, authException) ->
