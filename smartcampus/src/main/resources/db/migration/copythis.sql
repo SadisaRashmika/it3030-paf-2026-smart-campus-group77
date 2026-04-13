@@ -142,7 +142,7 @@ INSERT INTO roles (name) VALUES
 INSERT INTO users (
     name, user_id, email, password, role, is_active, suspicious, otp_request_count, failed_otp_attempts
 ) VALUES (
-    'Sadisa Rashmika', 'ADMIN001', 'xxxxxxxxxx.com', '12345', 'ADMIN', TRUE, FALSE, 0, 0
+    'Sadisa Rashmika', 'ADMIN001', 'koffykoffy@gmail.com', '12345', 'ADMIN', TRUE, FALSE, 0, 0
 );
 
 -- Insert 5 Lecturers
