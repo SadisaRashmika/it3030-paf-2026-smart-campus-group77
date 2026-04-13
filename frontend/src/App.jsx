@@ -61,6 +61,51 @@ export default function App() {
   }, []);
 
   useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const authResult = params.get("auth");
+    if (!authResult) {
+      return;
+    }
+
+    const clearAuthParams = () => {
+      params.delete("auth");
+      params.delete("reason");
+      const nextQuery = params.toString();
+      const nextUrl = `${window.location.pathname}${nextQuery ? `?${nextQuery}` : ""}${window.location.hash}`;
+      window.history.replaceState({}, "", nextUrl);
+    };
+
+    const applyOAuthSession = async () => {
+      if (authResult === "google-failed") {
+        const reason = params.get("reason");
+        setAppError(reason || "Google sign-in failed. Please try again.");
+        clearAuthParams();
+        return;
+      }
+
+      let lastError = null;
+      for (let attempt = 0; attempt < 3; attempt += 1) {
+        try {
+          const me = await getCurrentUser();
+          setUser(me);
+          setAppError("");
+          setActiveTab("home");
+          clearAuthParams();
+          return;
+        } catch (error) {
+          lastError = error;
+          await new Promise((resolve) => setTimeout(resolve, 250));
+        }
+      }
+
+      setAppError(lastError?.message || "Google sign-in completed, but session could not be restored.");
+      clearAuthParams();
+    };
+
+    applyOAuthSession();
+  }, []);
+
+  useEffect(() => {
     if (role === "admin") {
       fetchAdminData();
     }

@@ -30,6 +30,40 @@ export default function TopNavHeader({ activeTab, onTabClick, user, onLogin, onL
 	const roleLabel = user?.role?.replace("ROLE_", "") || "";
 	const roleKey = roleLabel.toLowerCase();
 	const displayName = user?.name?.trim() || user?.userId || "SmartCampus User";
+	const tabLabelForRole = (tab) => {
+		if (roleKey === "admin") {
+			if (tab.key === "timetable") {
+				return "Activity";
+			}
+			if (tab.key === "resource") {
+				return "User Management";
+			}
+			if (tab.key === "jobs") {
+				return "Role Management";
+			}
+			return tab.label;
+		}
+
+		if (roleKey === "student") {
+			if (tab.key === "home") {
+				return "Home";
+			}
+			if (tab.key === "timetable") {
+				return "Member 1";
+			}
+			if (tab.key === "resource") {
+				return "Member 2";
+			}
+			if (tab.key === "jobs") {
+				return "Member 3";
+			}
+			if (tab.key === "ticket") {
+				return "Member 4";
+			}
+		}
+
+		return tab.label;
+	};
 	const initials = displayName
 		.split(" ")
 		.filter(Boolean)
@@ -52,14 +86,7 @@ export default function TopNavHeader({ activeTab, onTabClick, user, onLogin, onL
 					<nav className="hidden items-center gap-2 xl:flex">
 						{visibleTabs.map((tab) => {
 							const active = activeTab === tab.key;
-							const tabLabel =
-								roleKey === "admin" && tab.key === "timetable"
-									? "Activity"
-									: roleKey === "admin" && tab.key === "resource"
-										? "User Management"
-										: roleKey === "admin" && tab.key === "jobs"
-											? "Role Management"
-									: tab.label;
+							const tabLabel = tabLabelForRole(tab);
 							return (
 								<button
 									key={tab.key}
@@ -119,16 +146,16 @@ export default function TopNavHeader({ activeTab, onTabClick, user, onLogin, onL
 					) : (
 						<div className="flex items-center gap-2">
 							<button
-								onClick={() => onLogin("login")}
-								className="rounded-xl border border-amber-300 bg-white px-4 py-2.5 text-sm font-bold text-amber-800 transition hover:bg-amber-50"
-							>
-								Login
-							</button>
-							<button
 								onClick={() => onLogin("activate")}
-								className="rounded-xl bg-gradient-to-b from-amber-400 to-amber-500 px-4 py-2.5 text-sm font-bold text-amber-950 shadow-[0_6px_14px_rgba(245,158,11,0.35)] transition hover:brightness-105"
+								className="rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm font-bold text-slate-700 transition hover:border-slate-400 hover:bg-slate-50"
 							>
 								Activate
+							</button>
+							<button
+								onClick={() => onLogin("login")}
+								className="rounded-xl bg-gradient-to-b from-amber-400 to-amber-500 px-4 py-2.5 text-sm font-bold text-amber-950 shadow-[0_6px_14px_rgba(245,158,11,0.35)] transition hover:brightness-105"
+							>
+								Login
 							</button>
 						</div>
 					)}
@@ -144,14 +171,7 @@ export default function TopNavHeader({ activeTab, onTabClick, user, onLogin, onL
 					<div className="space-y-1">
 						{visibleTabs.map((tab) => {
 							const active = activeTab === tab.key;
-							const tabLabel =
-								roleKey === "admin" && tab.key === "timetable"
-									? "Activity"
-									: roleKey === "admin" && tab.key === "resource"
-										? "User Management"
-										: roleKey === "admin" && tab.key === "jobs"
-											? "Role Management"
-									: tab.label;
+							const tabLabel = tabLabelForRole(tab);
 							return (
 								<button
 									key={`mobile-${tab.key}`}
