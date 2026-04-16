@@ -16,7 +16,8 @@ export default function PortalTabContent({
 	reloadAdminData,
 	onAssignLecturerWork,
 	onCreateStaffLogin,
-	onDeleteUser
+	onDeleteUser,
+	onDeactivateUser
 }) {
 	if (tab === "home") {
 		return <PortalHomeContent user={user} onLogin={onLogin} onNavigate={onNavigate} />;
@@ -40,6 +41,7 @@ export default function PortalTabContent({
 				suspiciousUsers={suspiciousUsers}
 				loading={loadingAdminData}
 				onDeleteUser={onDeleteUser}
+				onDeactivateUser={onDeactivateUser}
 			/>
 		);
 	}

@@ -7,11 +7,13 @@ export default function AdminUsersPanel({
 	users,
 	suspiciousUsers,
 	loading,
-	onDeleteUser
+	onDeleteUser,
+	onDeactivateUser
 }) {
 	const [accountFilter, setAccountFilter] = useState("all");
 	const [searchTerm, setSearchTerm] = useState("");
 	const [deletingUserId, setDeletingUserId] = useState(null);
+	const [deactivatingUserId, setDeactivatingUserId] = useState(null);
 	const [actionError, setActionError] = useState("");
 	const [showWhySuspicious, setShowWhySuspicious] = useState(false);
 	const [pendingDeleteUser, setPendingDeleteUser] = useState(null);
@@ -65,6 +67,31 @@ export default function AdminUsersPanel({
 			setActionError(error.message || "Unable to delete user.");
 		} finally {
 			setDeletingUserId(null);
+		}
+	};
+
+	const handleDeactivateUser = async (user) => {
+		if (!onDeactivateUser) {
+			setActionError("Deactivate action is not available.");
+			return;
+		}
+
+		const shouldDeactivate = window.confirm(
+			`Deactivate ${user.name || user.userId} (${user.userId})? The user must activate the account again before logging in.`
+		);
+
+		if (!shouldDeactivate) {
+			return;
+		}
+
+		setActionError("");
+		setDeactivatingUserId(user.id);
+		try {
+			await onDeactivateUser(user.id);
+		} catch (error) {
+			setActionError(error.message || "Unable to deactivate user.");
+		} finally {
+			setDeactivatingUserId(null);
 		}
 	};
 
@@ -197,14 +224,24 @@ export default function AdminUsersPanel({
 											<p className="mt-1 text-rose-700">OTP Requests: {user.otpRequestCount} | Failed OTP: {user.failedOtpAttempts}</p>
 											{user.suspiciousReason ? <p className="mt-1 font-semibold text-rose-800">Reason: {user.suspiciousReason}</p> : null}
 										</div>
-										<button
-											type="button"
-											onClick={() => handleDeleteUser(user)}
-											disabled={deletingUserId === user.id}
-											className="inline-flex items-center gap-1 rounded-md border border-rose-300 bg-white px-2 py-1 font-semibold text-rose-700 transition hover:bg-rose-100 disabled:cursor-not-allowed disabled:opacity-60"
-										>
-											<Trash2 size={12} /> {deletingUserId === user.id ? "Deleting" : "Delete"}
-										</button>
+										<div className="flex items-center gap-2">
+											<button
+												type="button"
+												onClick={() => handleDeactivateUser(user)}
+												disabled={deactivatingUserId === user.id}
+												className="inline-flex items-center gap-1 rounded-md border border-amber-300 bg-white px-2 py-1 font-semibold text-amber-800 transition hover:bg-amber-100 disabled:cursor-not-allowed disabled:opacity-60"
+											>
+												{deactivatingUserId === user.id ? "Deactivating" : "Deactivate"}
+											</button>
+											<button
+												type="button"
+												onClick={() => handleDeleteUser(user)}
+												disabled={deletingUserId === user.id}
+												className="inline-flex items-center gap-1 rounded-md border border-rose-300 bg-white px-2 py-1 font-semibold text-rose-700 transition hover:bg-rose-100 disabled:cursor-not-allowed disabled:opacity-60"
+											>
+												<Trash2 size={12} /> {deletingUserId === user.id ? "Deleting" : "Delete"}
+											</button>
+										</div>
 									</div>
 								</div>
 							))

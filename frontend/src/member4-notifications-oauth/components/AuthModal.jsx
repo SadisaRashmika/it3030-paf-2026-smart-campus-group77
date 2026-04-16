@@ -11,7 +11,15 @@ import {
 	ShieldCheck,
 	X
 } from "lucide-react";
-import { login, requestActivationOtp, requestForgotPasswordOtp, resetForgotPassword, startGoogleLogin, verifyActivationOtp } from "../../services/authService";
+import {
+	createLoginAlert,
+	login,
+	requestActivationOtp,
+	requestForgotPasswordOtp,
+	resetForgotPassword,
+	startGoogleLogin,
+	verifyActivationOtp
+} from "../../services/authService";
 
 const MODES = {
 	LOGIN: "login",
@@ -138,6 +146,7 @@ export default function AuthModal({ isOpen, onClose, onAuthenticated, initialMod
 		setLoading(true);
 		try {
 			const user = await login(loginPayload);
+			await createLoginAlert("Password Login").catch(() => null);
 			onAuthenticated(user);
 			onClose();
 		} catch (err) {

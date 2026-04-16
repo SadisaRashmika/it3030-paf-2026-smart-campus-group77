@@ -14,7 +14,8 @@ export default function AdminPage() {
     reloadAdminData,
     onAssignLecturerWork,
     onCreateStaffLogin,
-    onDeleteUser
+    onDeleteUser,
+    onDeactivateUser
   } = useOutletContext();
 
   return (
@@ -31,6 +32,7 @@ export default function AdminPage() {
       onAssignLecturerWork={onAssignLecturerWork}
       onCreateStaffLogin={onCreateStaffLogin}
       onDeleteUser={onDeleteUser}
+      onDeactivateUser={onDeactivateUser}
     />
   );
 }

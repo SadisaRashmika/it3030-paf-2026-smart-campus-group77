@@ -103,6 +103,51 @@ export function deleteUser(userId) {
   });
 }
 
+export function deactivateUser(userId) {
+  return requestJson(`/api/admin/users/${userId}/deactivate`, {
+    method: "PATCH"
+  }).then(normalizeUser);
+}
+
+export function getMyNotifications() {
+  return requestJson("/api/member4/notifications/me");
+}
+
+export function markNotificationRead(notificationId) {
+  return requestJson(`/api/member4/notifications/${notificationId}/read`, {
+    method: "PATCH"
+  });
+}
+
+export function markAllNotificationsRead() {
+  return requestJson("/api/member4/notifications/read-all", {
+    method: "PATCH"
+  });
+}
+
+export function createLoginAlert(channel) {
+  return requestJson("/api/member4/notifications/login-alert", {
+    method: "POST",
+    body: JSON.stringify(channel ? { channel } : {})
+  });
+}
+
+export function reportSuspiciousLogin({ userId, email }) {
+  const normalizedUserId = String(userId || "").trim();
+  const normalizedEmail = String(email || "").trim();
+
+  if (!normalizedUserId || !normalizedEmail) {
+    throw new Error("Unable to report suspicious login. Missing user details.");
+  }
+
+  const params = new URLSearchParams({
+    userId: normalizedUserId,
+    email: normalizedEmail
+  });
+
+  return requestJson(`/api/public/activation/report-suspicious?${params.toString()}`);
+}
+
 export function startGoogleLogin() {
   const configuredBase = import.meta.env?.VITE_API_URL ? String(import.meta.env.VITE_API_URL).trim() : "";
   const oauthPath = "/oauth2/authorization/google";
