@@ -23,6 +23,21 @@ export default function AdminRoleManagementPanel({ onCreateStaffLogin }) {
 			return;
 		}
 
+		if (!form.name.trim()) {
+			setError("Full Name is required.");
+			return;
+		}
+
+		if (!form.email.trim()) {
+			setError("Email is required.");
+			return;
+		}
+
+		if (!form.email.includes("@")) {
+			setError("Enter a valid email address.");
+			return;
+		}
+
 		setSubmitting(true);
 		setMessage("");
 		setError("");

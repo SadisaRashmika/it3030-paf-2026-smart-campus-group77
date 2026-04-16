@@ -1,7 +1,16 @@
 import { BellRing, Clock3, Mail, Search, X } from "lucide-react";
 import { useMemo, useState } from "react";
 
+function getTodayValue() {
+	const now = new Date();
+	const year = now.getFullYear();
+	const month = String(now.getMonth() + 1).padStart(2, "0");
+	const day = String(now.getDate()).padStart(2, "0");
+	return `${year}-${month}-${day}`;
+}
+
 export default function AdminUserManagementPanel({ users, assignments = [], onAssignLecturerWork }) {
+	const todayValue = getTodayValue();
 	const [workForm, setWorkForm] = useState({
 		lecturerIds: [],
 		workTitle: "",
@@ -15,6 +24,7 @@ export default function AdminUserManagementPanel({ users, assignments = [], onAs
 	});
 	const [searchTerm, setSearchTerm] = useState("");
 	const [workActionMessage, setWorkActionMessage] = useState("");
+	const [workFormError, setWorkFormError] = useState("");
 	const [submittingWork, setSubmittingWork] = useState(false);
 
 	const getLecturerName = (lecturer) => {
@@ -91,14 +101,45 @@ export default function AdminUserManagementPanel({ users, assignments = [], onAs
 
 	const onAssignWorkSubmit = async (event) => {
 		event.preventDefault();
+		setWorkFormError("");
 
 		if (!onAssignLecturerWork) {
-			setWorkActionMessage("Assign work action is not available.");
+			setWorkFormError("Assign work action is not available.");
 			return;
 		}
 
 		if (workForm.lecturerIds.length === 0) {
-			setWorkActionMessage("Select at least one lecturer.");
+			setWorkFormError("Select at least one lecturer.");
+			return;
+		}
+
+		if (!workForm.workTitle.trim()) {
+			setWorkFormError("Work Title is required.");
+			return;
+		}
+
+		if (!workForm.description.trim()) {
+			setWorkFormError("Description is required.");
+			return;
+		}
+
+		if (!workForm.location.trim()) {
+			setWorkFormError("Location / Lecture Hall is required.");
+			return;
+		}
+
+		if (workForm.startDate && workForm.startDate < todayValue) {
+			setWorkFormError("Start Date cannot be in the past.");
+			return;
+		}
+
+		if (workForm.endDate && workForm.endDate < todayValue) {
+			setWorkFormError("End Date cannot be in the past.");
+			return;
+		}
+
+		if (workForm.startDate && workForm.endDate && workForm.endDate < workForm.startDate) {
+			setWorkFormError("End Date cannot be earlier than Start Date.");
 			return;
 		}
 
@@ -119,6 +160,7 @@ export default function AdminUserManagementPanel({ users, assignments = [], onAs
 			setWorkActionMessage(
 				`${assignment.message} Notifications: ${assignment.notificationCount}. Emails sent: ${assignment.emailSentCount}.`
 			);
+			setWorkFormError("");
 			setWorkForm({
 				lecturerIds: [],
 				workTitle: "",
@@ -154,7 +196,7 @@ export default function AdminUserManagementPanel({ users, assignments = [], onAs
 						<BellRing size={16} /> Assign Work to Lecturer
 					</p>
 					<p className="mb-4 text-xs text-slate-500">
-						Select one or more lecturers by searching their name, email, or ID. Date and time end fields are optional.
+						Select one or more lecturers by searching their name, email, or ID. End date and end time are optional, but past dates are not allowed.
 					</p>
 
 					<div className="mb-4 space-y-3 rounded-2xl border border-slate-200 bg-slate-50 p-4">
@@ -265,6 +307,7 @@ export default function AdminUserManagementPanel({ users, assignments = [], onAs
 									type="date"
 									value={workForm.startDate}
 									onChange={(event) => setWorkForm((prev) => ({ ...prev, startDate: event.target.value }))}
+									min={todayValue}
 									className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 outline-none ring-amber-200 focus:ring"
 								/>
 							</div>
@@ -274,6 +317,7 @@ export default function AdminUserManagementPanel({ users, assignments = [], onAs
 									type="date"
 									value={workForm.endDate}
 									onChange={(event) => setWorkForm((prev) => ({ ...prev, endDate: event.target.value }))}
+									min={todayValue}
 									className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 outline-none ring-amber-200 focus:ring"
 								/>
 							</div>
@@ -317,6 +361,7 @@ export default function AdminUserManagementPanel({ users, assignments = [], onAs
 							</button>
 						</div>
 					</form>
+					{workFormError ? <p className="mt-3 rounded-lg bg-rose-50 px-3 py-2 text-xs font-medium text-rose-800">{workFormError}</p> : null}
 					{workActionMessage ? (
 						<p className="mt-3 rounded-lg bg-slate-50 px-3 py-2 text-xs font-medium text-slate-700">{workActionMessage}</p>
 					) : null}
