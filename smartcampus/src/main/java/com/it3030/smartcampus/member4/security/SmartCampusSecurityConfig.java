@@ -18,6 +18,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 // import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -28,6 +29,7 @@ import jakarta.servlet.http.HttpServletRequest;
 
 import com.it3030.smartcampus.member4.model.UserAccount;
 import com.it3030.smartcampus.member4.repository.UserRepository;
+import com.it3030.smartcampus.member4.service.NotificationService;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -47,6 +49,12 @@ public class SmartCampusSecurityConfig {
 	@Bean
 	UserDetailsService userDetailsService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
 		return username -> userRepository.findByEmail(username)
+				.filter(user -> {
+					if (!user.isActive()) {
+						throw new UsernameNotFoundException("Account is deactivated. Please activate your account.");
+					}
+					return true;
+				})
 				.map(user -> toUserDetails(user, passwordEncoder))
 				.orElseThrow(() -> new UsernameNotFoundException("User not found"));
 	}
@@ -60,6 +68,7 @@ public class SmartCampusSecurityConfig {
 	SecurityFilterChain securityFilterChain(HttpSecurity http,
 										DatabaseBackedOAuth2UserService databaseBackedOAuth2UserService,
 										DatabaseBackedOidcUserService databaseBackedOidcUserService,
+										NotificationService notificationService,
 										ObjectProvider<ClientRegistrationRepository> clientRegistrationRepositoryProvider,
 										@Value("${app.frontend.base-url:http://localhost:8081/ui/index.html}") String frontendBaseUrl) throws Exception {
 		http.cors(cors -> cors.configurationSource(corsConfigurationSource()));
@@ -80,6 +89,8 @@ public class SmartCampusSecurityConfig {
 							.userService(databaseBackedOAuth2UserService)
 							.oidcUserService(databaseBackedOidcUserService))
 					.successHandler((request, response, authentication) -> {
+						String principal = resolvePrincipal(authentication);
+						notificationService.createLoginAlert(principal, "Google Login");
 						String target = buildAuthRedirectUrl(frontendBaseUrl, "google-success", null);
 						response.sendRedirect(target);
 					})
@@ -95,11 +106,22 @@ public class SmartCampusSecurityConfig {
 		return http.build();
 	}
 
+	private String resolvePrincipal(org.springframework.security.core.Authentication authentication) {
+		if (authentication != null && authentication.getPrincipal() instanceof OAuth2User oauth2User) {
+			Object emailAttr = oauth2User.getAttributes().get("email");
+			if (emailAttr instanceof String email && !email.isBlank()) {
+				return email.trim().toLowerCase();
+			}
+		}
+
+		return authentication == null ? null : authentication.getName();
+	}
+
 	@Bean
 	CorsConfigurationSource corsConfigurationSource() {
 		CorsConfiguration config = new CorsConfiguration();
 		config.setAllowedOriginPatterns(List.of("http://localhost:*", "http://127.0.0.1:*"));
-		config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+		config.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
 		config.setAllowedHeaders(List.of("*"));
 		config.setAllowCredentials(true);
 

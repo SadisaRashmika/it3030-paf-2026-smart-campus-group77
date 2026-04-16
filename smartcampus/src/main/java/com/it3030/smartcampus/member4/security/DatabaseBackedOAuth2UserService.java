@@ -52,12 +52,11 @@ public class DatabaseBackedOAuth2UserService implements OAuth2UserService<OAuth2
 	}
 
 	private UserAccount updateExistingUser(UserAccount account, String displayName) {
-		boolean changed = false;
-
 		if (!account.isActive()) {
-			account.activate(passwordEncoder.encode("oauth2-account"));
-			changed = true;
+			throw new OAuth2AuthenticationException("Account is deactivated. Please activate your account before signing in.");
 		}
+
+		boolean changed = false;
 
 		if (displayName != null && !displayName.isBlank() && (account.getName() == null || account.getName().isBlank())) {
 			account.setName(displayName);

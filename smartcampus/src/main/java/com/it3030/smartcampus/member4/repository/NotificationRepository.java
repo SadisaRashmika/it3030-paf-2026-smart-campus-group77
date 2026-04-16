@@ -9,7 +9,7 @@ import com.it3030.smartcampus.member4.model.Notification;
 
 public interface NotificationRepository extends JpaRepository<Notification, Long> {
 
-	List<Notification> findByUserIdOrderByCreatedAtDesc(Integer userId);
+	List<Notification> findByUser_IdOrderByCreatedAtDesc(Integer userId);
 
-	Optional<Notification> findByIdAndUserId(Long id, Integer userId);
+	Optional<Notification> findByIdAndUser_Id(Long id, Integer userId);
 }

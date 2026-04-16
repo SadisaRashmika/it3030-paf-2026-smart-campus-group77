@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.it3030.smartcampus.member4.dto.NotificationResponse;
@@ -23,16 +24,42 @@ public class NotificationService {
 		this.userRepository = userRepository;
 	}
 
-	public List<NotificationResponse> myNotifications(String email) {
-		UserAccount user = getUserByEmail(email);
-		return notificationRepository.findByUserIdOrderByCreatedAtDesc(user.getId()).stream()
+	@Transactional(readOnly = true)
+	public List<NotificationResponse> myNotifications(String principal) {
+		UserAccount user = resolveUser(principal);
+		return notificationRepository.findByUser_IdOrderByCreatedAtDesc(user.getId()).stream()
 				.map(this::toResponse)
 				.toList();
 	}
 
-	public NotificationResponse markRead(Long notificationId, String email) {
-		UserAccount user = getUserByEmail(email);
-		Notification notification = notificationRepository.findByIdAndUserId(notificationId, user.getId())
+	@Transactional
+	public NotificationResponse createLoginAlert(String principal, String channel) {
+		if (principal == null || principal.isBlank()) {
+			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized");
+		}
+
+		UserAccount user = resolveUser(principal);
+		String message = "You logged in successfully.";
+		Notification saved = notificationRepository.save(Notification.of(user, message));
+		return toResponse(saved);
+	}
+
+	@Transactional
+	public void createPasswordChangeAlert(String principal) {
+		if (principal == null || principal.isBlank()) {
+			return;
+		}
+
+		resolveUserOptional(principal).ifPresent(user -> {
+			String message = "Security Alert: Your account password was changed successfully.";
+			notificationRepository.save(Notification.of(user, message));
+		});
+	}
+
+	@Transactional
+	public NotificationResponse markRead(Long notificationId, String principal) {
+		UserAccount user = resolveUser(principal);
+		Notification notification = notificationRepository.findByIdAndUser_Id(notificationId, user.getId())
 				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Notification not found"));
 
 		notification.markRead();
@@ -40,9 +67,10 @@ public class NotificationService {
 		return toResponse(notification);
 	}
 
-	public int markAllRead(String email) {
-		UserAccount user = getUserByEmail(email);
-		List<Notification> notifications = notificationRepository.findByUserIdOrderByCreatedAtDesc(user.getId());
+	@Transactional
+	public int markAllRead(String principal) {
+		UserAccount user = resolveUser(principal);
+		List<Notification> notifications = notificationRepository.findByUser_IdOrderByCreatedAtDesc(user.getId());
 		int updatedCount = 0;
 		for (Notification notification : notifications) {
 			if (!notification.isRead()) {
@@ -52,26 +80,42 @@ public class NotificationService {
 		}
 
 		if (updatedCount > 0) {
-			notificationRepository.saveAll(notifications);
+			notificationRepository.saveAllAndFlush(notifications);
 		}
 
 		return updatedCount;
 	}
 
-	public void delete(Long notificationId, String email) {
-		UserAccount user = getUserByEmail(email);
-		Notification notification = notificationRepository.findByIdAndUserId(notificationId, user.getId())
+	@Transactional
+	public void delete(Long notificationId, String principal) {
+		UserAccount user = resolveUser(principal);
+		Notification notification = notificationRepository.findByIdAndUser_Id(notificationId, user.getId())
 				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Notification not found"));
 		notificationRepository.delete(notification);
 	}
 
-	private UserAccount getUserByEmail(String email) {
-		if (email == null || email.isBlank()) {
+	private UserAccount resolveUser(String principal) {
+		return resolveUserOptional(principal)
+				.orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized"));
+	}
+
+	private java.util.Optional<UserAccount> resolveUserOptional(String principal) {
+		if (principal == null || principal.isBlank()) {
 			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized");
 		}
 
-		return userRepository.findByEmail(email.trim().toLowerCase())
-				.orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized"));
+		String normalized = principal.trim();
+		if (normalized.isBlank()) {
+			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized");
+		}
+
+		if (normalized.contains("@")) {
+			return userRepository.findByEmail(normalized.toLowerCase())
+					.or(() -> userRepository.findByUserId(normalized.toUpperCase()));
+		}
+
+		return userRepository.findByUserId(normalized.toUpperCase())
+				.or(() -> userRepository.findByEmail(normalized.toLowerCase()));
 	}
 
 	private NotificationResponse toResponse(Notification notification) {

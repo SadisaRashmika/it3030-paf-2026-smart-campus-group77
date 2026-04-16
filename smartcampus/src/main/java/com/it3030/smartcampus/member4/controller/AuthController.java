@@ -25,6 +25,7 @@ import com.it3030.smartcampus.member4.dto.LoginRequest;
 import com.it3030.smartcampus.member4.dto.MessageResponse;
 import com.it3030.smartcampus.member4.model.UserAccount;
 import com.it3030.smartcampus.member4.repository.UserRepository;
+import com.it3030.smartcampus.member4.service.NotificationService;
 import com.it3030.smartcampus.member4.service.PasswordResetService;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -40,11 +41,16 @@ public class AuthController {
 	private final AuthenticationManager authenticationManager;
 	private final UserRepository userRepository;
 	private final PasswordResetService passwordResetService;
+	private final NotificationService notificationService;
 
-	public AuthController(AuthenticationManager authenticationManager, UserRepository userRepository, PasswordResetService passwordResetService) {
+	public AuthController(AuthenticationManager authenticationManager,
+						 UserRepository userRepository,
+						 PasswordResetService passwordResetService,
+						 NotificationService notificationService) {
 		this.authenticationManager = authenticationManager;
 		this.userRepository = userRepository;
 		this.passwordResetService = passwordResetService;
+		this.notificationService = notificationService;
 	}
 
 	@PostMapping("/login")
@@ -83,6 +89,7 @@ public class AuthController {
 	@PostMapping("/forgot-password/reset")
 	public ResponseEntity<MessageResponse> resetForgottenPassword(@Valid @RequestBody ForgotPasswordResetRequest request) {
 		passwordResetService.resetPassword(request);
+		notificationService.createPasswordChangeAlert(request.email());
 		return ResponseEntity.ok(new MessageResponse("Password reset successful. You can now login."));
 	}
 
@@ -99,6 +106,10 @@ public class AuthController {
 		String principal = resolvePrincipal(authentication);
 		UserAccount user = findAuthenticatedUser(principal)
 				.orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Authenticated user not found"));
+
+		if (!user.isActive()) {
+			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Account is deactivated. Please activate your account.");
+		}
 
 		String email = user.getEmail();
 		String userId = user.getUserId();
@@ -147,11 +158,21 @@ public class AuthController {
 
 		if (userId != null) {
 			return userRepository.findByUserId(userId.toUpperCase())
-					.map(u -> u.getEmail())
+					.map(u -> {
+						if (!u.isActive()) {
+							throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Account is deactivated. Please activate your account.");
+						}
+						return u.getEmail();
+					})
 					.orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid user ID or password"));
 		}
 
 		if (email != null) {
+			userRepository.findByEmail(email.toLowerCase()).ifPresent(existing -> {
+				if (!existing.isActive()) {
+					throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Account is deactivated. Please activate your account.");
+				}
+			});
 			return email.toLowerCase();
 		}
 

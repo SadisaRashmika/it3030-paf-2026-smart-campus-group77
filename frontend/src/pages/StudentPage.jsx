@@ -14,7 +14,8 @@ export default function StudentPage() {
     reloadAdminData,
     onAssignLecturerWork,
     onCreateStaffLogin,
-    onDeleteUser
+    onDeleteUser,
+    onDeactivateUser
   } = useOutletContext();
 
   return (
@@ -31,6 +32,7 @@ export default function StudentPage() {
       onAssignLecturerWork={onAssignLecturerWork}
       onCreateStaffLogin={onCreateStaffLogin}
       onDeleteUser={onDeleteUser}
+      onDeactivateUser={onDeactivateUser}
     />
   );
 }

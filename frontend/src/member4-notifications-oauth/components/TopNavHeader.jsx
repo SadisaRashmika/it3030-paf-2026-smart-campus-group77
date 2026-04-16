@@ -1,4 +1,4 @@
-import { ChevronDown, LogOut, Menu, X } from "lucide-react";
+import { Bell, ChevronDown, LogOut, Menu, ShieldAlert, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 const tabs = [
@@ -9,15 +9,61 @@ const tabs = [
 	{ key: "ticket", label: "Ticket", public: false }
 ];
 
-export default function TopNavHeader({ activeTab, onTabClick, user, onLogin, onLogout }) {
+export default function TopNavHeader({
+	activeTab,
+	onTabClick,
+	user,
+	onLogin,
+	onLogout,
+	notifications = [],
+	loadingNotifications = false,
+	onOpenNotifications,
+	onMarkNotificationRead,
+	onMarkAllNotificationsRead,
+	onReportSuspicious,
+	lastSeenNotificationAt = "",
+	reportingSuspicious = false
+}) {
 	const [mobileOpen, setMobileOpen] = useState(false);
 	const [menuOpen, setMenuOpen] = useState(false);
+	const [notificationsOpen, setNotificationsOpen] = useState(false);
 	const userMenuRef = useRef(null);
+	const notificationsRef = useRef(null);
+
+	const formatNotificationTime = (value) => {
+		if (!value) {
+			return "";
+		}
+		try {
+			return new Date(value).toLocaleString();
+		} catch {
+			return "";
+		}
+	};
+
+	const isLoginAlert = (message) => String(message || "").toLowerCase().includes("logged in successfully");
+
+	const isSeenBeforeLastRefresh = (item) => {
+		if (!lastSeenNotificationAt || !item?.createdAt) {
+			return false;
+		}
+
+		const createdAt = new Date(item.createdAt).getTime();
+		const lastSeenAt = new Date(lastSeenNotificationAt).getTime();
+		if (Number.isNaN(createdAt) || Number.isNaN(lastSeenAt)) {
+			return false;
+		}
+
+		return createdAt <= lastSeenAt;
+	};
 
 	useEffect(() => {
 		const onDown = (event) => {
 			if (userMenuRef.current && !userMenuRef.current.contains(event.target)) {
 				setMenuOpen(false);
+			}
+			if (notificationsRef.current && !notificationsRef.current.contains(event.target)) {
+				setNotificationsOpen(false);
 			}
 		};
 
@@ -29,6 +75,8 @@ export default function TopNavHeader({ activeTab, onTabClick, user, onLogin, onL
 
 	const roleLabel = user?.role?.replace("ROLE_", "") || "";
 	const roleKey = roleLabel.toLowerCase();
+	const canReportSuspicious = roleKey === "student" || roleKey === "lecturer";
+	const unreadCount = notifications.filter((item) => item?.read === false && !isSeenBeforeLastRefresh(item)).length;
 	const displayName = user?.name?.trim() || user?.userId || "SmartCampus User";
 	const tabLabelForRole = (tab) => {
 		if (roleKey === "admin") {
@@ -107,6 +155,86 @@ export default function TopNavHeader({ activeTab, onTabClick, user, onLogin, onL
 				<div className="flex items-center gap-2">
 					{user ? (
 						<>
+							{canReportSuspicious ? (
+								<div ref={notificationsRef} className="relative hidden sm:block">
+									<button
+										type="button"
+										onClick={() => {
+											setNotificationsOpen((prev) => {
+												const next = !prev;
+												if (next) {
+													onOpenNotifications?.();
+												}
+												return next;
+											});
+										}}
+										title="Notifications"
+										className="relative inline-flex h-10 w-10 items-center justify-center rounded-lg border border-slate-200 text-slate-700 transition hover:bg-slate-100"
+									>
+										<Bell size={16} />
+										{unreadCount > 0 ? (
+											<span className="absolute -right-1 -top-1 inline-flex min-h-5 min-w-5 items-center justify-center rounded-full bg-rose-500 px-1 text-[10px] font-bold text-white">
+												{unreadCount > 99 ? "99+" : unreadCount}
+											</span>
+										) : null}
+									</button>
+
+									{notificationsOpen ? (
+										<div className="absolute right-0 mt-2 w-[360px] overflow-hidden rounded-xl border border-slate-200 bg-white shadow-xl">
+											<div className="flex items-center justify-between border-b border-slate-100 px-3 py-2.5">
+												<p className="text-sm font-bold text-slate-800">Notifications</p>
+												<button
+													type="button"
+													onClick={() => onMarkAllNotificationsRead?.()}
+													className="text-xs font-semibold text-slate-500 transition hover:text-slate-700"
+												>
+													Mark all read
+												</button>
+											</div>
+
+											<div className="max-h-96 overflow-y-auto">
+												{loadingNotifications ? (
+													<p className="px-3 py-3 text-sm text-slate-500">Loading notifications...</p>
+												) : notifications.length === 0 ? (
+													<p className="px-3 py-3 text-sm text-slate-500">No notifications yet.</p>
+												) : (
+													notifications.map((item) => {
+														const loginAlert = isLoginAlert(item.message);
+														const itemRead = item?.read === true || isSeenBeforeLastRefresh(item);
+														return (
+															<div key={item.id} className={`border-b border-slate-100 px-3 py-2.5 ${itemRead ? "bg-white" : "bg-amber-50/50"}`}>
+																<button
+																	type="button"
+																	onClick={() => onMarkNotificationRead?.(item.id)}
+																	className="w-full text-left"
+																>
+																	<p className={`text-sm ${itemRead ? "text-slate-700" : "font-semibold text-slate-900"}`}>{item.message}</p>
+																</button>
+
+																{item.createdAt || loginAlert ? (
+																	<div className="mt-1 flex items-center justify-between gap-2">
+																		{item.createdAt ? <p className="text-[11px] text-slate-500">{formatNotificationTime(item.createdAt)}</p> : <span />}
+																		{loginAlert ? (
+																			<button
+																				type="button"
+																				onClick={() => onReportSuspicious?.()}
+																				disabled={reportingSuspicious}
+																				className="inline-flex items-center gap-1 rounded-md border border-rose-200 px-2.5 py-1 text-xs font-semibold text-rose-700 transition hover:bg-rose-50 disabled:cursor-not-allowed disabled:opacity-60"
+																			>
+																				<ShieldAlert size={12} /> {reportingSuspicious ? "Reporting..." : "Not you? Report"}
+																			</button>
+																		) : null}
+																	</div>
+																) : null}
+															</div>
+														);
+													})
+												)}
+											</div>
+										</div>
+									) : null}
+								</div>
+							) : null}
 							<div ref={userMenuRef} className="relative hidden sm:block">
 								<button
 									onClick={() => setMenuOpen((prev) => !prev)}
@@ -169,6 +297,48 @@ export default function TopNavHeader({ activeTab, onTabClick, user, onLogin, onL
 						<p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">{roleLabel}</p>
 					</div>
 					<div className="space-y-1">
+						{canReportSuspicious ? (
+							<div className="mb-2 rounded-xl border border-slate-200 bg-slate-50 p-2.5">
+								<div className="mb-2 flex items-center justify-between">
+									<p className="text-xs font-bold uppercase tracking-wide text-slate-600">Notifications</p>
+									<button
+										type="button"
+										onClick={() => onMarkAllNotificationsRead?.()}
+										className="text-[11px] font-semibold text-slate-500"
+									>
+										Mark all read
+									</button>
+								</div>
+								<div className="max-h-48 space-y-1 overflow-y-auto">
+									{notifications.length === 0 ? (
+										<p className="rounded-lg bg-white px-2 py-2 text-xs text-slate-500">No notifications yet.</p>
+									) : (
+										notifications.slice(0, 8).map((item) => (
+											<div key={`mobile-notice-${item.id}`} className={`rounded-lg bg-white px-2 py-2 text-xs ${item?.read === true || isSeenBeforeLastRefresh(item) ? "text-slate-600" : "font-semibold text-slate-800"}`}>
+												<button type="button" onClick={() => onMarkNotificationRead?.(item.id)} className="w-full text-left">
+													<p>{item.message}</p>
+												</button>
+												{item.createdAt || isLoginAlert(item.message) ? (
+													<div className="mt-1 flex items-center justify-between gap-2">
+														{item.createdAt ? <p className="text-[10px] text-slate-500">{formatNotificationTime(item.createdAt)}</p> : <span />}
+														{isLoginAlert(item.message) ? (
+															<button
+																type="button"
+																onClick={() => onReportSuspicious?.()}
+																disabled={reportingSuspicious}
+																className="inline-flex items-center gap-1 rounded-md border border-rose-200 px-2 py-1 text-[10px] font-semibold text-rose-700"
+															>
+																<ShieldAlert size={10} /> {reportingSuspicious ? "Reporting..." : "Not you? Report"}
+															</button>
+														) : null}
+													</div>
+												) : null}
+											</div>
+										))
+									)}
+								</div>
+							</div>
+						) : null}
 						{visibleTabs.map((tab) => {
 							const active = activeTab === tab.key;
 							const tabLabel = tabLabelForRole(tab);
