@@ -175,6 +175,10 @@ public class UserAccount {
 		this.active = false;
 	}
 
+	public void activate() {
+		this.active = true;
+	}
+
 	public void setRole(Role role) {
 		this.role = role;
 	}

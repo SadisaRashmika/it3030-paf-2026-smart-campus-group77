@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
 	AlertCircle,
 	CheckCircle2,
@@ -43,6 +44,7 @@ export default function AuthModal({ isOpen, onClose, onAuthenticated, initialMod
 	const [error, setError] = useState("");
 	const [message, setMessage] = useState("");
 	const modalRef = useRef(null);
+	const navigate = useNavigate();
 
 	useEffect(() => {
 		if (!isOpen) {
@@ -114,6 +116,11 @@ export default function AuthModal({ isOpen, onClose, onAuthenticated, initialMod
 		setActivationStep(1);
 		setForgotStep(1);
 		resetFeedback();
+	};
+
+	const openHelpPage = () => {
+		onClose();
+		navigate("/help");
 	};
 
 	const onLogin = async (event) => {
@@ -284,6 +291,7 @@ export default function AuthModal({ isOpen, onClose, onAuthenticated, initialMod
 							onLogin={onLogin}
 							onActivate={() => switchMode(MODES.ACTIVATE)}
 							onForgotPassword={() => switchMode(MODES.FORGOT)}
+								onNeedHelp={openHelpPage}
 						/>
 					) : mode === MODES.ACTIVATE ? (
 						<ActivateForm
@@ -294,6 +302,7 @@ export default function AuthModal({ isOpen, onClose, onAuthenticated, initialMod
 							onRequestOtp={onRequestActivationOtp}
 							onVerifyOtp={onVerifyActivationOtp}
 							onBackToLogin={() => switchMode(MODES.LOGIN)}
+								onNeedHelp={openHelpPage}
 						/>
 					) : (
 						<ForgotPasswordForm
@@ -312,7 +321,7 @@ export default function AuthModal({ isOpen, onClose, onAuthenticated, initialMod
 	);
 }
 
-function LoginForm({ forms, updateForm, loading, onLogin, onActivate, onForgotPassword }) {
+function LoginForm({ forms, updateForm, loading, onLogin, onActivate, onForgotPassword, onNeedHelp }) {
 	return (
 		<form className="space-y-4" onSubmit={onLogin}>
 			<Field
@@ -347,6 +356,14 @@ function LoginForm({ forms, updateForm, loading, onLogin, onActivate, onForgotPa
 					Forgot password?
 				</button>
 			</div>
+
+			<button
+				type="button"
+				onClick={onNeedHelp}
+				className="w-full rounded-2xl border border-dashed border-slate-300 px-4 py-2.5 text-sm font-semibold text-slate-600 transition hover:border-slate-400 hover:bg-slate-50"
+			>
+				Need help recovering your account?
+			</button>
 
 			<SubmitButton loading={loading} label="Sign In" loadingLabel="Signing in..." />
 		</form>
@@ -405,7 +422,7 @@ function ForgotPasswordForm({ forms, updateForm, loading, step, onRequestOtp, on
 	);
 }
 
-function ActivateForm({ forms, updateForm, loading, step, onRequestOtp, onVerifyOtp, onBackToLogin }) {
+function ActivateForm({ forms, updateForm, loading, step, onRequestOtp, onVerifyOtp, onBackToLogin, onNeedHelp }) {
 	return (
 		<form className="space-y-3" onSubmit={step === 1 ? onRequestOtp : onVerifyOtp}>
 			<StepChip step={step} />
@@ -430,6 +447,13 @@ function ActivateForm({ forms, updateForm, loading, step, onRequestOtp, onVerify
 						required
 					/>
 					<SubmitButton loading={loading} label="Send OTP" loadingLabel="Sending OTP..." />
+					<button
+						type="button"
+						onClick={onNeedHelp}
+						className="w-full rounded-2xl border border-dashed border-slate-300 px-4 py-2.5 text-sm font-semibold text-slate-600 transition hover:border-slate-400 hover:bg-slate-50"
+					>
+						Need help recovering your account?
+					</button>
 				</>
 			) : (
 				<>
@@ -459,6 +483,13 @@ function ActivateForm({ forms, updateForm, loading, step, onRequestOtp, onVerify
 						</button>
 						<SubmitButton loading={loading} label="Verify" loadingLabel="Verifying..." />
 					</div>
+					<button
+						type="button"
+						onClick={onNeedHelp}
+						className="w-full rounded-2xl border border-dashed border-slate-300 px-4 py-2.5 text-sm font-semibold text-slate-600 transition hover:border-slate-400 hover:bg-slate-50"
+					>
+						Need help recovering your account?
+					</button>
 				</>
 			)}
 		</form>

@@ -10,12 +10,15 @@ export default function LecturerPage() {
     adminUsers,
     suspiciousUsers,
     lecturerAssignments,
+    recoveryRequests,
     loadingAdminData,
     reloadAdminData,
     onAssignLecturerWork,
     onCreateStaffLogin,
     onDeleteUser,
-    onDeactivateUser
+    onDeactivateUser,
+    onApproveRecoveryRequest,
+    onRejectRecoveryRequest
   } = useOutletContext();
 
   return (
@@ -27,12 +30,15 @@ export default function LecturerPage() {
       adminUsers={adminUsers}
       suspiciousUsers={suspiciousUsers}
       lecturerAssignments={lecturerAssignments}
+      recoveryRequests={recoveryRequests}
       loadingAdminData={loadingAdminData}
       reloadAdminData={reloadAdminData}
       onAssignLecturerWork={onAssignLecturerWork}
       onCreateStaffLogin={onCreateStaffLogin}
       onDeleteUser={onDeleteUser}
       onDeactivateUser={onDeactivateUser}
+      onApproveRecoveryRequest={onApproveRecoveryRequest}
+      onRejectRecoveryRequest={onRejectRecoveryRequest}
     />
   );
 }

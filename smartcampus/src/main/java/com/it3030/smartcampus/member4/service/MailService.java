@@ -7,4 +7,6 @@ public interface MailService {
 	void sendStaffOnboardingEmail(String email, String name, String userId, String role, String otp);
 
 	void sendNotificationEmail(String email, String subject, String title, String message);
+
+	void sendRecoveryRequestDecisionEmail(String email, String userId, String studentEmail, boolean approved);
 }

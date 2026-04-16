@@ -109,6 +109,22 @@ export function deactivateUser(userId) {
   }).then(normalizeUser);
 }
 
+export function getRecoveryRequests() {
+  return requestJson("/api/admin/recovery-requests");
+}
+
+export function approveRecoveryRequest(requestId) {
+  return requestJson(`/api/admin/recovery-requests/${requestId}/approve`, {
+    method: "PATCH"
+  });
+}
+
+export function rejectRecoveryRequest(requestId) {
+  return requestJson(`/api/admin/recovery-requests/${requestId}/reject`, {
+    method: "PATCH"
+  });
+}
+
 export function getMyNotifications() {
   return requestJson("/api/member4/notifications/me");
 }
@@ -129,6 +145,13 @@ export function createLoginAlert(channel) {
   return requestJson("/api/member4/notifications/login-alert", {
     method: "POST",
     body: JSON.stringify(channel ? { channel } : {})
+  });
+}
+
+export function submitRecoveryRequest(payload) {
+  return requestJson("/api/public/recovery-requests", {
+    method: "POST",
+    body: JSON.stringify(payload)
   });
 }
 

@@ -100,6 +100,35 @@ public class ConsoleMailService implements MailService {
 		}
 	}
 
+	@Override
+	public void sendRecoveryRequestDecisionEmail(String email, String userId, String studentEmail, boolean approved) {
+		if (!mailEnabled || mailSender == null) {
+			log.info("Mail disabled. Recovery decision for {} ({}) -> {}", userId, studentEmail, approved ? "approved" : "rejected");
+			return;
+		}
+
+		String subject = approved
+				? "SmartCampus Account Recovery Approved"
+				: "SmartCampus Account Recovery Rejected";
+		String body = approved
+				? buildRecoveryApprovedBody(userId, studentEmail)
+				: buildRecoveryRejectedBody(userId, studentEmail);
+
+		try {
+			MimeMessage mail = mailSender.createMimeMessage();
+			MimeMessageHelper helper = new MimeMessageHelper(mail, false, "UTF-8");
+			helper.setTo(email);
+			helper.setFrom(fromAddress);
+			helper.setSubject(subject);
+			helper.setText(body, true);
+			mailSender.send(mail);
+			log.info("Recovery decision email sent to {} for {}", email, userId);
+		} catch (MessagingException | MailException ex) {
+			log.error("Failed to send recovery decision email to {}", email, ex);
+			throw new IllegalStateException("Unable to send recovery email right now. Please try again.");
+		}
+	}
+
 	private String buildOtpBody(String otp) {
 		return """
 				<html>
@@ -154,5 +183,35 @@ public class ConsoleMailService implements MailService {
 				  </body>
 				</html>
 				""".formatted(name, role, userId, email, otp, reportUrl);
+	}
+
+	private String buildRecoveryApprovedBody(String userId, String studentEmail) {
+		return """
+				<html>
+				  <body style=\"font-family:Segoe UI,Arial,sans-serif;background:#f8fafc;color:#0f172a;padding:24px;\">
+				    <div style=\"max-width:520px;margin:0 auto;background:#ffffff;border-radius:14px;padding:24px;border:1px solid #e2e8f0;\">
+				      <h2 style=\"margin:0 0 12px;font-size:20px;color:#15803d;\">Account Recovery Approved</h2>
+				      <p style=\"margin:0 0 12px;font-size:14px;line-height:1.6;\">Your recovery request for user ID <strong>%s</strong> has been approved.</p>
+				      <p style=\"margin:0 0 12px;font-size:14px;line-height:1.6;\">Your account is now restored. Sign in with your campus email <strong>%s</strong> and update your password if needed.</p>
+				      <p style=\"margin:0;font-size:12px;color:#64748b;\">If you still have trouble signing in, contact the SmartCampus admin team.</p>
+				    </div>
+				  </body>
+				</html>
+				""".formatted(userId, studentEmail);
+	}
+
+	private String buildRecoveryRejectedBody(String userId, String studentEmail) {
+		return """
+				<html>
+				  <body style=\"font-family:Segoe UI,Arial,sans-serif;background:#f8fafc;color:#0f172a;padding:24px;\">
+				    <div style=\"max-width:520px;margin:0 auto;background:#ffffff;border-radius:14px;padding:24px;border:1px solid #e2e8f0;\">
+				      <h2 style=\"margin:0 0 12px;font-size:20px;color:#b91c1c;\">Account Recovery Rejected</h2>
+				      <p style=\"margin:0 0 12px;font-size:14px;line-height:1.6;\">Your recovery request for user ID <strong>%s</strong> and email <strong>%s</strong> was rejected after admin review.</p>
+				      <p style=\"margin:0 0 12px;font-size:14px;line-height:1.6;\">If you believe this is a mistake, please submit a new request with clearer supporting information or contact the admin team directly.</p>
+				      <p style=\"margin:0;font-size:12px;color:#64748b;\">This is an automated message from SmartCampus.</p>
+				    </div>
+				  </body>
+				</html>
+				""".formatted(userId, studentEmail);
 	}
 }

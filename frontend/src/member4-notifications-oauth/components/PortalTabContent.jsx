@@ -2,6 +2,7 @@ import { CalendarClock, Briefcase, BookOpenText, MessageSquareText } from "lucid
 import AdminRoleManagementPanel from "./AdminRoleManagementPanel";
 import AdminUserManagementPanel from "./AdminUserManagementPanel";
 import AdminUsersPanel from "./AdminUsersPanel";
+import RecoveryRequestsPanel from "./RecoveryRequestsPanel";
 import PortalHomeContent from "./PortalHomeContent";
 
 export default function PortalTabContent({
@@ -12,12 +13,15 @@ export default function PortalTabContent({
 	adminUsers,
 	suspiciousUsers,
 	lecturerAssignments,
+	recoveryRequests,
 	loadingAdminData,
 	reloadAdminData,
 	onAssignLecturerWork,
 	onCreateStaffLogin,
 	onDeleteUser,
-	onDeactivateUser
+	onDeactivateUser,
+	onApproveRecoveryRequest,
+	onRejectRecoveryRequest
 }) {
 	if (tab === "home") {
 		return <PortalHomeContent user={user} onLogin={onLogin} onNavigate={onNavigate} />;
@@ -58,6 +62,17 @@ export default function PortalTabContent({
 
 	if (role === "admin" && tab === "jobs") {
 		return <AdminRoleManagementPanel onCreateStaffLogin={onCreateStaffLogin} />;
+	}
+
+	if (role === "admin" && tab === "ticket") {
+		return (
+			<RecoveryRequestsPanel
+				requests={recoveryRequests}
+				loading={loadingAdminData}
+				onApproveRecoveryRequest={onApproveRecoveryRequest}
+				onRejectRecoveryRequest={onRejectRecoveryRequest}
+			/>
+		);
 	}
 
 	if (tab === "resource") {
