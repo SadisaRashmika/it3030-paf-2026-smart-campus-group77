@@ -63,6 +63,10 @@ Implemented the full Member 4 module scope around authentication experience, not
 - Change-password entrypoint connected to OTP reset flow
 - Navbar avatar replacement with profile image fallback behavior
 
+5. Frontend reliability/testing updates
+- Standardized Member 4 API wrapper to use the active session-aware API client
+- Added frontend unit test coverage for suspicious-login request validation and query encoding
+
 ### Member 4 Endpoint Count Evidence
 
 Member 4 implemented more than four endpoints and used multiple HTTP methods:
@@ -81,6 +85,20 @@ Member 4 implemented more than four endpoints and used multiple HTTP methods:
 	- `frontend/src/layouts/MainLayout.jsx`
 	- `frontend/src/services/authService.js`
 	- `frontend/src/pages/HelpPage.jsx`
+
+### Testing Evidence Added (Member 4)
+
+- Frontend test file:
+	- `frontend/src/services/authService.test.js`
+- Backend test file:
+	- `smartcampus/src/test/java/com/it3030/smartcampus/member4/controller/AuthControllerTest.java`
+
+### Command/Execution Clarification Added
+
+- Documented that backend tests should run via:
+	- backend folder: `npm test`
+	- repository root: `npm run backend:test` or `smartcampus\mvnw.cmd -f smartcampus\pom.xml test`
+- Clarified why plain `./mvnw.cmd test` fails at repository root (wrapper is under `smartcampus/`).
 
 ---
 

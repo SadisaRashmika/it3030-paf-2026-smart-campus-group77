@@ -1,4 +1,4 @@
-import { requestJson } from "../../../common/services/apiClient";
+import { requestJson } from "../../services/apiClient";
 
 export const member4Api = {
 	requestOtp(payload) {

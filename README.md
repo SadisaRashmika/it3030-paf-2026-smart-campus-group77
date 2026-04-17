@@ -106,6 +106,36 @@ npm run build
 & ".\smartcampus\mvnw.cmd" -f ".\smartcampus\pom.xml" -DskipTests package
 ```
 
+## Test Commands (Verified)
+
+### Frontend tests
+
+```powershell
+Set-Location ".\frontend"
+npm test
+```
+
+### Backend tests from backend folder
+
+```powershell
+Set-Location ".\smartcampus"
+npm test
+```
+
+### Backend tests from repository root
+
+```powershell
+npm run backend:test
+```
+
+or directly:
+
+```powershell
+& ".\smartcampus\mvnw.cmd" -f ".\smartcampus\pom.xml" test
+```
+
+Important: running `./mvnw.cmd test` from repository root fails because the Maven wrapper file exists under `smartcampus/`, not at root.
+
 ## CI Workflow
 
 GitHub Actions workflow: [\.github/workflows/ci.yml](.github/workflows/ci.yml)
@@ -137,6 +167,14 @@ Jobs:
 - Upload and persist profile picture (data URL)
 - Navbar avatar rendering with initials fallback
 - Admin activity list avatars with initials fallback
+
+### Member 4 test coverage currently included
+- Frontend unit test: `frontend/src/services/authService.test.js`
+- Backend unit test: `smartcampus/src/test/java/com/it3030/smartcampus/member4/controller/AuthControllerTest.java`
+- Spring context test: `smartcampus/src/test/java/com/it3030/smartcampus/SmartcampusApplicationTests.java`
+
+### Reliability fix included
+- Member 4 legacy API wrapper now uses the active session-aware frontend API client (`frontend/src/member4-notifications-oauth/services/member4Api.js`), avoiding mixed client behavior.
 
 ## API Summary
 
