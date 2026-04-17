@@ -1,61 +1,42 @@
-import React, { useState } from 'react';
-import BookingForm from '../member2-bookings-management/components/BookingForm';
-import MyBookingsPage from '../member2-bookings-management/pages/MyBookingsPage';
-import AdminBookingDashboard from '../member2-bookings-management/pages/AdminBookingDashboard';
-import './App.css';
+import { Navigate, Route, Routes } from "react-router-dom";
+import MainLayout from "./layouts/MainLayout";
+import AdminPage from "./pages/AdminPage";
+import HomePage from "./pages/HomePage";
+import LecturerPage from "./pages/LecturerPage";
+import HelpPage from "./pages/HelpPage";
+import NotFoundPage from "./pages/NotFoundPage";
+import StudentPage from "./pages/StudentPage";
+import BookingForm from "../member2-bookings-management/components/BookingForm";
+import MyBookingsPage from "../member2-bookings-management/pages/MyBookingsPage";
+import AdminBookingDashboard from "../member2-bookings-management/pages/AdminBookingDashboard";
 
-function App() {
-  const [currentView, setCurrentView] = useState('form');
-
+export default function App() {
   return (
-    <div className="app-container">
-      <nav className="nav-bar">
-        <div className="nav-brand">M2: Bookings</div>
-        <div className="nav-links">
-          <button 
-            className={`nav-btn ${currentView === 'form' ? 'active' : ''}`}
-            onClick={() => setCurrentView('form')}
-          >
-            New Booking
-          </button>
-          <button 
-            className={`nav-btn ${currentView === 'my-bookings' ? 'active' : ''}`}
-            onClick={() => setCurrentView('my-bookings')}
-          >
-            My Bookings (User)
-          </button>
-          <button 
-            className={`nav-btn ${currentView === 'admin' ? 'active' : ''}`}
-            onClick={() => setCurrentView('admin')}
-          >
-            Admin Dashboard
-          </button>
-        </div>
-      </nav>
-
-      <main className="main-content">
-        {currentView === 'form' && (
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-            <p style={{ textAlign: 'center', marginBottom: '1rem', color: '#888' }}>
-              Note: This is a demo container. Below is the BookingForm component.
-              Dummy resources have been passed in.
-            </p>
+    <Routes>
+      <Route path="/" element={<MainLayout />}>
+        <Route index element={<HomePage />} />
+        <Route path="admin" element={<AdminPage />} />
+        <Route path="lecturer" element={<LecturerPage />} />
+        <Route path="student" element={<StudentPage />} />
+        
+        {/* Member 2: Booking Management */}
+        <Route path="admin/bookings" element={<AdminBookingDashboard />} />
+        <Route path="student/bookings" element={<MyBookingsPage userId={1} />} />
+        <Route path="student/book" element={
+          <div style={{ padding: '2rem' }}>
+            <h2 style={{ textAlign: 'center', marginBottom: '1rem', color: '#c084fc' }}>New Booking Request</h2>
             <BookingForm 
-              resources={[
-                { id: 1, name: 'Lecture Hall A', location: 'Main Building' },
-                { id: 2, name: 'Computer Lab 3', location: 'IT Faculty' },
-                { id: 3, name: 'Projector 1', location: 'Storage Room' }
-              ]}
-              userId={1}
-              onSuccess={() => setCurrentView('my-bookings')}
+              resources={[]} 
+              userId={1} 
+              onSuccess={() => window.location.href = '/student/bookings'} 
             />
           </div>
-        )}
-        {currentView === 'my-bookings' && <MyBookingsPage userId={1} />}
-        {currentView === 'admin' && <AdminBookingDashboard />}
-      </main>
-    </div>
+        } />
+
+        <Route path="help" element={<HelpPage />} />
+        <Route path="*" element={<NotFoundPage />} />
+      </Route>
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
   );
 }
-
-export default App;
