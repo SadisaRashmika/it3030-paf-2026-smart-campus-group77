@@ -4,6 +4,7 @@ import AuthModal from "../member4-notifications-oauth/components/AuthModal";
 import TopNavHeader from "../member4-notifications-oauth/components/TopNavHeader";
 import {
   assignLecturerWork,
+  approveRecoveryRequest,
   createStaffLogin,
   deactivateUser,
   deleteUser,
@@ -11,9 +12,11 @@ import {
   getCurrentUser,
   getLecturerAssignments,
   getMyNotifications,
+  getRecoveryRequests,
   getSuspiciousUsers,
   markAllNotificationsRead,
   markNotificationRead,
+  rejectRecoveryRequest,
   reportSuspiciousLogin,
   logout
 } from "../services/authService";
@@ -79,6 +82,7 @@ export default function MainLayout() {
   const [adminUsers, setAdminUsers] = useState([]);
   const [suspiciousUsers, setSuspiciousUsers] = useState([]);
   const [lecturerAssignments, setLecturerAssignments] = useState([]);
+  const [recoveryRequests, setRecoveryRequests] = useState([]);
   const [notifications, setNotifications] = useState([]);
   const [loadingNotifications, setLoadingNotifications] = useState(false);
   const [loadingAdminData, setLoadingAdminData] = useState(false);
@@ -123,6 +127,23 @@ export default function MainLayout() {
       setAppNotice("");
     } finally {
       setLoadingAdminData(false);
+    }
+  }, [role]);
+
+  const fetchRecoveryRequests = useCallback(async () => {
+    if (role !== "admin") {
+      return;
+    }
+
+    try {
+      const recoveryQueue = await getRecoveryRequests();
+      setRecoveryRequests(Array.isArray(recoveryQueue) ? recoveryQueue : []);
+    } catch (error) {
+      setRecoveryRequests([]);
+      if (error?.message && !String(error.message).includes("404")) {
+        setAppError(error.message);
+        setAppNotice("");
+      }
     }
   }, [role]);
 
@@ -214,6 +235,12 @@ export default function MainLayout() {
   }, [role, fetchAdminData]);
 
   useEffect(() => {
+    if (role === "admin" && activeTab === "ticket") {
+      fetchRecoveryRequests();
+    }
+  }, [role, activeTab, fetchRecoveryRequests]);
+
+  useEffect(() => {
     if (!user) {
       setNotifications([]);
       return;
@@ -244,6 +271,7 @@ export default function MainLayout() {
     setAdminUsers([]);
     setSuspiciousUsers([]);
     setLecturerAssignments([]);
+    setRecoveryRequests([]);
     setNotifications([]);
     setAppNotice("");
     navigate("/");
@@ -346,6 +374,16 @@ export default function MainLayout() {
     await fetchAdminData();
   };
 
+  const handleApproveRecoveryRequest = async (requestId) => {
+    await approveRecoveryRequest(requestId);
+    await fetchRecoveryRequests();
+  };
+
+  const handleRejectRecoveryRequest = async (requestId) => {
+    await rejectRecoveryRequest(requestId);
+    await fetchRecoveryRequests();
+  };
+
   const handleTabChange = (tab) => {
     if (!VALID_TABS.has(tab)) {
       return;
@@ -391,12 +429,15 @@ export default function MainLayout() {
             adminUsers,
             suspiciousUsers,
             lecturerAssignments,
+            recoveryRequests,
             loadingAdminData,
             reloadAdminData: fetchAdminData,
             onAssignLecturerWork: handleAssignLecturerWork,
             onCreateStaffLogin: handleCreateStaffLogin,
             onDeleteUser: handleDeleteUser,
-            onDeactivateUser: handleDeactivateUser
+            onDeactivateUser: handleDeactivateUser,
+            onApproveRecoveryRequest: handleApproveRecoveryRequest,
+            onRejectRecoveryRequest: handleRejectRecoveryRequest
           }}
         />
       </main>

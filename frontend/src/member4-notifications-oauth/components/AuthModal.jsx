@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
 	AlertCircle,
 	CheckCircle2,
@@ -52,6 +53,7 @@ export default function AuthModal({ isOpen, onClose, onAuthenticated, initialMod
 	const [error, setError] = useState("");
 	const [message, setMessage] = useState("");
 	const modalRef = useRef(null);
+	const navigate = useNavigate();
 
 	useEffect(() => {
 		if (!isOpen) {
@@ -154,6 +156,11 @@ export default function AuthModal({ isOpen, onClose, onAuthenticated, initialMod
 		} finally {
 			setLoading(false);
 		}
+	};
+
+	const onNeedHelp = () => {
+		onClose();
+		navigate("/help");
 	};
 
 	const onRequestActivationOtp = async (event) => {
@@ -293,6 +300,7 @@ export default function AuthModal({ isOpen, onClose, onAuthenticated, initialMod
 							loading={loading}
 							onLogin={onLogin}
 							onGoogleLogin={startGoogleLogin}
+								onNeedHelp={onNeedHelp}
 							onActivate={() => switchMode(MODES.ACTIVATE)}
 							onForgotPassword={() => switchMode(MODES.FORGOT)}
 						/>
@@ -323,7 +331,7 @@ export default function AuthModal({ isOpen, onClose, onAuthenticated, initialMod
 	);
 }
 
-function LoginForm({ forms, updateForm, loading, onLogin, onGoogleLogin, onActivate, onForgotPassword }) {
+function LoginForm({ forms, updateForm, loading, onLogin, onGoogleLogin, onNeedHelp, onActivate, onForgotPassword }) {
 	return (
 		<form className="space-y-4" onSubmit={onLogin}>
 			<Field
@@ -373,6 +381,14 @@ function LoginForm({ forms, updateForm, loading, onLogin, onGoogleLogin, onActiv
 				className="flex w-full items-center justify-center gap-2 rounded-2xl border border-slate-300 bg-white px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
 			>
 				<Globe size={16} /> Continue with Google
+			</button>
+
+			<button
+				type="button"
+				onClick={onNeedHelp}
+				className="mx-auto block w-fit text-sm font-semibold text-blue-600 underline underline-offset-4 transition hover:text-blue-700"
+			>
+				Need help?
 			</button>
 		</form>
 	);

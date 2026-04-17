@@ -70,8 +70,7 @@ public class PasswordResetService {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "OTP expired. Request a new code.");
 		}
 
-		user.setPasswordHash(passwordEncoder.encode(request.newPassword()));
-		user.clearOtp();
+		user.activate(passwordEncoder.encode(request.newPassword()));
 		userRepository.save(user);
 	}
 

@@ -3,6 +3,7 @@ import MainLayout from "./layouts/MainLayout";
 import AdminPage from "./pages/AdminPage";
 import HomePage from "./pages/HomePage";
 import LecturerPage from "./pages/LecturerPage";
+import HelpPage from "./pages/HelpPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import StudentPage from "./pages/StudentPage";
 
@@ -14,6 +15,7 @@ export default function App() {
         <Route path="admin" element={<AdminPage />} />
         <Route path="lecturer" element={<LecturerPage />} />
         <Route path="student" element={<StudentPage />} />
+        <Route path="help" element={<HelpPage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
