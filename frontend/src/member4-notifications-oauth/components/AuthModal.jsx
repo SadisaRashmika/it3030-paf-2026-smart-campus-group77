@@ -5,7 +5,6 @@ import {
 	CheckCircle2,
 	Eye,
 	EyeOff,
-	Globe,
 	Hash,
 	Lock,
 	Mail,
@@ -384,7 +383,7 @@ function LoginForm({ forms, updateForm, loading, onLogin, onGoogleLogin, onNeedH
 				onClick={onGoogleLogin}
 				className="flex w-full items-center justify-center gap-2 rounded-2xl border border-slate-300 bg-white px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
 			>
-				<Globe size={16} /> Continue with Google
+				<img src="/assets/google.png" alt="Google" className="h-4 w-4 object-contain" /> Continue with Google
 			</button>
 
 			<button
