@@ -1,0 +1,249 @@
+/* ── AdminBookingDashboard.css ───────────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+.ad-page {
+  font-family: 'Inter', sans-serif;
+  min-height: 100vh;
+  background: linear-gradient(160deg, #0f1322 0%, #1a1f36 100%);
+  color: #e2e8f0;
+  padding: 2rem;
+  box-sizing: border-box;
+}
+
+/* ── Page header ─────────────────────────────────────────────────────────── */
+.ad-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1.75rem;
+}
+.ad-header-left { display: flex; align-items: flex-start; gap: 1rem; }
+.ad-icon        { font-size: 2.2rem; line-height: 1; }
+
+.ad-title {
+  margin: 0 0 0.2rem;
+  font-size: 1.6rem;
+  font-weight: 700;
+  background: linear-gradient(90deg, #818cf8, #c084fc);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.ad-subtitle { margin: 0; font-size: 0.85rem; color: #94a3b8; }
+
+.ad-refresh-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 1rem;
+  border: 1px solid rgba(99,120,255,0.35);
+  border-radius: 8px;
+  background: rgba(99,120,255,0.1);
+  color: #818cf8;
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+}
+.ad-refresh-btn:hover:not(:disabled) { background: rgba(99,120,255,0.2); border-color: #818cf8; }
+.ad-refresh-btn:disabled             { opacity: 0.5; cursor: not-allowed; }
+
+/* ── Stat cards ──────────────────────────────────────────────────────────── */
+.ad-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.ad-stat-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 1.1rem 0.75rem;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.07);
+  background: rgba(255,255,255,0.04);
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s, background 0.15s;
+  user-select: none;
+}
+.ad-stat-card:hover {
+  transform: translateY(-2px);
+  background: rgba(255,255,255,0.07);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+}
+.ad-stat-card--pending   { border-color: rgba(245,158,11,0.3);  }
+.ad-stat-card--approved  { border-color: rgba(16,185,129,0.3);  }
+.ad-stat-card--rejected  { border-color: rgba(239,68,68,0.3);   }
+.ad-stat-card--cancelled { border-color: rgba(100,116,139,0.3); }
+
+.ad-stat-emoji { font-size: 1.5rem; }
+.ad-stat-value { font-size: 1.75rem; font-weight: 700; color: #e2e8f0; line-height: 1; }
+.ad-stat-label { font-size: 0.75rem; font-weight: 500; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em; }
+
+/* ── Alert ───────────────────────────────────────────────────────────────── */
+.ad-alert {
+  border-radius: 10px;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1.25rem;
+  font-size: 0.88rem;
+  font-weight: 500;
+}
+.ad-alert--error { background: rgba(239,68,68,.15); border: 1px solid rgba(239,68,68,.4); color: #fca5a5; }
+
+/* ── Filter tabs ─────────────────────────────────────────────────────────── */
+.ad-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.ad-tab {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.9rem;
+  border: 1px solid rgba(99,120,255,0.2);
+  border-radius: 999px;
+  background: transparent;
+  color: #94a3b8;
+  font-family: inherit;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+.ad-tab:hover           { background: rgba(99,120,255,0.1); color: #c7d2fe; border-color: #6366f1; }
+.ad-tab--active         { background: linear-gradient(135deg,#6366f1,#8b5cf6); color:#fff; border-color: transparent; box-shadow: 0 2px 10px rgba(99,102,241,0.35); }
+.ad-tab--active:hover   { opacity: 0.9; }
+
+.ad-tab-count {
+  background: rgba(0,0,0,0.25);
+  border-radius: 999px;
+  padding: 0.1rem 0.45rem;
+  font-size: 0.72rem;
+}
+.ad-tab--active .ad-tab-count { background: rgba(255,255,255,0.2); }
+
+/* ── Loading / Empty ─────────────────────────────────────────────────────── */
+.ad-loading, .ad-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 4rem 2rem;
+  color: #64748b;
+  font-size: 0.95rem;
+}
+.ad-empty-icon { font-size: 3rem; }
+
+/* ── Table ───────────────────────────────────────────────────────────────── */
+.ad-table-wrapper {
+  border-radius: 14px;
+  overflow-x: auto;
+  border: 1px solid rgba(99,120,255,0.18);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.35);
+}
+
+.ad-table { width: 100%; border-collapse: collapse; font-size: 0.87rem; }
+
+.ad-table thead tr { background: rgba(99,120,255,0.12); }
+
+.ad-table th {
+  padding: 0.85rem 1rem;
+  text-align: left;
+  font-size: 0.74rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #94a3b8;
+  border-bottom: 1px solid rgba(99,120,255,0.18);
+  white-space: nowrap;
+}
+
+.ad-row { transition: background 0.15s; }
+.ad-row:hover { background: rgba(99,120,255,0.06); }
+.ad-row:not(:last-child) td { border-bottom: 1px solid rgba(255,255,255,0.05); }
+
+/* Highlight pending rows with a subtle left border */
+.ad-row--pending { border-left: 3px solid #f59e0b; }
+
+.ad-cell { padding: 0.85rem 1rem; vertical-align: middle; color: #cbd5e1; }
+.ad-cell--id      { color: #64748b; font-size: 0.8rem; }
+.ad-cell--time    { white-space: nowrap; font-size: 0.82rem; color: #94a3b8; }
+.ad-cell--purpose { max-width: 180px; }
+.ad-cell--actions { min-width: 170px; }
+
+.ad-user-name     { display: block; font-weight: 600; color: #e2e8f0; }
+.ad-user-email    { font-size: 0.73rem; color: #64748b; }
+.ad-resource-name { display: block; font-weight: 600; color: #e2e8f0; }
+.ad-resource-type { font-size: 0.73rem; color: #64748b; }
+
+/* ── Status badges ───────────────────────────────────────────────────────── */
+.ad-badge {
+  display: inline-block;
+  padding: 0.28rem 0.7rem;
+  border-radius: 999px;
+  font-size: 0.74rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.ad-badge--pending   { background: rgba(245,158,11,.2); color: #fcd34d; border: 1px solid rgba(245,158,11,.4); }
+.ad-badge--approved  { background: rgba(16,185,129,.2); color: #6ee7b7; border: 1px solid rgba(16,185,129,.4); }
+.ad-badge--rejected  { background: rgba(239,68,68,.2);  color: #fca5a5; border: 1px solid rgba(239,68,68,.4);  }
+.ad-badge--cancelled { background: rgba(100,116,139,.2);color: #94a3b8; border: 1px solid rgba(100,116,139,.4);}
+
+/* ── Action buttons ──────────────────────────────────────────────────────── */
+.ad-action-btns { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+
+.ad-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.38rem 0.85rem;
+  border-radius: 7px;
+  font-family: inherit;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.15s;
+  border: 1px solid transparent;
+}
+.ad-btn:hover:not(:disabled) { opacity: 0.85; transform: translateY(-1px); }
+.ad-btn:disabled              { opacity: 0.45; cursor: not-allowed; }
+
+.ad-btn--approve { background: rgba(16,185,129,0.2);  color: #6ee7b7; border-color: rgba(16,185,129,0.4); }
+.ad-btn--approve:hover:not(:disabled) { background: rgba(16,185,129,0.3); }
+
+.ad-btn--reject  { background: rgba(239,68,68,0.15);  color: #fca5a5; border-color: rgba(239,68,68,0.4);  }
+.ad-btn--reject:hover:not(:disabled)  { background: rgba(239,68,68,0.25); }
+
+.ad-inline-error { font-size: 0.8rem; color: #fcd34d; font-weight: 600; }
+
+/* ── Spinners ────────────────────────────────────────────────────────────── */
+.ad-spinner {
+  display: inline-block;
+  border: 2px solid rgba(255,255,255,0.2);
+  border-top-color: currentColor;
+  border-radius: 50%;
+  animation: ad-spin 0.7s linear infinite;
+}
+.ad-spinner--lg { width: 30px; height: 30px; border-width: 3px; color: #818cf8; }
+.ad-spinner--sm { width: 12px; height: 12px; }
+
+@keyframes ad-spin { to { transform: rotate(360deg); } }
+
+/* ── Responsive ──────────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .ad-page { padding: 1rem; }
+  .ad-table th, .ad-cell { padding: 0.6rem 0.6rem; font-size: 0.78rem; }
+  .ad-cell--purpose { max-width: 100px; }
+}

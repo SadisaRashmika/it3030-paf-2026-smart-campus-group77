@@ -1,0 +1,178 @@
+/* ── MyBookingsPage.css ──────────────────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+.mb-page {
+  font-family: 'Inter', sans-serif;
+  min-height: 100vh;
+  background: linear-gradient(160deg, #0f1322 0%, #1a1f36 100%);
+  color: #e2e8f0;
+  padding: 2rem;
+  box-sizing: border-box;
+}
+
+/* ── Header ──────────────────────────────────────────────────────────────── */
+.mb-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1.75rem;
+}
+
+.mb-header-left { display: flex; align-items: flex-start; gap: 1rem; }
+
+.mb-icon { font-size: 2rem; line-height: 1; }
+
+.mb-title {
+  margin: 0 0 0.2rem;
+  font-size: 1.6rem;
+  font-weight: 700;
+  background: linear-gradient(90deg, #818cf8, #c084fc);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.mb-subtitle { margin: 0; font-size: 0.85rem; color: #94a3b8; }
+
+/* Refresh button */
+.mb-refresh-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 1rem;
+  border: 1px solid rgba(99,120,255,0.35);
+  border-radius: 8px;
+  background: rgba(99,120,255,0.1);
+  color: #818cf8;
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+}
+.mb-refresh-btn:hover:not(:disabled) { background: rgba(99,120,255,0.2); border-color: #818cf8; }
+.mb-refresh-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* ── Alerts ──────────────────────────────────────────────────────────────── */
+.mb-alert {
+  border-radius: 10px;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1.25rem;
+  font-size: 0.88rem;
+  font-weight: 500;
+}
+.mb-alert--error { background: rgba(239,68,68,.15); border: 1px solid rgba(239,68,68,.4); color: #fca5a5; }
+
+/* ── Loading / Empty ─────────────────────────────────────────────────────── */
+.mb-loading, .mb-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 4rem 2rem;
+  color: #64748b;
+  font-size: 0.95rem;
+}
+
+.mb-empty-icon { font-size: 3rem; }
+.mb-empty-hint { color: #475569; font-size: 0.82rem; }
+
+/* ── Table ───────────────────────────────────────────────────────────────── */
+.mb-table-wrapper {
+  border-radius: 14px;
+  overflow-x: auto;
+  border: 1px solid rgba(99,120,255,0.18);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.35);
+}
+
+.mb-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+}
+
+.mb-table thead tr {
+  background: rgba(99,120,255,0.12);
+}
+
+.mb-table th {
+  padding: 0.85rem 1rem;
+  text-align: left;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #94a3b8;
+  border-bottom: 1px solid rgba(99,120,255,0.18);
+  white-space: nowrap;
+}
+
+.mb-row { transition: background 0.15s; }
+.mb-row:hover { background: rgba(99,120,255,0.07); }
+.mb-row:not(:last-child) td { border-bottom: 1px solid rgba(255,255,255,0.05); }
+
+.mb-cell { padding: 0.85rem 1rem; vertical-align: middle; color: #cbd5e1; }
+.mb-cell--id { color: #64748b; font-size: 0.8rem; }
+.mb-cell--time { white-space: nowrap; font-size: 0.82rem; color: #94a3b8; }
+.mb-cell--purpose { max-width: 220px; }
+.mb-cell--resource { min-width: 140px; }
+
+.mb-resource-name { display: block; font-weight: 600; color: #e2e8f0; }
+.mb-resource-type  { font-size: 0.75rem; color: #64748b; }
+
+/* ── Status Badges ───────────────────────────────────────────────────────── */
+.mb-badge {
+  display: inline-block;
+  padding: 0.28rem 0.7rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.mb-badge--pending   { background: rgba(245,158,11,.2);  color: #fcd34d; border: 1px solid rgba(245,158,11,.4); }
+.mb-badge--approved  { background: rgba(16,185,129,.2);  color: #6ee7b7; border: 1px solid rgba(16,185,129,.4); }
+.mb-badge--rejected  { background: rgba(239,68,68,.2);   color: #fca5a5; border: 1px solid rgba(239,68,68,.4);  }
+.mb-badge--cancelled { background: rgba(100,116,139,.2); color: #94a3b8; border: 1px solid rgba(100,116,139,.4);}
+
+/* ── Cancel button ───────────────────────────────────────────────────────── */
+.mb-btn-cancel {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.35rem 0.8rem;
+  border: 1px solid rgba(239,68,68,0.4);
+  border-radius: 7px;
+  background: rgba(239,68,68,0.1);
+  color: #fca5a5;
+  font-family: inherit;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+}
+.mb-btn-cancel:hover:not(:disabled) { background: rgba(239,68,68,0.2); border-color: #ef4444; }
+.mb-btn-cancel:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* ── Spinners ────────────────────────────────────────────────────────────── */
+.mb-spinner {
+  display: inline-block;
+  border: 2px solid rgba(255,255,255,0.2);
+  border-top-color: currentColor;
+  border-radius: 50%;
+  animation: mb-spin 0.7s linear infinite;
+}
+.mb-spinner--lg { width: 32px; height: 32px; border-width: 3px; color: #818cf8; }
+.mb-spinner--sm { width: 12px; height: 12px; }
+
+@keyframes mb-spin { to { transform: rotate(360deg); } }
+
+/* ── Responsive ──────────────────────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .mb-page { padding: 1rem; }
+  .mb-table th, .mb-cell { padding: 0.65rem 0.6rem; font-size: 0.78rem; }
+}
