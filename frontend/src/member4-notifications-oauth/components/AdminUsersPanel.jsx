@@ -3,6 +3,30 @@ import { useMemo, useState } from "react";
 
 const ACCOUNT_FILTERS = ["all", "student", "lecturer"];
 
+function getInitials(value) {
+	return String(value || "")
+		.split(" ")
+		.filter(Boolean)
+		.slice(0, 2)
+		.map((part) => part[0]?.toUpperCase() || "")
+		.join("") || "SC";
+}
+
+function UserAvatar({ user }) {
+	const photoUrl = String(user?.profilePictureDataUrl || "").trim();
+	const label = user?.name || user?.userId || "SmartCampus User";
+
+	return (
+		<span className="inline-flex h-9 w-9 items-center justify-center overflow-hidden rounded-full bg-gradient-to-br from-amber-500 to-amber-300 text-xs font-bold text-amber-950 ring-1 ring-amber-200">
+			{photoUrl ? (
+				<img src={photoUrl} alt={`${label} profile`} className="h-full w-full object-cover" />
+			) : (
+				getInitials(label)
+			)}
+		</span>
+	);
+}
+
 export default function AdminUsersPanel({
 	users,
 	suspiciousUsers,
@@ -171,9 +195,12 @@ export default function AdminUsersPanel({
 							filteredUsers.map((user) => (
 								<div key={user.id} className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-xs">
 									<div className="flex items-start justify-between gap-3">
-										<div>
-											<p className="font-bold text-slate-800">{user.name || user.userId} - {user.email}</p>
-											<p className="mt-1 text-slate-600">{user.role} | {user.status}</p>
+										<div className="flex items-start gap-2.5">
+											<UserAvatar user={user} />
+											<div>
+												<p className="font-bold text-slate-800">{user.name || user.userId} - {user.email}</p>
+												<p className="mt-1 text-slate-600">{user.role} | {user.status}</p>
+											</div>
 										</div>
 										<button
 											type="button"
@@ -219,10 +246,13 @@ export default function AdminUsersPanel({
 							suspiciousUsers.map((user) => (
 								<div key={user.id} className="rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-xs">
 									<div className="flex items-start justify-between gap-3">
-										<div>
-											<p className="font-bold text-rose-800">{user.name || user.userId} - {user.email}</p>
-											<p className="mt-1 text-rose-700">OTP Requests: {user.otpRequestCount} | Failed OTP: {user.failedOtpAttempts}</p>
-											{user.suspiciousReason ? <p className="mt-1 font-semibold text-rose-800">Reason: {user.suspiciousReason}</p> : null}
+										<div className="flex items-start gap-2.5">
+											<UserAvatar user={user} />
+											<div>
+												<p className="font-bold text-rose-800">{user.name || user.userId} - {user.email}</p>
+												<p className="mt-1 text-rose-700">OTP Requests: {user.otpRequestCount} | Failed OTP: {user.failedOtpAttempts}</p>
+												{user.suspiciousReason ? <p className="mt-1 font-semibold text-rose-800">Reason: {user.suspiciousReason}</p> : null}
+											</div>
 										</div>
 										<div className="flex items-center gap-2">
 											<button

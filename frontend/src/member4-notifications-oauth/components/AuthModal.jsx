@@ -44,7 +44,7 @@ const createInitialForms = () => ({
 	forgotVerify: { ...initialForms.forgotVerify }
 });
 
-export default function AuthModal({ isOpen, onClose, onAuthenticated, initialMode = MODES.LOGIN }) {
+export default function AuthModal({ isOpen, onClose, onAuthenticated, initialMode = MODES.LOGIN, initialEmail = "" }) {
 	const [mode, setMode] = useState(initialMode);
 	const [forms, setForms] = useState(createInitialForms());
 	const [activationStep, setActivationStep] = useState(1);
@@ -68,13 +68,17 @@ export default function AuthModal({ isOpen, onClose, onAuthenticated, initialMod
 		}
 
 		setMode(initialMode);
-		setForms(createInitialForms());
+		const nextForms = createInitialForms();
+		if (initialMode === MODES.FORGOT && initialEmail) {
+			nextForms.forgotRequest = { email: initialEmail };
+		}
+		setForms(nextForms);
 		setActivationStep(1);
 		setForgotStep(1);
 		setLoading(false);
 		setError("");
 		setMessage("");
-	}, [initialMode, isOpen]);
+	}, [initialEmail, initialMode, isOpen]);
 
 	useEffect(() => {
 		if (!isOpen) {

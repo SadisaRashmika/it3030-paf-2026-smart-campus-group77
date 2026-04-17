@@ -307,6 +307,7 @@ public class ActivationService {
 				user.getName(),
 				user.getUserId(),
 				user.getEmail(),
+				user.getProfilePictureDataUrl(),
 				user.getRole(),
 				user.isActive(),
 				user.isSuspicious(),
