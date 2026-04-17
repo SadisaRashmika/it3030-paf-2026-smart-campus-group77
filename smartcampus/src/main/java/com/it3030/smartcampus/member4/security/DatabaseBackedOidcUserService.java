@@ -57,17 +57,6 @@ public class DatabaseBackedOidcUserService extends OidcUserService {
 			throw new OAuth2AuthenticationException("Account is deactivated. Please activate your account before signing in.");
 		}
 
-		boolean changed = false;
-
-		if (displayName != null && !displayName.isBlank() && (account.getName() == null || account.getName().isBlank())) {
-			account.setName(displayName);
-			changed = true;
-		}
-
-		if (changed) {
-			return userRepository.save(account);
-		}
-
 		return account;
 	}
 

@@ -76,6 +76,7 @@ export default function TopNavHeader({
 
 	const roleLabel = user?.role?.replace("ROLE_", "") || "";
 	const roleKey = roleLabel.toLowerCase();
+	const canSeeNotifications = Boolean(user);
 	const canReportSuspicious = roleKey === "student" || roleKey === "lecturer";
 	const unreadCount = notifications.filter((item) => item?.read === false && !isSeenBeforeLastRefresh(item)).length;
 	const displayName = user?.name?.trim() || user?.userId || "SmartCampus User";
@@ -157,7 +158,7 @@ export default function TopNavHeader({
 				<div className="flex items-center gap-2">
 					{user ? (
 						<>
-							{canReportSuspicious ? (
+							{canSeeNotifications ? (
 								<div ref={notificationsRef} className="relative hidden sm:block">
 									<button
 										type="button"
@@ -321,7 +322,7 @@ export default function TopNavHeader({
 						<UserCircle2 size={14} /> My Profile
 					</button>
 					<div className="space-y-1">
-						{canReportSuspicious ? (
+						{canSeeNotifications ? (
 							<div className="mb-2 rounded-xl border border-slate-200 bg-slate-50 p-2.5">
 								<div className="mb-2 flex items-center justify-between">
 									<p className="text-xs font-bold uppercase tracking-wide text-slate-600">Notifications</p>

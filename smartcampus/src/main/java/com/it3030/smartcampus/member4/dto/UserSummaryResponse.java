@@ -7,6 +7,7 @@ public record UserSummaryResponse(
 		String name,
 		String userId,
 		String email,
+		String profilePictureDataUrl,
 		Role role,
 		boolean active,
 		boolean suspicious,
