@@ -12,6 +12,7 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,6 +26,7 @@ import com.it3030.smartcampus.member4.dto.ForgotPasswordRequest;
 import com.it3030.smartcampus.member4.dto.ForgotPasswordResetRequest;
 import com.it3030.smartcampus.member4.dto.LoginRequest;
 import com.it3030.smartcampus.member4.dto.MessageResponse;
+import com.it3030.smartcampus.member4.dto.ProfilePictureUpdateRequest;
 import com.it3030.smartcampus.member4.model.UserAccount;
 import com.it3030.smartcampus.member4.repository.UserRepository;
 import com.it3030.smartcampus.member4.service.NotificationService;
@@ -104,17 +106,42 @@ public class AuthController {
 		return ResponseEntity.ok(toAuthUserResponse(authentication));
 	}
 
+	@PatchMapping("/profile-picture")
+	public ResponseEntity<AuthUserResponse> updateProfilePicture(Authentication authentication,
+																	 @Valid @RequestBody ProfilePictureUpdateRequest request) {
+		UserAccount user = requireAuthenticatedUser(authentication);
+		user.setProfilePictureDataUrl(normalizeProfilePicture(request.profilePictureDataUrl()));
+		userRepository.save(user);
+		return ResponseEntity.ok(toAuthUserResponse(user));
+	}
+
 	private AuthUserResponse toAuthUserResponse(Authentication authentication) {
 		String principal = resolvePrincipal(authentication);
 		UserAccount user = findAuthenticatedUser(principal)
 				.orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Authenticated user not found"));
 		ensureLoginAllowed(user);
 
+		return toAuthUserResponse(user);
+	}
+
+	private AuthUserResponse toAuthUserResponse(UserAccount user) {
 		String email = user.getEmail();
 		String userId = user.getUserId();
 		String name = user.getName();
 		String role = user.getRole().authority();
-		return new AuthUserResponse(name, email, userId, role, true);
+		return new AuthUserResponse(name, email, userId, role, true, user.getProfilePictureDataUrl());
+	}
+
+	private UserAccount requireAuthenticatedUser(Authentication authentication) {
+		if (authentication == null || !authentication.isAuthenticated() || authentication instanceof AnonymousAuthenticationToken) {
+			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Authentication required");
+		}
+
+		String principal = resolvePrincipal(authentication);
+		UserAccount user = findAuthenticatedUser(principal)
+				.orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Authenticated user not found"));
+		ensureLoginAllowed(user);
+		return user;
 	}
 
 	private java.util.Optional<UserAccount> findAuthenticatedUser(String principal) {
@@ -191,5 +218,9 @@ public class AuthController {
 		if (user.temporaryPasswordExpired(Instant.now())) {
 			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Temporary password expired. Please request a new recovery request.");
 		}
+	}
+
+	private String normalizeProfilePicture(String value) {
+		return value == null ? null : value.trim();
 	}
 }

@@ -209,11 +209,11 @@ public class ConsoleMailService implements MailService {
 				<html>
 				  <body style=\"font-family:Segoe UI,Arial,sans-serif;background:#f8fafc;color:#0f172a;padding:24px;\">
 				    <div style=\"max-width:520px;margin:0 auto;background:#ffffff;border-radius:14px;padding:24px;border:1px solid #e2e8f0;\">
-				      <h2 style=\"margin:0 0 12px;font-size:20px;color:#15803d;\">Account Recovery Approved ✓</h2>
+				      <h2 style=\"margin:0 0 12px;font-size:20px;color:#15803d;\">Account Recovery Approved</h2>
 				      <p style=\"margin:0 0 12px;font-size:14px;line-height:1.6;\">Your recovery request for user ID <strong>%s</strong> has been approved.</p>
 				      
 				      <div style=\"background:#fef3c7;border-left:4px solid #f59e0b;padding:12px;margin:16px 0;border-radius:4px;\">
-				        <p style=\"margin:0 0 8px;font-size:13px;font-weight:600;color:#92400e;\">⏱ TEMPORARY PASSWORD (VALID FOR 24 HOURS ONLY)</p>
+				        <p style=\"margin:0 0 8px;font-size:13px;font-weight:600;color:#92400e;\">TEMPORARY PASSWORD (VALID FOR 24 HOURS ONLY)</p>
 				        <p style=\"margin:8px 0 0;font-size:30px;font-weight:700;letter-spacing:4px;color:#111827;font-family:monospace;\">%s</p>
 				      </div>
 				      

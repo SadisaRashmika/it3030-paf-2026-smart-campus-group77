@@ -39,6 +39,13 @@ export function getCurrentUser() {
   return requestJson("/api/public/auth/me").then(normalizeUser);
 }
 
+export function updateProfilePicture(profilePictureDataUrl) {
+  return requestJson("/api/public/auth/profile-picture", {
+    method: "PATCH",
+    body: JSON.stringify({ profilePictureDataUrl })
+  }).then(normalizeUser);
+}
+
 export function logout() {
   return requestJson("/api/public/auth/logout", { method: "POST" });
 }

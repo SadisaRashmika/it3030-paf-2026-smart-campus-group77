@@ -62,6 +62,9 @@ public class UserAccount {
 	@Column(name = "temp_password_expires_at")
 	private Instant tempPasswordExpiresAt;
 
+	@Column(name = "profile_picture_data_url", columnDefinition = "TEXT")
+	private String profilePictureDataUrl;
+
 	@CreationTimestamp
 	@Column(name = "created_at", updatable = false)
 	private Instant createdAt;
@@ -264,6 +267,14 @@ public class UserAccount {
 
 	public Instant getTempPasswordExpiresAt() {
 		return tempPasswordExpiresAt;
+	}
+
+	public String getProfilePictureDataUrl() {
+		return profilePictureDataUrl;
+	}
+
+	public void setProfilePictureDataUrl(String profilePictureDataUrl) {
+		this.profilePictureDataUrl = profilePictureDataUrl;
 	}
 
 	public String getTemporaryPasswordHash() {

@@ -18,8 +18,10 @@ import {
   markNotificationRead,
   rejectRecoveryRequest,
   reportSuspiciousLogin,
+  updateProfilePicture,
   logout
 } from "../services/authService";
+import ProfileModal from "../member4-notifications-oauth/components/ProfileModal";
 
 const VALID_TABS = new Set(["home", "resource", "timetable", "jobs", "ticket"]);
 
@@ -78,7 +80,7 @@ function getNotificationStorageKey(user) {
 
 export default function MainLayout() {
   const [user, setUser] = useState(null);
-  const [authModal, setAuthModal] = useState({ open: false, mode: "login" });
+  const [authModal, setAuthModal] = useState({ open: false, mode: "login", email: "" });
   const [adminUsers, setAdminUsers] = useState([]);
   const [suspiciousUsers, setSuspiciousUsers] = useState([]);
   const [lecturerAssignments, setLecturerAssignments] = useState([]);
@@ -90,6 +92,7 @@ export default function MainLayout() {
   const [notificationsLastSeenAt, setNotificationsLastSeenAt] = useState("");
   const [appError, setAppError] = useState("");
   const [appNotice, setAppNotice] = useState("");
+  const [profileModalOpen, setProfileModalOpen] = useState(false);
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -250,7 +253,20 @@ export default function MainLayout() {
   }, [user, fetchNotifications]);
 
   const openLogin = (mode) => {
-    setAuthModal({ open: true, mode });
+    setAuthModal({ open: true, mode, email: "" });
+  };
+
+  const openProfileModal = () => {
+    setProfileModalOpen(true);
+  };
+
+  const openChangePassword = () => {
+    setProfileModalOpen(false);
+    setAuthModal({
+      open: true,
+      mode: "forgot",
+      email: user?.email || ""
+    });
   };
 
   const handleAuthenticated = (authUser) => {
@@ -274,7 +290,14 @@ export default function MainLayout() {
     setRecoveryRequests([]);
     setNotifications([]);
     setAppNotice("");
+    setProfileModalOpen(false);
     navigate("/");
+  };
+
+  const handleProfilePictureUpdate = async (profilePictureDataUrl) => {
+    const updatedUser = await updateProfilePicture(profilePictureDataUrl);
+    setUser(updatedUser);
+    return updatedUser;
   };
 
   const handleOpenNotifications = async () => {
@@ -408,6 +431,7 @@ export default function MainLayout() {
         onMarkNotificationRead={handleMarkNotificationRead}
         onMarkAllNotificationsRead={handleMarkAllNotificationsRead}
         onReportSuspicious={handleReportSuspiciousLogin}
+        onOpenProfile={openProfileModal}
         reportingSuspicious={reportingSuspicious}
         lastSeenNotificationAt={notificationsLastSeenAt}
       />
@@ -445,8 +469,17 @@ export default function MainLayout() {
       <AuthModal
         isOpen={authModal.open}
         initialMode={authModal.mode}
+        initialEmail={authModal.email}
         onClose={() => setAuthModal((prev) => ({ ...prev, open: false }))}
         onAuthenticated={handleAuthenticated}
+      />
+
+      <ProfileModal
+        isOpen={profileModalOpen}
+        user={user}
+        onClose={() => setProfileModalOpen(false)}
+        onChangePassword={openChangePassword}
+        onSaveProfilePicture={handleProfilePictureUpdate}
       />
     </div>
   );

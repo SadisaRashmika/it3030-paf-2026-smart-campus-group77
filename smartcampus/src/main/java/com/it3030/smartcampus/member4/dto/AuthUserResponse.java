@@ -5,5 +5,6 @@ public record AuthUserResponse(
 		String email,
 		String userId,
 		String role,
-		boolean authenticated) {
+		boolean authenticated,
+		String profilePictureDataUrl) {
 }

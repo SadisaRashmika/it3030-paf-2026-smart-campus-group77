@@ -1,4 +1,4 @@
-import { Bell, ChevronDown, LogOut, Menu, ShieldAlert, X } from "lucide-react";
+import { Bell, Camera, ChevronDown, LogOut, Menu, ShieldAlert, UserCircle2, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 const tabs = [
@@ -21,6 +21,7 @@ export default function TopNavHeader({
 	onMarkNotificationRead,
 	onMarkAllNotificationsRead,
 	onReportSuspicious,
+	onOpenProfile,
 	lastSeenNotificationAt = "",
 	reportingSuspicious = false
 }) {
@@ -118,6 +119,7 @@ export default function TopNavHeader({
 		.slice(0, 2)
 		.map((part) => part[0]?.toUpperCase() || "")
 		.join("") || "SC";
+	const profilePhotoUrl = user?.profilePictureDataUrl?.trim() || "";
 
 	return (
 		<header className="sticky top-0 z-30 border-b border-slate-200 bg-white/95 backdrop-blur-xl">
@@ -240,8 +242,12 @@ export default function TopNavHeader({
 									onClick={() => setMenuOpen((prev) => !prev)}
 									className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white py-1.5 pl-1.5 pr-2.5 transition hover:bg-slate-50"
 								>
-									<span className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-amber-500 to-amber-300 text-xs font-bold text-amber-950">
-										{initials}
+									<span className="inline-flex h-9 w-9 items-center justify-center overflow-hidden rounded-full bg-gradient-to-br from-amber-500 to-amber-300 text-xs font-bold text-amber-950">
+										{profilePhotoUrl ? (
+											<img src={profilePhotoUrl} alt={`${displayName} profile`} className="h-full w-full object-cover" />
+										) : (
+											initials
+										)}
 									</span>
 									<span className="text-left">
 										<span className="block text-sm font-bold text-slate-900">{displayName}</span>
@@ -251,6 +257,15 @@ export default function TopNavHeader({
 								</button>
 								{menuOpen ? (
 									<div className="absolute right-0 mt-2 w-40 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-xl">
+										<button
+											onClick={() => {
+											setMenuOpen(false);
+											onOpenProfile?.();
+										}}
+											className="flex w-full items-center gap-2 px-3 py-2.5 text-sm font-medium text-slate-700 transition hover:bg-slate-50 hover:text-slate-900"
+										>
+											<Camera size={14} /> My Profile
+										</button>
 										<button
 											onClick={() => {
 												setMenuOpen(false);
@@ -296,6 +311,15 @@ export default function TopNavHeader({
 						<p className="text-sm font-bold text-slate-800">{displayName}</p>
 						<p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">{roleLabel}</p>
 					</div>
+					<button
+						onClick={() => {
+							setMobileOpen(false);
+							onOpenProfile?.();
+						}}
+						className="mb-2 flex w-full items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+					>
+						<UserCircle2 size={14} /> My Profile
+					</button>
 					<div className="space-y-1">
 						{canReportSuspicious ? (
 							<div className="mb-2 rounded-xl border border-slate-200 bg-slate-50 p-2.5">
