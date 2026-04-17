@@ -3,7 +3,7 @@ import { useState } from "react";
 
 const ROLE_OPTIONS = [
 	{ value: "LECTURER", label: "Lecturer" },
-	{ value: "STUDENT", label: "Student" }
+	{ value: "TIMETABLE_MANAGER", label: "Staff (Timetable Manager)" }
 ];
 
 export default function AdminRoleManagementPanel({ onCreateStaffLogin }) {

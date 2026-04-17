@@ -9,10 +9,16 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import com.it3030.smartcampus.member2.exception.BookingConflictException;
 import com.it3030.smartcampus.member4.dto.MessageResponse;
 
 @RestControllerAdvice
 public class ApiExceptionHandler {
+
+	@ExceptionHandler(BookingConflictException.class)
+	public ResponseEntity<MessageResponse> handleBookingConflict(BookingConflictException exception) {
+		return ResponseEntity.status(HttpStatus.CONFLICT).body(new MessageResponse(exception.getMessage()));
+	}
 
 	@ExceptionHandler(IllegalArgumentException.class)
 	public ResponseEntity<MessageResponse> handleIllegalArgument(IllegalArgumentException exception) {

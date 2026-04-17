@@ -78,6 +78,8 @@ public class SmartCampusSecurityConfig {
 		http.authorizeHttpRequests(authorize -> authorize
 				.requestMatchers("/", "/index.html", "/ui/**", "/error", "/api/public/**", "/oauth2/**", "/login/oauth2/**").permitAll()
 				.requestMatchers("/api/admin/**").hasRole("ADMIN")
+				.requestMatchers("/api/member2/bookings/**").authenticated()
+				.requestMatchers("/api/timetable/**").hasRole("TIMETABLE_MANAGER")
 				.requestMatchers("/api/lecturer/**").hasRole("LECTURER")
 				.requestMatchers("/api/student/**").hasRole("STUDENT")
 				.anyRequest().authenticated());

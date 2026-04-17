@@ -39,6 +39,11 @@ public class ConsoleMailService implements MailService {
 
 	@Override
 	public void sendOtp(String email, String otp) {
+		log.info("System generated OTP for {}: {}", email, otp);
+		System.out.println("\n==========================================");
+		System.out.println("📢 OTP FOR " + email + ": " + otp);
+		System.out.println("==========================================\n");
+
 		if (!mailEnabled || mailSender == null) {
 			log.info("Mail disabled. OTP {} for {}", otp, email);
 			return;
@@ -54,13 +59,17 @@ public class ConsoleMailService implements MailService {
 			mailSender.send(message);
 			log.info("OTP email sent to {}", email);
 		} catch (MessagingException | MailException ex) {
-			log.error("Failed to send OTP email to {}", email, ex);
-			throw new IllegalStateException("Unable to send OTP email right now. Please try again.");
+			log.warn("Failed to send OTP email to {} (Printed to console instead). Error: {}", email, ex.getMessage());
 		}
 	}
 
 	@Override
 	public void sendStaffOnboardingEmail(String email, String name, String userId, String role, String otp) {
+		log.info("System generated Staff Onboarding OTP for {}: {}", email, otp);
+		System.out.println("\n==========================================");
+		System.out.println("📢 STAFF OTP FOR " + email + ": " + otp);
+		System.out.println("==========================================\n");
+
 		if (!mailEnabled || mailSender == null) {
 			log.info("Mail disabled. Staff onboarding for {} ({}) with userId {} and OTP {}", email, role, userId, otp);
 			return;
@@ -76,8 +85,7 @@ public class ConsoleMailService implements MailService {
 			mailSender.send(message);
 			log.info("Staff onboarding email sent to {}", email);
 		} catch (MessagingException | MailException ex) {
-			log.error("Failed to send staff onboarding email to {}", email, ex);
-			throw new IllegalStateException("Unable to send onboarding email right now. Please try again.");
+			log.warn("Failed to send staff onboarding email to {} (Printed to console instead). Error: {}", email, ex.getMessage());
 		}
 	}
 

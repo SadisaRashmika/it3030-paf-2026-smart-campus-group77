@@ -4,6 +4,12 @@ import AdminUserManagementPanel from "./AdminUserManagementPanel";
 import AdminUsersPanel from "./AdminUsersPanel";
 import RecoveryRequestsPanel from "./RecoveryRequestsPanel";
 import PortalHomeContent from "./PortalHomeContent";
+import ResourcePanel from "../../member2-bookings-management/components/ResourcePanel";
+import AdminBookingDashboard from "../../member2-bookings-management/components/AdminBookingDashboard";
+import LecturerDashboard from "../../components/dashboard/LecturerDashboard";
+import StudentDashboard from "../../components/dashboard/StudentDashboard";
+import TimetableManagerDashboard from "../../components/dashboard/TimetableManagerDashboard";
+import TimetableWeeklyView from "../../components/dashboard/TimetableWeeklyView";
 
 export default function PortalTabContent({
 	tab,
@@ -24,19 +30,37 @@ export default function PortalTabContent({
 	onRejectRecoveryRequest
 }) {
 	if (tab === "home") {
+		if (role === "lecturer") return <LecturerDashboard user={user} />;
+		if (role === "student") return <StudentDashboard user={user} />;
+		if (role === "timetable_manager") return <TimetableManagerDashboard user={user} />;
 		return <PortalHomeContent user={user} onLogin={onLogin} onNavigate={onNavigate} />;
 	}
 
 	if (!user) {
 		return (
-			<section className="rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
-				<h2 className="text-2xl font-bold text-slate-900">Login Required</h2>
-				<p className="mt-2 text-sm text-slate-600">Please login to access this area.</p>
+			<section className="rounded-2xl border border-amber-300 bg-amber-50 p-8 text-center sm:p-12 sm:m-8">
+				<div className="mx-auto h-16 w-16 bg-amber-100 rounded-2xl flex items-center justify-center text-amber-600 mb-4">
+					<CalendarClock size={32} />
+				</div>
+				<h2 className="text-2xl font-black text-amber-900 tracking-tighter uppercase">Authorized Access Only</h2>
+				<p className="mt-2 text-sm text-amber-800 font-medium">Please sign in to access your dashboard and campus resources.</p>
+				<button 
+					onClick={onLogin}
+					className="mt-6 rounded-xl bg-amber-900 px-6 py-2.5 text-sm font-bold text-white hover:bg-black transition-all"
+				>
+					Sign In Now
+				</button>
 			</section>
 		);
 	}
 
 	const role = user.role?.replace("ROLE_", "").toLowerCase();
+	const isManager = role === "timetable_manager";
+
+	// Special Handling for Admin and Manager Dashboards
+	if (tab === "timetable" && isManager) {
+		return <TimetableWeeklyView user={user} />;
+	}
 
 	if (role === "admin" && tab === "timetable") {
 		return (
@@ -76,31 +100,12 @@ export default function PortalTabContent({
 	}
 
 	if (tab === "resource") {
-		return (
-			<RolePanel
-				icon={BookOpenText}
-				title="Resource Management"
-				body={
-					role === "lecturer"
-						? "Upload and update module content, notes, and announcements for your students."
-						: "Browse course material, lecture notes, and subject-specific resources."
-				}
-			/>
-		);
+		return <ResourcePanel user={user} />;
 	}
 
 	if (tab === "timetable") {
-		return (
-			<RolePanel
-				icon={CalendarClock}
-				title="Timetable"
-				body={
-					role === "lecturer"
-						? "View your teaching sessions and manage your weekly schedule."
-						: "Track classes and upcoming session changes in one place."
-				}
-			/>
-		);
+		// Students and Lecturers get the read-only weekly timetable
+		return <TimetableWeeklyView user={user} readOnly={role === "student"} />;
 	}
 
 	if (tab === "jobs") {
