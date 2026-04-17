@@ -26,7 +26,7 @@ export default function AdminUserManagement() {
 			<ul>
 				{users.map((user) => (
 					<li key={user.id}>
-						<strong>{user.email}</strong> - {user.role} - {user.status}
+						<strong>{user.name || user.userId}</strong> - {user.role} - {user.status}
 					</li>
 				))}
 			</ul>

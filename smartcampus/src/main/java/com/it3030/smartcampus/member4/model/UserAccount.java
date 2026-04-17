@@ -22,6 +22,9 @@ public class UserAccount {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 
+	@Column(nullable = false)
+	private String name;
+
 	@Column(name = "user_id", nullable = false, unique = true, length = 20)
 	private String userId;
 
@@ -53,6 +56,15 @@ public class UserAccount {
 	@Column(name = "otp_expires_at")
 	private Instant otpExpiresAt;
 
+	@Column(name = "temporary_password_hash")
+	private String temporaryPasswordHash;
+
+	@Column(name = "temp_password_expires_at")
+	private Instant tempPasswordExpiresAt;
+
+	@Column(name = "profile_picture_data_url", columnDefinition = "TEXT")
+	private String profilePictureDataUrl;
+
 	@CreationTimestamp
 	@Column(name = "created_at", updatable = false)
 	private Instant createdAt;
@@ -64,7 +76,8 @@ public class UserAccount {
 	protected UserAccount() {
 	}
 
-	private UserAccount(String userId, String email, Role role, String passwordHash, boolean active) {
+	private UserAccount(String name, String userId, String email, Role role, String passwordHash, boolean active) {
+		this.name = name;
 		this.userId = userId;
 		this.email = email;
 		this.role = role;
@@ -76,11 +89,11 @@ public class UserAccount {
 	}
 
 	public static UserAccount candidate(String userId, String email, Role role) {
-		return new UserAccount(normalizeUserId(userId), normalize(email), role, "PENDING", false);
+		return new UserAccount(defaultName(userId, email), normalizeUserId(userId), normalize(email), role, "PENDING", false);
 	}
 
 	public static UserAccount activeUser(String userId, String email, String passwordHash, Role role) {
-		return new UserAccount(normalizeUserId(userId), normalize(email), role, passwordHash, true);
+		return new UserAccount(defaultName(userId, email), normalizeUserId(userId), normalize(email), role, passwordHash, true);
 	}
 
 	public static UserAccount adminSeed(String userId, String email, String passwordHash) {
@@ -103,6 +116,34 @@ public class UserAccount {
 		return userId == null ? null : userId.trim().toUpperCase();
 	}
 
+	private static String defaultName(String userId, String email) {
+		String source = email != null && email.contains("@") ? email.substring(0, email.indexOf('@')) : userId;
+		if (source == null || source.isBlank()) {
+			return "Unknown User";
+		}
+
+		String candidate = source.replaceAll("[._-]+", " ").trim();
+		if (candidate.isBlank()) {
+			return normalizeUserId(userId);
+		}
+
+		String[] parts = candidate.split("\\s+");
+		StringBuilder builder = new StringBuilder();
+		for (String part : parts) {
+			if (part.isBlank()) {
+				continue;
+			}
+			if (!builder.isEmpty()) {
+				builder.append(' ');
+			}
+			builder.append(Character.toUpperCase(part.charAt(0)));
+			if (part.length() > 1) {
+				builder.append(part.substring(1).toLowerCase());
+			}
+		}
+		return builder.isEmpty() ? normalizeUserId(userId) : builder.toString();
+	}
+
 	public void requestOtp(String otp, Instant expiresAt) {
 		this.currentOtp = otp == null ? null : otp.trim();
 		this.otpExpiresAt = expiresAt;
@@ -122,6 +163,18 @@ public class UserAccount {
 		this.active = true;
 		this.currentOtp = null;
 		this.otpExpiresAt = null;
+		this.temporaryPasswordHash = null;
+		this.tempPasswordExpiresAt = null;
+		this.failedOtpAttempts = 0;
+		this.suspicious = false;
+	}
+
+	public void setTemporaryPassword(String temporaryPasswordHash, Instant expiresAt) {
+		this.temporaryPasswordHash = temporaryPasswordHash;
+		this.active = true;
+		this.currentOtp = null;
+		this.otpExpiresAt = null;
+		this.tempPasswordExpiresAt = expiresAt;
 		this.failedOtpAttempts = 0;
 		this.suspicious = false;
 	}
@@ -130,12 +183,21 @@ public class UserAccount {
 		this.suspicious = true;
 	}
 
+	public void clearSuspicious() {
+		this.suspicious = false;
+		this.failedOtpAttempts = 0;
+	}
+
 	public void recordFailedOtp() {
 		this.failedOtpAttempts++;
 	}
 
 	public void deactivate() {
 		this.active = false;
+	}
+
+	public void activate() {
+		this.active = true;
 	}
 
 	public void setRole(Role role) {
@@ -147,8 +209,16 @@ public class UserAccount {
 		this.otpExpiresAt = null;
 	}
 
+	public boolean temporaryPasswordExpired(Instant now) {
+		return tempPasswordExpiresAt != null && now.isAfter(tempPasswordExpiresAt);
+	}
+
 	public Integer getId() {
 		return id;
+	}
+
+	public String getName() {
+		return name;
 	}
 
 	public String getUserId() {
@@ -171,6 +241,10 @@ public class UserAccount {
 		this.passwordHash = passwordHash;
 	}
 
+	public void setName(String name) {
+		this.name = name;
+	}
+
 	public boolean isActive() {
 		return active;
 	}
@@ -189,6 +263,22 @@ public class UserAccount {
 
 	public Instant getOtpExpiresAt() {
 		return otpExpiresAt;
+	}
+
+	public Instant getTempPasswordExpiresAt() {
+		return tempPasswordExpiresAt;
+	}
+
+	public String getProfilePictureDataUrl() {
+		return profilePictureDataUrl;
+	}
+
+	public void setProfilePictureDataUrl(String profilePictureDataUrl) {
+		this.profilePictureDataUrl = profilePictureDataUrl;
+	}
+
+	public String getTemporaryPasswordHash() {
+		return temporaryPasswordHash;
 	}
 
 	public Instant getCreatedAt() {

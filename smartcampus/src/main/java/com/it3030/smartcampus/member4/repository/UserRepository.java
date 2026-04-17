@@ -18,5 +18,7 @@ public interface UserRepository extends JpaRepository<UserAccount, Integer> {
 
 	Optional<UserAccount> findByUserIdAndEmail(String userId, String email);
 
+	Optional<UserAccount> findTopByUserIdStartingWithOrderByUserIdDesc(String prefix);
+
 	List<UserAccount> findBySuspiciousTrueOrderByEmailAsc();
 }

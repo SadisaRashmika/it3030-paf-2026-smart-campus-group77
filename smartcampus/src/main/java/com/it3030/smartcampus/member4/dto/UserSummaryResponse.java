@@ -4,12 +4,15 @@ import com.it3030.smartcampus.member4.model.Role;
 
 public record UserSummaryResponse(
 		Integer id,
+		String name,
 		String userId,
 		String email,
+		String profilePictureDataUrl,
 		Role role,
 		boolean active,
 		boolean suspicious,
 		int otpRequestCount,
 		int failedOtpAttempts,
+		String suspiciousReason,
 		String status) {
 }

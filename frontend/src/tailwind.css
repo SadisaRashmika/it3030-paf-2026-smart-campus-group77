@@ -1,0 +1,23 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply m-0 min-h-screen font-body text-slate-900;
+    background:
+      radial-gradient(circle at 88% 12%, rgba(245, 158, 11, 0.22) 0%, rgba(245, 158, 11, 0) 34%),
+      radial-gradient(circle at 0% 100%, rgba(250, 204, 21, 0.2) 0%, rgba(250, 204, 21, 0) 30%),
+      linear-gradient(160deg, #fffbeb 0%, #fef3c7 44%, #fffbeb 100%);
+  }
+
+  #root {
+    @apply min-h-screen;
+  }
+}
+
+@layer utilities {
+  .glass {
+    @apply bg-white/90 backdrop-blur-[14px];
+  }
+}

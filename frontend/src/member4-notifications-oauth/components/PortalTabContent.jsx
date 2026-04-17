@@ -1,5 +1,8 @@
 import { CalendarClock, Briefcase, BookOpenText, MessageSquareText } from "lucide-react";
+import AdminRoleManagementPanel from "./AdminRoleManagementPanel";
+import AdminUserManagementPanel from "./AdminUserManagementPanel";
 import AdminUsersPanel from "./AdminUsersPanel";
+import RecoveryRequestsPanel from "./RecoveryRequestsPanel";
 import PortalHomeContent from "./PortalHomeContent";
 
 export default function PortalTabContent({
@@ -9,8 +12,16 @@ export default function PortalTabContent({
 	onNavigate,
 	adminUsers,
 	suspiciousUsers,
+	lecturerAssignments,
+	recoveryRequests,
 	loadingAdminData,
-	reloadAdminData
+	reloadAdminData,
+	onAssignLecturerWork,
+	onCreateStaffLogin,
+	onDeleteUser,
+	onDeactivateUser,
+	onApproveRecoveryRequest,
+	onRejectRecoveryRequest
 }) {
 	if (tab === "home") {
 		return <PortalHomeContent user={user} onLogin={onLogin} onNavigate={onNavigate} />;
@@ -18,22 +29,48 @@ export default function PortalTabContent({
 
 	if (!user) {
 		return (
-			<section className="rounded-2xl border border-amber-300 bg-amber-50 p-8">
-				<h2 className="text-2xl font-bold text-amber-900">Login Required</h2>
-				<p className="mt-2 text-sm text-amber-800">Please login to access this area.</p>
+			<section className="rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
+				<h2 className="text-2xl font-bold text-slate-900">Login Required</h2>
+				<p className="mt-2 text-sm text-slate-600">Please login to access this area.</p>
 			</section>
 		);
 	}
 
 	const role = user.role?.replace("ROLE_", "").toLowerCase();
 
-	if (role === "admin" && tab !== "home") {
+	if (role === "admin" && tab === "timetable") {
 		return (
 			<AdminUsersPanel
 				users={adminUsers}
 				suspiciousUsers={suspiciousUsers}
 				loading={loadingAdminData}
-				onReload={reloadAdminData}
+				onDeleteUser={onDeleteUser}
+				onDeactivateUser={onDeactivateUser}
+			/>
+		);
+	}
+
+	if (role === "admin" && tab === "resource") {
+		return (
+			<AdminUserManagementPanel
+				users={adminUsers}
+				assignments={lecturerAssignments}
+				onAssignLecturerWork={onAssignLecturerWork}
+			/>
+		);
+	}
+
+	if (role === "admin" && tab === "jobs") {
+		return <AdminRoleManagementPanel onCreateStaffLogin={onCreateStaffLogin} />;
+	}
+
+	if (role === "admin" && tab === "ticket") {
+		return (
+			<RecoveryRequestsPanel
+				requests={recoveryRequests}
+				loading={loadingAdminData}
+				onApproveRecoveryRequest={onApproveRecoveryRequest}
+				onRejectRecoveryRequest={onRejectRecoveryRequest}
 			/>
 		);
 	}
