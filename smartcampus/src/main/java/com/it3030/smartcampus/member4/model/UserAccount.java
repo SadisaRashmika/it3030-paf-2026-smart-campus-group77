@@ -56,6 +56,12 @@ public class UserAccount {
 	@Column(name = "otp_expires_at")
 	private Instant otpExpiresAt;
 
+	@Column(name = "temporary_password_hash")
+	private String temporaryPasswordHash;
+
+	@Column(name = "temp_password_expires_at")
+	private Instant tempPasswordExpiresAt;
+
 	@CreationTimestamp
 	@Column(name = "created_at", updatable = false)
 	private Instant createdAt;
@@ -154,6 +160,18 @@ public class UserAccount {
 		this.active = true;
 		this.currentOtp = null;
 		this.otpExpiresAt = null;
+		this.temporaryPasswordHash = null;
+		this.tempPasswordExpiresAt = null;
+		this.failedOtpAttempts = 0;
+		this.suspicious = false;
+	}
+
+	public void setTemporaryPassword(String temporaryPasswordHash, Instant expiresAt) {
+		this.temporaryPasswordHash = temporaryPasswordHash;
+		this.active = true;
+		this.currentOtp = null;
+		this.otpExpiresAt = null;
+		this.tempPasswordExpiresAt = expiresAt;
 		this.failedOtpAttempts = 0;
 		this.suspicious = false;
 	}
@@ -186,6 +204,10 @@ public class UserAccount {
 	public void clearOtp() {
 		this.currentOtp = null;
 		this.otpExpiresAt = null;
+	}
+
+	public boolean temporaryPasswordExpired(Instant now) {
+		return tempPasswordExpiresAt != null && now.isAfter(tempPasswordExpiresAt);
 	}
 
 	public Integer getId() {
@@ -238,6 +260,14 @@ public class UserAccount {
 
 	public Instant getOtpExpiresAt() {
 		return otpExpiresAt;
+	}
+
+	public Instant getTempPasswordExpiresAt() {
+		return tempPasswordExpiresAt;
+	}
+
+	public String getTemporaryPasswordHash() {
+		return temporaryPasswordHash;
 	}
 
 	public Instant getCreatedAt() {

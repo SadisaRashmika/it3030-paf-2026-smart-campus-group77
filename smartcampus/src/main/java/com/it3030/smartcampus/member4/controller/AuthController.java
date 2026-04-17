@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.Instant;
+
 import com.it3030.smartcampus.member4.dto.AuthUserResponse;
 import com.it3030.smartcampus.member4.dto.ForgotPasswordRequest;
 import com.it3030.smartcampus.member4.dto.ForgotPasswordResetRequest;
@@ -106,10 +108,7 @@ public class AuthController {
 		String principal = resolvePrincipal(authentication);
 		UserAccount user = findAuthenticatedUser(principal)
 				.orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Authenticated user not found"));
-
-		if (!user.isActive()) {
-			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Account is deactivated. Please activate your account.");
-		}
+		ensureLoginAllowed(user);
 
 		String email = user.getEmail();
 		String userId = user.getUserId();
@@ -159,9 +158,7 @@ public class AuthController {
 		if (userId != null) {
 			return userRepository.findByUserId(userId.toUpperCase())
 					.map(u -> {
-						if (!u.isActive()) {
-							throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Account is deactivated. Please activate your account.");
-						}
+						ensureLoginAllowed(u);
 						return u.getEmail();
 					})
 					.orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid user ID or password"));
@@ -169,9 +166,7 @@ public class AuthController {
 
 		if (email != null) {
 			userRepository.findByEmail(email.toLowerCase()).ifPresent(existing -> {
-				if (!existing.isActive()) {
-					throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Account is deactivated. Please activate your account.");
-				}
+				ensureLoginAllowed(existing);
 			});
 			return email.toLowerCase();
 		}
@@ -186,5 +181,15 @@ public class AuthController {
 
 		String trimmed = value.trim();
 		return trimmed.isEmpty() ? null : trimmed;
+	}
+
+	private void ensureLoginAllowed(UserAccount user) {
+		if (!user.isActive()) {
+			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Account is deactivated. Please activate your account.");
+		}
+
+		if (user.temporaryPasswordExpired(Instant.now())) {
+			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Temporary password expired. Please request a new recovery request.");
+		}
 	}
 }

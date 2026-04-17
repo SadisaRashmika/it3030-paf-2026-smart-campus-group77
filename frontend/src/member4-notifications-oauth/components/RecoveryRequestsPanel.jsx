@@ -39,7 +39,11 @@ export default function RecoveryRequestsPanel({ requests = [], loading, onApprov
 		setBusyRequestId(request.id);
 		try {
 			await action(request.id);
-			setActionMessage(`${approve ? "Approved" : "Rejected"} recovery request #${request.id}.`);
+			setActionMessage(
+				approve
+					? `Approved recovery request #${request.id}. A temporary password was emailed to the contact address and expires in 1 day.`
+					: `Rejected recovery request #${request.id}. A rejection email was sent to the contact address.`
+			);
 		} catch (error) {
 			setActionError(error.message || "Unable to process the request.");
 		} finally {

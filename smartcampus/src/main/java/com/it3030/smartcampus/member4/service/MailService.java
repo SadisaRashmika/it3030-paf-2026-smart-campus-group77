@@ -8,5 +8,7 @@ public interface MailService {
 
 	void sendNotificationEmail(String email, String subject, String title, String message);
 
-	void sendRecoveryRequestDecisionEmail(String email, String userId, String studentEmail, boolean approved);
+	void sendRecoveryRequestApprovalEmail(String email, String userId, String studentEmail, String temporaryPassword, java.time.Instant expiresAt);
+
+	void sendRecoveryRequestRejectionEmail(String email, String userId, String studentEmail);
 }

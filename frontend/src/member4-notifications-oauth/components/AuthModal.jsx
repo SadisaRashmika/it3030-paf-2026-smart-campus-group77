@@ -386,7 +386,7 @@ function LoginForm({ forms, updateForm, loading, onLogin, onGoogleLogin, onNeedH
 			<button
 				type="button"
 				onClick={onNeedHelp}
-				className="w-full rounded-2xl border border-dashed border-slate-300 px-4 py-2.5 text-sm font-semibold text-slate-600 transition hover:border-slate-400 hover:bg-slate-50"
+				className="mx-auto block w-fit text-sm font-semibold text-blue-600 underline underline-offset-4 transition hover:text-blue-700"
 			>
 				Need help?
 			</button>

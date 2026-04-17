@@ -22,6 +22,7 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 // import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.context.SecurityContextHolderFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -132,7 +133,11 @@ public class SmartCampusSecurityConfig {
 
 	private UserDetails toUserDetails(UserAccount user, PasswordEncoder passwordEncoder) {
 		String passwordHash = user.getPasswordHash();
-		if (passwordHash == null || passwordHash.isBlank()) {
+		// Check if temporary password exists and hasn't expired
+		if (user.getTemporaryPasswordHash() != null && !user.temporaryPasswordExpired(java.time.Instant.now())) {
+			// Use temporary password for authentication
+			passwordHash = user.getTemporaryPasswordHash();
+		} else if (passwordHash == null || passwordHash.isBlank()) {
 			passwordHash = passwordEncoder.encode("inactive-account");
 		}
 		return User.withUsername(user.getEmail())

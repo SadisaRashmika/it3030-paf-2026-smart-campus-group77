@@ -1,9 +1,17 @@
 package com.it3030.smartcampus.member4.service;
 
 import java.util.List;
+import java.time.Duration;
+import java.time.Instant;
+import java.security.SecureRandom;
+import java.util.Optional;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.it3030.smartcampus.member4.dto.RecoveryRequestResponse;
 import com.it3030.smartcampus.member4.dto.RecoveryRequestSubmissionRequest;
@@ -15,16 +23,21 @@ import com.it3030.smartcampus.member4.repository.UserRepository;
 
 @Service
 public class RecoveryRequestService {
+	private static final Logger log = LoggerFactory.getLogger(RecoveryRequestService.class);
 
 	private final RecoveryRequestRepository recoveryRequestRepository;
 	private final UserRepository userRepository;
+	private final PasswordEncoder passwordEncoder;
 	private final MailService mailService;
+	private static final SecureRandom SECURE_RANDOM = new SecureRandom();
 
 	public RecoveryRequestService(RecoveryRequestRepository recoveryRequestRepository,
 								 UserRepository userRepository,
+								 PasswordEncoder passwordEncoder,
 								 MailService mailService) {
 		this.recoveryRequestRepository = recoveryRequestRepository;
 		this.userRepository = userRepository;
+		this.passwordEncoder = passwordEncoder;
 		this.mailService = mailService;
 	}
 
@@ -53,23 +66,28 @@ public class RecoveryRequestService {
 	@Transactional
 	public RecoveryRequestResponse approve(Long requestId) {
 		RecoveryRequest recoveryRequest = getRequest(requestId);
-		UserAccount user = userRepository.findByUserIdAndEmail(recoveryRequest.getUserId(), recoveryRequest.getStudentEmail())
-				.orElse(null);
+		UserAccount user = resolveRecoveryUser(recoveryRequest)
+				.orElseThrow(() -> new IllegalArgumentException(
+						"Matching user account not found for this recovery request (userId="
+								+ recoveryRequest.getUserId()
+								+ ", studentEmail="
+								+ recoveryRequest.getStudentEmail()
+								+ ")"));
 
-		if (user != null) {
-			user.activate();
-			user.clearSuspicious();
-			userRepository.save(user);
-		}
+		String temporaryPassword = generateTemporaryPassword();
+		Instant expiresAt = Instant.now().plus(Duration.ofDays(1));
+		user.setTemporaryPassword(passwordEncoder.encode(temporaryPassword), expiresAt);
+		userRepository.save(user);
 
 		recoveryRequest.approve();
 		recoveryRequestRepository.save(recoveryRequest);
 
-		mailService.sendRecoveryRequestDecisionEmail(
+		mailService.sendRecoveryRequestApprovalEmail(
 				recoveryRequest.getContactEmail(),
 				recoveryRequest.getUserId(),
 				recoveryRequest.getStudentEmail(),
-				true);
+				temporaryPassword,
+				expiresAt);
 
 		return toResponse(recoveryRequest);
 	}
@@ -80,11 +98,10 @@ public class RecoveryRequestService {
 		recoveryRequest.reject();
 		recoveryRequestRepository.save(recoveryRequest);
 
-		mailService.sendRecoveryRequestDecisionEmail(
+		mailService.sendRecoveryRequestRejectionEmail(
 				recoveryRequest.getContactEmail(),
 				recoveryRequest.getUserId(),
-				recoveryRequest.getStudentEmail(),
-				false);
+				recoveryRequest.getStudentEmail());
 
 		return toResponse(recoveryRequest);
 	}
@@ -95,7 +112,7 @@ public class RecoveryRequestService {
 	}
 
 	private RecoveryRequestResponse toResponse(RecoveryRequest recoveryRequest) {
-		UserAccount user = userRepository.findByUserIdAndEmail(recoveryRequest.getUserId(), recoveryRequest.getStudentEmail())
+		UserAccount user = resolveRecoveryUser(recoveryRequest)
 				.orElse(null);
 
 		return new RecoveryRequestResponse(
@@ -123,5 +140,32 @@ public class RecoveryRequestService {
 
 	private String normalizeUserId(String value) {
 		return UserAccount.normalizeUserId(value);
+	}
+
+	private Optional<UserAccount> resolveRecoveryUser(RecoveryRequest recoveryRequest) {
+		String requestUserId = normalizeUserId(recoveryRequest.getUserId());
+		String requestEmail = normalizeEmail(recoveryRequest.getStudentEmail());
+
+		Optional<UserAccount> byUserId = userRepository.findByUserId(requestUserId);
+		if (byUserId.isPresent()) {
+			return byUserId;
+		}
+
+		Optional<UserAccount> byEmail = userRepository.findByEmail(requestEmail);
+		if (byEmail.isPresent()) {
+			log.warn("Recovery request userId {} did not match a user. Falling back to email {}", requestUserId, requestEmail);
+			return byEmail;
+		}
+
+		return Optional.empty();
+	}
+
+	private String generateTemporaryPassword() {
+		final String alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789";
+		StringBuilder builder = new StringBuilder(10);
+		for (int i = 0; i < 10; i++) {
+			builder.append(alphabet.charAt(SECURE_RANDOM.nextInt(alphabet.length())));
+		}
+		return builder.toString();
 	}
 }

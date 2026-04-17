@@ -18,7 +18,20 @@ export async function requestJson(path, options = {}) {
 	});
 
 	if (!response.ok) {
-		const message = await response.text();
+		const raw = await response.text();
+		let message = raw;
+
+		if (raw) {
+			try {
+				const parsed = JSON.parse(raw);
+				if (parsed && typeof parsed.message === "string" && parsed.message.trim()) {
+					message = parsed.message;
+				}
+			} catch {
+				// Keep original raw text when response is not JSON.
+			}
+		}
+
 		throw new Error(message || `Request failed with ${response.status}`);
 	}
 
