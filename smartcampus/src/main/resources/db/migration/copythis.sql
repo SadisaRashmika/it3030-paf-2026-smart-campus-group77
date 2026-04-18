@@ -26,9 +26,12 @@ CREATE TABLE users (
     is_active BOOLEAN DEFAULT FALSE,
     otp VARCHAR(6),
     otp_expires_at TIMESTAMP,
+    temporary_password_hash VARCHAR(255),
+    temp_password_expires_at TIMESTAMP,
     suspicious BOOLEAN DEFAULT FALSE,
     otp_request_count INTEGER DEFAULT 0,
     failed_otp_attempts INTEGER DEFAULT 0,
+    profile_picture_data_url TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -136,7 +139,8 @@ INSERT INTO roles (name) VALUES
 ('ADMIN'),
 ('LECTURER'),
 ('STUDENT'),
-('TIMETABLE_MANAGER');
+('TIMETABLE_MANAGER'),
+('RESOURCE_ADMINISTATOR');
 
 -- Seed requested admin user
 -- Password is plain 12345 as requested
