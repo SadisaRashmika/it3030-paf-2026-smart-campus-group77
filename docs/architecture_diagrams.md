@@ -1,5 +1,7 @@
 # Architecture Diagrams
 
+> Working draft note: This file is currently Member-4-first and will be expanded with Member 1/2/3 architecture when their modules are merged.
+
 ## Member 4 Architecture (Completed)
 
 This section captures the architecture implemented for Member 4 features:
@@ -84,9 +86,33 @@ flowchart TD
 - Admin endpoints: user management, recovery approvals/rejections
 - OAuth2 login configured with role-mapped access in security config
 
+## 5) Quality and CI Notes (Member 4)
+
+- Frontend CI now runs tests before build (`npm run test:run` then `npm run build`).
+- Member 4 controller tests currently include:
+	- `AuthControllerTest`
+	- `NotificationControllerTest`
+	- `RecoveryRequestControllerTest`
+- Member 4 frontend tests currently include:
+	- `authService.test.js`
+	- `AdminUsersPanel.test.jsx`
+- Stale/unrouted Member 4 duplicate files were removed to keep the page-first flow clean.
+
 ---
 
 ## Remaining Team Architecture Sections
 
 Member 1, Member 2, and Member 3 architecture diagrams can be appended after this section.
+
+## Member 1 Architecture (Pending)
+
+To be completed by Member 1.
+
+## Member 2 Architecture (Pending)
+
+To be completed by Member 2.
+
+## Member 3 Architecture (Pending)
+
+To be completed by Member 3.
 

@@ -67,6 +67,13 @@ Implemented the full Member 4 module scope around authentication experience, not
 - Standardized Member 4 API wrapper to use the active session-aware API client
 - Added frontend unit test coverage for suspicious-login request validation and query encoding
 
+6. Frontend structure cleanup
+- Removed stale/unrouted Member 4 page files and duplicate legacy component files
+- Kept page-first flow in main `src/pages` routing path and removed obsolete dead-file paths
+
+7. Profile picture validation hardening
+- Added backend server-side validation for profile-picture data URL format/type and size limit (2MB)
+
 ### Member 4 Endpoint Count Evidence
 
 Member 4 implemented more than four endpoints and used multiple HTTP methods:
@@ -90,8 +97,15 @@ Member 4 implemented more than four endpoints and used multiple HTTP methods:
 
 - Frontend test file:
 	- `frontend/src/services/authService.test.js`
-- Backend test file:
+	- `frontend/src/member4-notifications-oauth/components/AdminUsersPanel.test.jsx`
+- Backend test files:
 	- `smartcampus/src/test/java/com/it3030/smartcampus/member4/controller/AuthControllerTest.java`
+	- `smartcampus/src/test/java/com/it3030/smartcampus/member4/controller/NotificationControllerTest.java`
+	- `smartcampus/src/test/java/com/it3030/smartcampus/member4/controller/RecoveryRequestControllerTest.java`
+
+Current observed run summary (local):
+- Frontend: 2 files, 4 tests passing
+- Backend: 10 tests passing
 
 ### Command/Execution Clarification Added
 
@@ -99,6 +113,12 @@ Member 4 implemented more than four endpoints and used multiple HTTP methods:
 	- backend folder: `npm test`
 	- repository root: `npm run backend:test` or `smartcampus\mvnw.cmd -f smartcampus\pom.xml test`
 - Clarified why plain `./mvnw.cmd test` fails at repository root (wrapper is under `smartcampus/`).
+
+### CI Update Added
+
+- Frontend CI workflow now runs tests before build:
+	- `npm run test:run`
+	- `npm run build`
 
 ---
 

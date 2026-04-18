@@ -1,7 +1,7 @@
 import { AlertTriangle, HelpCircle, Search, Trash2, Users } from "lucide-react";
 import { useMemo, useState } from "react";
 
-const ACCOUNT_FILTERS = ["all", "student", "lecturer"];
+const ACCOUNT_FILTERS = ["all", "active", "student", "lecturer"];
 
 function getInitials(value) {
 	return String(value || "")
@@ -47,6 +47,20 @@ export default function AdminUsersPanel({
 
 		if (accountFilter === "all") {
 			return users.filter((user) => {
+				if (!normalizedSearch) {
+					return true;
+				}
+				const haystack = `${user.name || ""} ${user.userId || ""} ${user.email || ""}`.toLowerCase();
+				return haystack.includes(normalizedSearch);
+			});
+		}
+
+		if (accountFilter === "active") {
+			return users.filter((user) => {
+				const isActive = user.active === true || String(user.status || "").toLowerCase() === "active";
+				if (!isActive) {
+					return false;
+				}
 				if (!normalizedSearch) {
 					return true;
 				}
@@ -159,7 +173,14 @@ export default function AdminUsersPanel({
 						<div className="inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-slate-50 p-1">
 							{ACCOUNT_FILTERS.map((filter) => {
 								const selected = accountFilter === filter;
-								const label = filter === "all" ? "All" : filter === "student" ? "Student" : "Lecturer";
+								const label =
+									filter === "all"
+										? "All"
+										: filter === "active"
+											? "Active"
+											: filter === "student"
+												? "Student"
+												: "Lecturer";
 								return (
 									<button
 										key={filter}
@@ -199,6 +220,7 @@ export default function AdminUsersPanel({
 											<UserAvatar user={user} />
 											<div>
 												<p className="font-bold text-slate-800">{user.name || user.userId} - {user.email}</p>
+												<p className="mt-1 text-slate-600">User ID: {user.userId || "N/A"}</p>
 												<p className="mt-1 text-slate-600">{user.role} | {user.status}</p>
 											</div>
 										</div>
@@ -250,6 +272,7 @@ export default function AdminUsersPanel({
 											<UserAvatar user={user} />
 											<div>
 												<p className="font-bold text-rose-800">{user.name || user.userId} - {user.email}</p>
+												<p className="mt-1 text-rose-700">User ID: {user.userId || "N/A"}</p>
 												<p className="mt-1 text-rose-700">OTP Requests: {user.otpRequestCount} | Failed OTP: {user.failedOtpAttempts}</p>
 												{user.suspiciousReason ? <p className="mt-1 font-semibold text-rose-800">Reason: {user.suspiciousReason}</p> : null}
 											</div>

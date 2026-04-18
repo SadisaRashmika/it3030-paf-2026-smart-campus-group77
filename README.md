@@ -142,7 +142,7 @@ GitHub Actions workflow: [\.github/workflows/ci.yml](.github/workflows/ci.yml)
 
 Jobs:
 - Backend test: `./smartcampus/mvnw -f smartcampus/pom.xml test`
-- Frontend build: `npm ci` + `npm run build` in `frontend`
+- Frontend test + build: `npm ci` + `npm run test:run` + `npm run build` in `frontend`
 
 ## Member 4 Functional Scope (Implemented)
 
@@ -167,14 +167,20 @@ Jobs:
 - Upload and persist profile picture (data URL)
 - Navbar avatar rendering with initials fallback
 - Admin activity list avatars with initials fallback
+- Server-side type/size validation for profile-picture uploads (base64 image data URL, 2MB max)
 
 ### Member 4 test coverage currently included
 - Frontend unit test: `frontend/src/services/authService.test.js`
-- Backend unit test: `smartcampus/src/test/java/com/it3030/smartcampus/member4/controller/AuthControllerTest.java`
+- Frontend component test: `frontend/src/member4-notifications-oauth/components/AdminUsersPanel.test.jsx`
+- Backend controller tests:
+	- `smartcampus/src/test/java/com/it3030/smartcampus/member4/controller/AuthControllerTest.java`
+	- `smartcampus/src/test/java/com/it3030/smartcampus/member4/controller/NotificationControllerTest.java`
+	- `smartcampus/src/test/java/com/it3030/smartcampus/member4/controller/RecoveryRequestControllerTest.java`
 - Spring context test: `smartcampus/src/test/java/com/it3030/smartcampus/SmartcampusApplicationTests.java`
 
 ### Reliability fix included
 - Member 4 legacy API wrapper now uses the active session-aware frontend API client (`frontend/src/member4-notifications-oauth/services/member4Api.js`), avoiding mixed client behavior.
+- Stale/unrouted Member 4 duplicate files removed to keep page-first flow and avoid maintenance confusion.
 
 ## API Summary
 

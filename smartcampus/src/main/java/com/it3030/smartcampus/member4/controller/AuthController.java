@@ -20,6 +20,9 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.Instant;
+import java.util.Base64;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.it3030.smartcampus.member4.dto.AuthUserResponse;
 import com.it3030.smartcampus.member4.dto.ForgotPasswordRequest;
@@ -41,6 +44,10 @@ import jakarta.validation.Valid;
 @RequestMapping("/api/public/auth")
 @Validated
 public class AuthController {
+	private static final int MAX_PROFILE_PICTURE_BYTES = 2 * 1024 * 1024;
+	private static final Pattern PROFILE_PICTURE_DATA_URL_PATTERN = Pattern.compile(
+			"^data:image/(png|jpeg|webp|gif);base64,([A-Za-z0-9+/=]+)$",
+			Pattern.CASE_INSENSITIVE);
 
 	private final AuthenticationManager authenticationManager;
 	private final UserRepository userRepository;
@@ -110,7 +117,7 @@ public class AuthController {
 	public ResponseEntity<AuthUserResponse> updateProfilePicture(Authentication authentication,
 																	 @Valid @RequestBody ProfilePictureUpdateRequest request) {
 		UserAccount user = requireAuthenticatedUser(authentication);
-		user.setProfilePictureDataUrl(normalizeProfilePicture(request.profilePictureDataUrl()));
+		user.setProfilePictureDataUrl(validateAndNormalizeProfilePicture(request.profilePictureDataUrl()));
 		userRepository.save(user);
 		return ResponseEntity.ok(toAuthUserResponse(user));
 	}
@@ -220,7 +227,30 @@ public class AuthController {
 		}
 	}
 
-	private String normalizeProfilePicture(String value) {
-		return value == null ? null : value.trim();
+	private String validateAndNormalizeProfilePicture(String value) {
+		if (value == null) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Profile picture data is required");
+		}
+
+		String trimmed = value.trim();
+		Matcher matcher = PROFILE_PICTURE_DATA_URL_PATTERN.matcher(trimmed);
+		if (!matcher.matches()) {
+			throw new ResponseStatusException(
+					HttpStatus.BAD_REQUEST,
+					"Profile picture must be a base64 image data URL (png, jpeg, webp, gif)");
+		}
+
+		byte[] decoded;
+		try {
+			decoded = Base64.getDecoder().decode(matcher.group(2));
+		} catch (IllegalArgumentException ex) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Profile picture encoding is invalid");
+		}
+
+		if (decoded.length > MAX_PROFILE_PICTURE_BYTES) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Profile picture exceeds 2MB limit");
+		}
+
+		return trimmed;
 	}
 }
