@@ -6,6 +6,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.Base64;
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
@@ -27,8 +29,6 @@ import com.it3030.smartcampus.member4.service.NotificationService;
 import com.it3030.smartcampus.member4.service.PasswordResetService;
 
 import org.mockito.Mock;
-
-import java.util.List;
 
 @ExtendWith(MockitoExtension.class)
 class AuthControllerTest {
@@ -79,11 +79,64 @@ class AuthControllerTest {
 
         ResponseEntity<AuthUserResponse> response = controller.updateProfilePicture(
                 authentication,
-                new ProfilePictureUpdateRequest("  data:image/png;base64,abc123  "));
+                new ProfilePictureUpdateRequest("  data:image/png;base64,aGVsbG8=  "));
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals("data:image/png;base64,abc123", response.getBody().profilePictureDataUrl());
+        assertEquals("data:image/png;base64,aGVsbG8=", response.getBody().profilePictureDataUrl());
         verify(userRepository).save(user);
+    }
+
+    @Test
+    void updateProfilePictureRejectsUnsupportedImageType() {
+        AuthController controller = new AuthController(
+                authenticationManager,
+                userRepository,
+                passwordResetService,
+                notificationService);
+
+        UserAccount user = UserAccount.activeUser("STU001", "student@campus.edu", "hash", Role.STUDENT);
+        when(userRepository.findByEmail("student@campus.edu")).thenReturn(Optional.of(user));
+
+        Authentication authentication = new UsernamePasswordAuthenticationToken(
+                "student@campus.edu",
+                "ignored",
+                List.of(new SimpleGrantedAuthority("ROLE_STUDENT")));
+
+        ResponseStatusException error = assertThrows(
+                ResponseStatusException.class,
+                () -> controller.updateProfilePicture(
+                        authentication,
+                        new ProfilePictureUpdateRequest("data:text/plain;base64,aGVsbG8=")));
+
+        assertEquals(HttpStatus.BAD_REQUEST, error.getStatusCode());
+    }
+
+    @Test
+    void updateProfilePictureRejectsOversizedPayload() {
+        AuthController controller = new AuthController(
+                authenticationManager,
+                userRepository,
+                passwordResetService,
+                notificationService);
+
+        UserAccount user = UserAccount.activeUser("STU001", "student@campus.edu", "hash", Role.STUDENT);
+        when(userRepository.findByEmail("student@campus.edu")).thenReturn(Optional.of(user));
+
+        Authentication authentication = new UsernamePasswordAuthenticationToken(
+                "student@campus.edu",
+                "ignored",
+                List.of(new SimpleGrantedAuthority("ROLE_STUDENT")));
+
+        byte[] oversizedBytes = new byte[(2 * 1024 * 1024) + 1];
+        String oversizedBase64 = Base64.getEncoder().encodeToString(oversizedBytes);
+
+        ResponseStatusException error = assertThrows(
+                ResponseStatusException.class,
+                () -> controller.updateProfilePicture(
+                        authentication,
+                        new ProfilePictureUpdateRequest("data:image/png;base64," + oversizedBase64)));
+
+        assertEquals(HttpStatus.BAD_REQUEST, error.getStatusCode());
     }
 
     @Test

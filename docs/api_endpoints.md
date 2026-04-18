@@ -1,5 +1,7 @@
 # SmartCampus API Endpoints
 
+> Working draft note: This file is currently Member-4-first and will be extended as Member 1/2/3 modules are finalized.
+
 ## Member 4 Scope (Completed)
 
 This section documents the endpoints implemented and maintained under Member 4 responsibilities:
@@ -17,6 +19,11 @@ This section documents the endpoints implemented and maintained under Member 4 r
 | POST | /api/public/auth/logout | Authenticated | Invalidate session | 204 |
 | GET | /api/public/auth/me | Authenticated | Return current user profile and role | 200, 401 |
 | PATCH | /api/public/auth/profile-picture | Authenticated | Update current user profile picture (data URL) | 200, 400, 401 |
+
+Profile picture validation currently enforced server-side:
+- Allowed MIME types: `image/png`, `image/jpeg`, `image/webp`, `image/gif`
+- Format: base64 image data URL
+- Max size: 2MB
 
 Sample request (login):
 
@@ -94,4 +101,18 @@ Sample response (me):
 ## Notes for Remaining Team Sections
 
 Member 1, Member 2, and Member 3 endpoint documentation can be appended below this section using the same table format.
+
+Suggested placeholders for next updates:
+
+## Member 1 Scope (Pending)
+
+To be completed by Member 1.
+
+## Member 2 Scope (Pending)
+
+To be completed by Member 2.
+
+## Member 3 Scope (Pending)
+
+To be completed by Member 3.
 
