@@ -10,7 +10,7 @@ const tabs = [
 ];
 
 const TIMETABLE_MANAGER_TAB_KEYS = new Set(["TAB01", "TAB02", "TAB03"]);
-const ADMIN_TAB_KEYS = new Set(["TAB01", "TAB02", "TAB03", "TAB04"]);
+const ADMIN_TAB_KEYS = new Set(["TAB01", "TAB02", "TAB03", "TAB04", "TAB05"]);
 const LECTURER_TAB_KEYS = new Set(["TAB01", "TAB02", "TAB03", "TAB04"]);
 const RESOURCE_ADMINISTATOR_TAB_KEYS = new Set(["TAB01", "TAB02", "TAB03"]);
 
@@ -137,15 +137,18 @@ export default function TopNavHeader({
 
 		if (roleKey === "admin") {
 			if (tab.key === "TAB01") {
-				return "Activity";
+				return "Home";
 			}
 			if (tab.key === "TAB02") {
-				return "User Management";
+				return "Activity";
 			}
 			if (tab.key === "TAB03") {
-				return "Role Management";
+				return "User Management";
 			}
 			if (tab.key === "TAB04") {
+				return "Role Management";
+			}
+			if (tab.key === "TAB05") {
 				return "Recovery Tickets";
 			}
 			return tab.label;

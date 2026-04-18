@@ -246,7 +246,7 @@ export default function MainLayout() {
   }, [role, fetchAdminData]);
 
   useEffect(() => {
-    if (role === "admin" && activeTab === "TAB04") {
+    if (role === "admin" && activeTab === "TAB05") {
       fetchRecoveryRequests();
     }
   }, [role, activeTab, fetchRecoveryRequests]);

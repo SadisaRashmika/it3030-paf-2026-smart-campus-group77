@@ -39,6 +39,10 @@ export default function PortalTabContent({
 	const role = user.role?.replace("ROLE_", "").toLowerCase();
 
 	if (role === "admin" && tab === "TAB01") {
+		return <PortalHomeContent user={user} onLogin={onLogin} onNavigate={onNavigate} />;
+	}
+
+	if (role === "admin" && tab === "TAB02") {
 		return (
 			<AdminUsersPanel
 				users={adminUsers}
@@ -50,7 +54,7 @@ export default function PortalTabContent({
 		);
 	}
 
-	if (role === "admin" && tab === "TAB02") {
+	if (role === "admin" && tab === "TAB03") {
 		return (
 			<AdminUserManagementPanel
 				users={adminUsers}
@@ -60,11 +64,11 @@ export default function PortalTabContent({
 		);
 	}
 
-	if (role === "admin" && tab === "TAB03") {
+	if (role === "admin" && tab === "TAB04") {
 		return <AdminRoleManagementPanel onCreateStaffLogin={onCreateStaffLogin} />;
 	}
 
-	if (role === "admin" && tab === "TAB04") {
+	if (role === "admin" && tab === "TAB05") {
 		return (
 			<RecoveryRequestsPanel
 				requests={recoveryRequests}
