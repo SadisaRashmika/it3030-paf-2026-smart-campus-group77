@@ -148,8 +148,8 @@ INSERT INTO users (
 -- Insert 5 Lecturers
 INSERT INTO users (name, user_id, email, password, role, is_active, suspicious, otp_request_count, failed_otp_attempts)
 VALUES 
-('Dr. Prabash Perera', 'LEC001', 'xxxxxxxxx@gmail.com', 'hashed_password', 'LECTURER', FALSE, FALSE, 0, 0),  -- Not activated yet
-('Dr. Nuwan Thushara', 'LEC002', 'xxxxxxxxx@gmail.com', 'hashed_password', 'LECTURER', FALSE, FALSE, 0, 0),  -- Not activated yet
+('Dr. Prabash Perera', 'LEC001', 'kalindugeethanjana48@gmail.com', 'hashed_password', 'LECTURER', FALSE, FALSE, 0, 0),  -- Not activated yet
+('Dr. Nuwan Thushara', 'LEC002', 'dip30kalindugeethanjana@gmail.com', 'hashed_password', 'LECTURER', FALSE, FALSE, 0, 0),  -- Not activated yet
 ('Dr. Saman Karunarathne', 'LEC003', 'lecturer3@example.com', 'hashed_password', 'LECTURER', FALSE, FALSE, 0, 0),  -- Not activated yet
 ('Dr. Nimesh Silva', 'LEC004', 'lecturer4@example.com', 'hashed_password', 'LECTURER', FALSE, FALSE, 0, 0),  -- Not activated yet
 ('Dr. Amara Kumara', 'LEC005', 'lecturer5@example.com', 'hashed_password', 'LECTURER', FALSE, FALSE, 0, 0);  -- Not activated yet
@@ -157,8 +157,8 @@ VALUES
 -- Insert 5 Students
 INSERT INTO users (name, user_id, email, password, role, is_active, suspicious, otp_request_count, failed_otp_attempts)
 VALUES 
-('Kasun Kalhara', 'STU001', 'xxxxxxxx@gmail.com', 'hashed_password', 'STUDENT', FALSE, FALSE, 0, 0),  -- Not activated yet
-('Sumudu Perera', 'STU002', 'xxxxxxxx@gmail.com', 'hashed_password', 'STUDENT', FALSE, FALSE, 0, 0),  -- Not activated yet
+('Kasun Kalhara', 'STU001', 'kyronx99@gmail.com@gmail.com', 'hashed_password', 'STUDENT', FALSE, FALSE, 0, 0),  -- Not activated yet
+('Sumudu Perera', 'STU002', 'kyronxdesign@gmail.com', 'hashed_password', 'STUDENT', FALSE, FALSE, 0, 0),  -- Not activated yet
 ('Sithmi Amarasiri', 'STU003', 'student3@example.com', 'hashed_password', 'STUDENT', FALSE, FALSE, 0, 0),  -- Not activated yet
 ('Vindiya Perera', 'STU004', 'student4@example.com', 'hashed_password', 'STUDENT', FALSE, FALSE, 0, 0),  -- Not activated yet
 ('Senal Galagedara', 'STU005', 'student5@example.com', 'hashed_password', 'STUDENT', FALSE, FALSE, 0, 0);  -- Not activated yet
