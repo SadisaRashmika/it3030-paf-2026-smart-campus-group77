@@ -24,6 +24,14 @@ From the `smartcampus` folder:
 .\mvnw.cmd spring-boot:run
 ```
 
+From repository root (equivalent command):
+
+```powershell
+& ".\smartcampus\mvnw.cmd" -f ".\smartcampus\pom.xml" spring-boot:run
+```
+
+Note: `./mvnw.cmd ...` from repository root will fail because there is no wrapper file at root.
+
 Flyway will automatically create tables on startup from:
 
 - `smartcampus/src/main/resources/db/migration/V1__initial_schema.sql`
@@ -56,4 +64,32 @@ After admin login, the same page shows user management with:
 - Active / pending / suspicious status
 - OTP request count
 - Failed OTP count
+
+### 7. Run tests (recommended commands)
+
+Frontend tests:
+
+```powershell
+Set-Location ".\frontend"
+npm test
+```
+
+Backend tests from backend folder:
+
+```powershell
+Set-Location ".\smartcampus"
+npm test
+```
+
+Backend tests from repository root:
+
+```powershell
+npm run backend:test
+```
+
+or:
+
+```powershell
+& ".\smartcampus\mvnw.cmd" -f ".\smartcampus\pom.xml" test
+```
 

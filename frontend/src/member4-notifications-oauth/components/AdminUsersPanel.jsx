@@ -1,21 +1,155 @@
-import { AlertTriangle, RefreshCcw, Users } from "lucide-react";
+import { AlertTriangle, HelpCircle, Search, Trash2, Users } from "lucide-react";
+import { useMemo, useState } from "react";
 
-export default function AdminUsersPanel({ users, suspiciousUsers, loading, onReload }) {
+const ACCOUNT_FILTERS = ["all", "active", "student", "lecturer"];
+
+function getInitials(value) {
+	return String(value || "")
+		.split(" ")
+		.filter(Boolean)
+		.slice(0, 2)
+		.map((part) => part[0]?.toUpperCase() || "")
+		.join("") || "SC";
+}
+
+function UserAvatar({ user }) {
+	const photoUrl = String(user?.profilePictureDataUrl || "").trim();
+	const label = user?.name || user?.userId || "SmartCampus User";
+
 	return (
+		<span className="inline-flex h-9 w-9 items-center justify-center overflow-hidden rounded-full bg-gradient-to-br from-amber-500 to-amber-300 text-xs font-bold text-amber-950 ring-1 ring-amber-200">
+			{photoUrl ? (
+				<img src={photoUrl} alt={`${label} profile`} className="h-full w-full object-cover" />
+			) : (
+				getInitials(label)
+			)}
+		</span>
+	);
+}
+
+export default function AdminUsersPanel({
+	users,
+	suspiciousUsers,
+	loading,
+	onDeleteUser,
+	onDeactivateUser
+}) {
+	const [accountFilter, setAccountFilter] = useState("all");
+	const [searchTerm, setSearchTerm] = useState("");
+	const [deletingUserId, setDeletingUserId] = useState(null);
+	const [deactivatingUserId, setDeactivatingUserId] = useState(null);
+	const [actionError, setActionError] = useState("");
+	const [showWhySuspicious, setShowWhySuspicious] = useState(false);
+	const [pendingDeleteUser, setPendingDeleteUser] = useState(null);
+
+	const filteredUsers = useMemo(() => {
+		const normalizedSearch = searchTerm.trim().toLowerCase();
+
+		if (accountFilter === "all") {
+			return users.filter((user) => {
+				if (!normalizedSearch) {
+					return true;
+				}
+				const haystack = `${user.name || ""} ${user.userId || ""} ${user.email || ""}`.toLowerCase();
+				return haystack.includes(normalizedSearch);
+			});
+		}
+
+		if (accountFilter === "active") {
+			return users.filter((user) => {
+				const isActive = user.active === true || String(user.status || "").toLowerCase() === "active";
+				if (!isActive) {
+					return false;
+				}
+				if (!normalizedSearch) {
+					return true;
+				}
+				const haystack = `${user.name || ""} ${user.userId || ""} ${user.email || ""}`.toLowerCase();
+				return haystack.includes(normalizedSearch);
+			});
+		}
+
+		return users.filter((user) => {
+			const role = (user.role || "").toLowerCase();
+			if (!role.includes(accountFilter)) {
+				return false;
+			}
+			if (!normalizedSearch) {
+				return true;
+			}
+			const haystack = `${user.name || ""} ${user.userId || ""} ${user.email || ""}`.toLowerCase();
+			return haystack.includes(normalizedSearch);
+		});
+	}, [users, accountFilter, searchTerm]);
+
+	const handleDeleteUser = async (user) => {
+		if (!onDeleteUser) {
+			setActionError("Delete action is not available.");
+			return;
+		}
+
+		setPendingDeleteUser(user);
+	};
+
+	const confirmDeleteUser = async () => {
+		if (!pendingDeleteUser) {
+			return;
+		}
+
+		setActionError("");
+		setDeletingUserId(pendingDeleteUser.id);
+		try {
+			await onDeleteUser(pendingDeleteUser.id);
+			setPendingDeleteUser(null);
+		} catch (error) {
+			setActionError(error.message || "Unable to delete user.");
+		} finally {
+			setDeletingUserId(null);
+		}
+	};
+
+	const handleDeactivateUser = async (user) => {
+		if (!onDeactivateUser) {
+			setActionError("Deactivate action is not available.");
+			return;
+		}
+
+		const shouldDeactivate = window.confirm(
+			`Deactivate ${user.name || user.userId} (${user.userId})? The user must activate the account again before logging in.`
+		);
+
+		if (!shouldDeactivate) {
+			return;
+		}
+
+		setActionError("");
+		setDeactivatingUserId(user.id);
+		try {
+			await onDeactivateUser(user.id);
+		} catch (error) {
+			setActionError(error.message || "Unable to deactivate user.");
+		} finally {
+			setDeactivatingUserId(null);
+		}
+	};
+
+	return (
+		<>
 		<section className="space-y-4">
 			<div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
 				<div className="flex flex-wrap items-center justify-between gap-3">
 					<div>
 						<p className="text-xs font-bold uppercase tracking-widest text-slate-500">Admin Controls</p>
-						<h2 className="mt-1 text-2xl font-bold text-slate-900">User Management Snapshot</h2>
+						<h2 className="mt-1 text-2xl font-bold text-slate-900">Manage Users</h2>
+						<p className="mt-1 text-sm text-slate-600">
+							Create lecturer staff logins, assign lecturer work, and trigger in-app notifications and emails.
+						</p>
 					</div>
-					<button
-						onClick={onReload}
-						disabled={loading}
-						className="inline-flex items-center gap-2 rounded-lg border border-blue-200 px-3 py-2 text-sm font-semibold text-blue-700 transition hover:bg-blue-50 disabled:opacity-60"
-					>
-						<RefreshCcw size={14} className={loading ? "animate-spin" : ""} /> Refresh
-					</button>
+					{loading ? (
+						<span className="rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-xs font-bold text-amber-700">
+							Refreshing
+						</span>
+					) : null}
 				</div>
 
 				<div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -32,35 +166,136 @@ export default function AdminUsersPanel({ users, suspiciousUsers, loading, onRel
 
 			<div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
 				<article className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-					<p className="mb-3 inline-flex items-center gap-2 text-sm font-bold text-slate-800">
-						<Users size={16} /> All Accounts
-					</p>
+					<div className="mb-3 flex flex-wrap items-center justify-between gap-3">
+						<p className="inline-flex items-center gap-2 text-sm font-bold text-slate-800">
+							<Users size={16} /> All Accounts
+						</p>
+						<div className="inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-slate-50 p-1">
+							{ACCOUNT_FILTERS.map((filter) => {
+								const selected = accountFilter === filter;
+								const label =
+									filter === "all"
+										? "All"
+										: filter === "active"
+											? "Active"
+											: filter === "student"
+												? "Student"
+												: "Lecturer";
+								return (
+									<button
+										key={filter}
+										type="button"
+										onClick={() => setAccountFilter(filter)}
+										className={`rounded-md px-2.5 py-1 text-xs font-semibold transition ${
+											selected
+												? "bg-white text-slate-900 shadow-sm"
+												: "text-slate-600 hover:text-slate-800"
+										}`}
+									>
+										{label}
+									</button>
+								);
+							})}
+						</div>
+					</div>
+					<div className="mb-3">
+						<div className="relative">
+							<Search size={14} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+							<input
+								value={searchTerm}
+								onChange={(event) => setSearchTerm(event.target.value)}
+								placeholder="Search by name, ID, or email"
+								className="w-full rounded-xl border border-slate-200 bg-white py-2.5 pl-9 pr-3 text-sm text-slate-700 outline-none ring-amber-200 focus:ring"
+							/>
+						</div>
+					</div>
 					<div className="space-y-2">
-						{users.length === 0 ? (
+						{filteredUsers.length === 0 ? (
 							<p className="rounded-lg bg-slate-50 px-3 py-2 text-sm text-slate-600">No users returned by API.</p>
 						) : (
-							users.map((user) => (
+							filteredUsers.map((user) => (
 								<div key={user.id} className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-xs">
-									<p className="font-bold text-slate-800">{user.userId} - {user.email}</p>
-									<p className="mt-1 text-slate-600">{user.role} | {user.status}</p>
+									<div className="flex items-start justify-between gap-3">
+										<div className="flex items-start gap-2.5">
+											<UserAvatar user={user} />
+											<div>
+												<p className="font-bold text-slate-800">{user.name || user.userId} - {user.email}</p>
+												<p className="mt-1 text-slate-600">User ID: {user.userId || "N/A"}</p>
+												<p className="mt-1 text-slate-600">{user.role} | {user.status}</p>
+											</div>
+										</div>
+										<button
+											type="button"
+											onClick={() => handleDeleteUser(user)}
+											disabled={deletingUserId === user.id}
+											className="inline-flex items-center gap-1 rounded-md border border-rose-200 bg-white px-2 py-1 font-semibold text-rose-700 transition hover:bg-rose-50 disabled:cursor-not-allowed disabled:opacity-60"
+										>
+											<Trash2 size={12} /> {deletingUserId === user.id ? "Deleting" : "Delete"}
+										</button>
+									</div>
 								</div>
 							))
 						)}
+						{actionError ? <p className="rounded-lg bg-rose-50 px-3 py-2 text-sm text-rose-700">{actionError}</p> : null}
 					</div>
 				</article>
 
 				<article className="rounded-2xl border border-rose-200 bg-white p-5 shadow-sm">
-					<p className="mb-3 inline-flex items-center gap-2 text-sm font-bold text-rose-700">
-						<AlertTriangle size={16} /> Suspicious Activity
-					</p>
+					<div className="mb-3 flex items-center justify-between gap-3">
+						<p className="inline-flex items-center gap-2 text-sm font-bold text-rose-700">
+							<AlertTriangle size={16} /> Suspicious Activity
+						</p>
+						<button
+							type="button"
+							onClick={() => setShowWhySuspicious((prev) => !prev)}
+							className="inline-flex items-center gap-1 rounded-md border border-rose-200 bg-white px-2.5 py-1 text-xs font-semibold text-rose-700 transition hover:bg-rose-50"
+						>
+							<HelpCircle size={13} /> Why Suspicious?
+						</button>
+					</div>
+					{showWhySuspicious ? (
+						<div className="mb-3 rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-xs text-rose-800">
+							<p className="font-semibold">Accounts are flagged suspicious when:</p>
+							<p className="mt-1">1. Too many OTP requests before activation.</p>
+							<p>2. Too many failed OTP verification attempts.</p>
+							<p>3. User clicks the suspicious-report link in onboarding email.</p>
+						</div>
+					) : null}
 					<div className="space-y-2">
 						{suspiciousUsers.length === 0 ? (
 							<p className="rounded-lg bg-emerald-50 px-3 py-2 text-sm text-emerald-700">No suspicious accounts currently flagged.</p>
 						) : (
 							suspiciousUsers.map((user) => (
 								<div key={user.id} className="rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-xs">
-									<p className="font-bold text-rose-800">{user.userId} - {user.email}</p>
-									<p className="mt-1 text-rose-700">OTP Requests: {user.otpRequestCount} | Failed OTP: {user.failedOtpAttempts}</p>
+									<div className="flex items-start justify-between gap-3">
+										<div className="flex items-start gap-2.5">
+											<UserAvatar user={user} />
+											<div>
+												<p className="font-bold text-rose-800">{user.name || user.userId} - {user.email}</p>
+												<p className="mt-1 text-rose-700">User ID: {user.userId || "N/A"}</p>
+												<p className="mt-1 text-rose-700">OTP Requests: {user.otpRequestCount} | Failed OTP: {user.failedOtpAttempts}</p>
+												{user.suspiciousReason ? <p className="mt-1 font-semibold text-rose-800">Reason: {user.suspiciousReason}</p> : null}
+											</div>
+										</div>
+										<div className="flex items-center gap-2">
+											<button
+												type="button"
+												onClick={() => handleDeactivateUser(user)}
+												disabled={deactivatingUserId === user.id}
+												className="inline-flex items-center gap-1 rounded-md border border-amber-300 bg-white px-2 py-1 font-semibold text-amber-800 transition hover:bg-amber-100 disabled:cursor-not-allowed disabled:opacity-60"
+											>
+												{deactivatingUserId === user.id ? "Deactivating" : "Deactivate"}
+											</button>
+											<button
+												type="button"
+												onClick={() => handleDeleteUser(user)}
+												disabled={deletingUserId === user.id}
+												className="inline-flex items-center gap-1 rounded-md border border-rose-300 bg-white px-2 py-1 font-semibold text-rose-700 transition hover:bg-rose-100 disabled:cursor-not-allowed disabled:opacity-60"
+											>
+												<Trash2 size={12} /> {deletingUserId === user.id ? "Deleting" : "Delete"}
+											</button>
+										</div>
+									</div>
 								</div>
 							))
 						)}
@@ -68,5 +303,40 @@ export default function AdminUsersPanel({ users, suspiciousUsers, loading, onRel
 				</article>
 			</div>
 		</section>
+
+		{pendingDeleteUser ? (
+			<div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/45 p-4 backdrop-blur-sm">
+				<div className="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-5 shadow-2xl">
+					<h3 className="text-base font-bold text-slate-900">Confirm Delete</h3>
+					<p className="mt-2 text-sm text-slate-700">
+						Are you sure you want to delete <span className="font-semibold">{pendingDeleteUser.name || pendingDeleteUser.userId}</span> ({pendingDeleteUser.userId})?
+					</p>
+					{pendingDeleteUser.suspiciousReason ? (
+						<p className="mt-2 rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-xs text-rose-700">
+							Reason: {pendingDeleteUser.suspiciousReason}
+						</p>
+					) : null}
+
+					<div className="mt-4 flex justify-end gap-2">
+						<button
+							type="button"
+							onClick={() => setPendingDeleteUser(null)}
+							className="rounded-lg border border-slate-200 px-3 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+						>
+							Cancel
+						</button>
+						<button
+							type="button"
+							onClick={confirmDeleteUser}
+							disabled={deletingUserId === pendingDeleteUser.id}
+							className="inline-flex items-center rounded-lg border border-rose-200 bg-rose-600 px-3 py-2 text-sm font-bold text-white transition hover:bg-rose-700 disabled:cursor-not-allowed disabled:opacity-60"
+						>
+							{deletingUserId === pendingDeleteUser.id ? "Deleting..." : "Delete User"}
+						</button>
+					</div>
+				</div>
+			</div>
+		) : null}
+		</>
 	);
 }

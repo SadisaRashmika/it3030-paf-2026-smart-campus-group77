@@ -9,10 +9,15 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.it3030.smartcampus.member4.dto.AssignLecturerWorkRequest;
+import com.it3030.smartcampus.member4.dto.CreateStaffLoginRequest;
+import com.it3030.smartcampus.member4.dto.LecturerWorkAssignmentResponse;
+import com.it3030.smartcampus.member4.dto.LecturerWorkAssignmentViewResponse;
 import com.it3030.smartcampus.member4.dto.UpdateRoleRequest;
 import com.it3030.smartcampus.member4.dto.UserSummaryResponse;
 import com.it3030.smartcampus.member4.service.ActivationService;
@@ -40,6 +45,21 @@ public class AdminController {
 		return ResponseEntity.ok(activationService.listSuspiciousUsers());
 	}
 
+	@PostMapping("/users/staff-login")
+	public ResponseEntity<UserSummaryResponse> createStaffLogin(@Valid @RequestBody CreateStaffLoginRequest request) {
+		return ResponseEntity.status(HttpStatus.CREATED).body(activationService.createStaffLogin(request));
+	}
+
+	@PostMapping("/lecturers/assign-work")
+	public ResponseEntity<LecturerWorkAssignmentResponse> assignLecturerWork(@Valid @RequestBody AssignLecturerWorkRequest request) {
+		return ResponseEntity.ok(activationService.assignLecturerWork(request));
+	}
+
+	@GetMapping("/lecturers/assignments")
+	public ResponseEntity<List<LecturerWorkAssignmentViewResponse>> lecturerAssignments() {
+		return ResponseEntity.ok(activationService.listLecturerAssignments());
+	}
+
 	@PatchMapping("/users/{userId}/role")
 	public ResponseEntity<UserSummaryResponse> assignRole(@PathVariable Integer userId, @Valid @RequestBody UpdateRoleRequest request) {
 		return ResponseEntity.ok(activationService.updateRole(userId, request.role()));
@@ -48,6 +68,11 @@ public class AdminController {
 	@PatchMapping("/users/{userId}/deactivate")
 	public ResponseEntity<UserSummaryResponse> deactivate(@PathVariable Integer userId) {
 		return ResponseEntity.ok(activationService.deactivate(userId));
+	}
+
+	@PatchMapping("/users/{userId}/clear-suspicious")
+	public ResponseEntity<UserSummaryResponse> clearSuspicious(@PathVariable Integer userId) {
+		return ResponseEntity.ok(activationService.clearSuspicious(userId));
 	}
 
 	@DeleteMapping("/users/{userId}")
