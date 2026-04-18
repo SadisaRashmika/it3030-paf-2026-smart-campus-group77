@@ -2,12 +2,17 @@ import { Bell, Camera, ChevronDown, LogOut, Menu, ShieldAlert, UserCircle2, X } 
 import { useEffect, useRef, useState } from "react";
 
 const tabs = [
-	{ key: "home", label: "Home", public: true },
-	{ key: "timetable", label: "Timetable", public: false },
-	{ key: "resource", label: "Resource", public: false },
-	{ key: "jobs", label: "Jobs", public: false },
-	{ key: "ticket", label: "Ticket", public: false }
+	{ key: "TAB01", label: "Home", public: true },
+	{ key: "TAB02", label: "Timetable", public: false },
+	{ key: "TAB03", label: "Resource", public: false },
+	{ key: "TAB04", label: "Jobs", public: false },
+	{ key: "TAB05", label: "Ticket", public: false }
 ];
+
+const TIMETABLE_MANAGER_TAB_KEYS = new Set(["TAB01", "TAB02", "TAB03"]);
+const ADMIN_TAB_KEYS = new Set(["TAB01", "TAB02", "TAB03", "TAB04", "TAB05"]);
+const LECTURER_TAB_KEYS = new Set(["TAB01", "TAB02", "TAB03", "TAB04"]);
+const RESOURCE_ADMINISTATOR_TAB_KEYS = new Set(["TAB01", "TAB02", "TAB03"]);
 
 export default function TopNavHeader({
 	activeTab,
@@ -72,43 +77,113 @@ export default function TopNavHeader({
 		return () => window.removeEventListener("mousedown", onDown);
 	}, []);
 
-	const visibleTabs = tabs.filter((tab) => user || tab.public);
-
 	const roleLabel = user?.role?.replace("ROLE_", "") || "";
 	const roleKey = roleLabel.toLowerCase();
+	const isAdmin = roleKey === "admin";
+	const isLecturer = roleKey === "lecturer";
+	const isTimetableManager = roleKey === "timetable_manager" || roleKey === "timetablemanager";
+	const isResourceAdministator = roleKey === "resource_administator" || roleKey === "resourceadministator";
+	const visibleTabs = tabs.filter((tab) => {
+		if (!user) {
+			return tab.public;
+		}
+
+		if (isAdmin) {
+			return ADMIN_TAB_KEYS.has(tab.key);
+		}
+
+		if (isTimetableManager) {
+			return TIMETABLE_MANAGER_TAB_KEYS.has(tab.key);
+		}
+
+		if (isLecturer) {
+			return LECTURER_TAB_KEYS.has(tab.key);
+		}
+
+		if (isResourceAdministator) {
+			return RESOURCE_ADMINISTATOR_TAB_KEYS.has(tab.key);
+		}
+
+		return true;
+	});
 	const canSeeNotifications = Boolean(user);
 	const canReportSuspicious = roleKey === "student" || roleKey === "lecturer";
 	const unreadCount = notifications.filter((item) => item?.read === false && !isSeenBeforeLastRefresh(item)).length;
 	const displayName = user?.name?.trim() || user?.userId || "SmartCampus User";
 	const tabLabelForRole = (tab) => {
+		if (isTimetableManager) {
+			if (tab.key === "TAB01") {
+				return "Tab 1";
+			}
+			if (tab.key === "TAB02") {
+				return "Tab 2";
+			}
+			if (tab.key === "TAB03") {
+				return "Tab 3";
+			}
+		}
+
+		if (isResourceAdministator) {
+			if (tab.key === "TAB01") {
+				return "Tab 1";
+			}
+			if (tab.key === "TAB02") {
+				return "Tab 2";
+			}
+			if (tab.key === "TAB03") {
+				return "Tab 3";
+			}
+		}
+
 		if (roleKey === "admin") {
-			if (tab.key === "timetable") {
+			if (tab.key === "TAB01") {
+				return "Home";
+			}
+			if (tab.key === "TAB02") {
 				return "Activity";
 			}
-			if (tab.key === "resource") {
+			if (tab.key === "TAB03") {
 				return "User Management";
 			}
-			if (tab.key === "jobs") {
+			if (tab.key === "TAB04") {
 				return "Role Management";
+			}
+			if (tab.key === "TAB05") {
+				return "Recovery Tickets";
 			}
 			return tab.label;
 		}
 
 		if (roleKey === "student") {
-			if (tab.key === "home") {
+			if (tab.key === "TAB01") {
 				return "Home";
 			}
-			if (tab.key === "timetable") {
+			if (tab.key === "TAB02") {
 				return "Member 1";
 			}
-			if (tab.key === "resource") {
+			if (tab.key === "TAB03") {
 				return "Member 2";
 			}
-			if (tab.key === "jobs") {
+			if (tab.key === "TAB04") {
 				return "Member 3";
 			}
-			if (tab.key === "ticket") {
+			if (tab.key === "TAB05") {
 				return "Member 4";
+			}
+		}
+
+		if (roleKey === "lecturer") {
+			if (tab.key === "TAB01") {
+				return "Home";
+			}
+			if (tab.key === "TAB02") {
+				return "Member 1";
+			}
+			if (tab.key === "TAB03") {
+				return "Member 2";
+			}
+			if (tab.key === "TAB04") {
+				return "Member 3";
 			}
 		}
 

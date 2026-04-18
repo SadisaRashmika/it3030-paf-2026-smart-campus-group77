@@ -3,7 +3,9 @@ import { useState } from "react";
 
 const ROLE_OPTIONS = [
 	{ value: "LECTURER", label: "Lecturer" },
-	{ value: "STUDENT", label: "Student" }
+	{ value: "STUDENT", label: "Student" },
+	{ value: "TIMETABLE_MANAGER", label: "Timetable Manager" },
+	{ value: "RESOURCE_ADMINISTATOR", label: "Resource Administator" }
 ];
 
 export default function AdminRoleManagementPanel({ onCreateStaffLogin }) {
@@ -65,7 +67,7 @@ export default function AdminRoleManagementPanel({ onCreateStaffLogin }) {
 				<p className="text-xs font-bold uppercase tracking-widest text-slate-500">Admin Controls</p>
 				<h2 className="mt-1 text-2xl font-bold text-slate-900">Role Management</h2>
 				<p className="mt-1 text-sm text-slate-600">
-					Create new users. The system auto-generates user IDs (like LEC001), sends activation details by email,
+					Create new users. The system auto-generates user IDs (like LEC001, STU001, or STAFF001), sends activation details by email,
 					and the user can activate from the Activate page.
 				</p>
 			</div>
