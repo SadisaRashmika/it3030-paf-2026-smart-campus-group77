@@ -23,11 +23,11 @@ export default function PortalTabContent({
 	onApproveRecoveryRequest,
 	onRejectRecoveryRequest
 }) {
-	if (tab === "home") {
-		return <PortalHomeContent user={user} onLogin={onLogin} onNavigate={onNavigate} />;
-	}
-
 	if (!user) {
+		if (tab === "TAB01") {
+			return <PortalHomeContent user={user} onLogin={onLogin} onNavigate={onNavigate} />;
+		}
+
 		return (
 			<section className="rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
 				<h2 className="text-2xl font-bold text-slate-900">Login Required</h2>
@@ -38,7 +38,7 @@ export default function PortalTabContent({
 
 	const role = user.role?.replace("ROLE_", "").toLowerCase();
 
-	if (role === "admin" && tab === "timetable") {
+	if (role === "admin" && tab === "TAB01") {
 		return (
 			<AdminUsersPanel
 				users={adminUsers}
@@ -50,7 +50,7 @@ export default function PortalTabContent({
 		);
 	}
 
-	if (role === "admin" && tab === "resource") {
+	if (role === "admin" && tab === "TAB02") {
 		return (
 			<AdminUserManagementPanel
 				users={adminUsers}
@@ -60,11 +60,11 @@ export default function PortalTabContent({
 		);
 	}
 
-	if (role === "admin" && tab === "jobs") {
+	if (role === "admin" && tab === "TAB03") {
 		return <AdminRoleManagementPanel onCreateStaffLogin={onCreateStaffLogin} />;
 	}
 
-	if (role === "admin" && tab === "ticket") {
+	if (role === "admin" && tab === "TAB04") {
 		return (
 			<RecoveryRequestsPanel
 				requests={recoveryRequests}
@@ -75,21 +75,75 @@ export default function PortalTabContent({
 		);
 	}
 
-	if (tab === "resource") {
-		return (
-			<RolePanel
-				icon={BookOpenText}
-				title="Resource Management"
-				body={
-					role === "lecturer"
-						? "Upload and update module content, notes, and announcements for your students."
-						: "Browse course material, lecture notes, and subject-specific resources."
-				}
-			/>
-		);
+	if (role === "timetable_manager") {
+		if (tab === "TAB01") {
+			return (
+				<RolePanel
+					icon={CalendarClock}
+					title="Timetable"
+					body="Manage class schedules, session slots, and timetable updates in one place."
+				/>
+			);
+		}
+
+		if (tab === "TAB02") {
+			return (
+				<RolePanel
+					icon={BookOpenText}
+					title="Resource Planning"
+					body="Coordinate room and resource allocation details for timetable activities."
+				/>
+			);
+		}
+
+		if (tab === "TAB03") {
+			return (
+				<RolePanel
+					icon={Briefcase}
+					title="Operations"
+					body="Track operational tasks related to timetable publishing and updates."
+				/>
+			);
+		}
 	}
 
-	if (tab === "timetable") {
+	if (role === "resource_administator") {
+		if (tab === "TAB01") {
+			return (
+				<RolePanel
+					icon={BookOpenText}
+					title="Resource Overview"
+					body="Monitor resource usage and review allocation priorities across the campus."
+				/>
+			);
+		}
+
+		if (tab === "TAB02") {
+			return (
+				<RolePanel
+					icon={CalendarClock}
+					title="Allocation Schedule"
+					body="Plan and adjust timetable-linked resource allocations with conflict visibility."
+				/>
+			);
+			}
+
+		if (tab === "TAB03") {
+			return (
+				<RolePanel
+					icon={Briefcase}
+					title="Operations"
+					body="Coordinate operational resource tasks and approvals for upcoming sessions."
+				/>
+			);
+		}
+	}
+
+	if (tab === "TAB01") {
+		return <PortalHomeContent user={user} onLogin={onLogin} onNavigate={onNavigate} />;
+	}
+
+	if (tab === "TAB02") {
 		return (
 			<RolePanel
 				icon={CalendarClock}
@@ -103,7 +157,21 @@ export default function PortalTabContent({
 		);
 	}
 
-	if (tab === "jobs") {
+	if (tab === "TAB03") {
+		return (
+			<RolePanel
+				icon={BookOpenText}
+				title="Resource Management"
+				body={
+					role === "lecturer"
+						? "Upload and update module content, notes, and announcements for your students."
+						: "Browse course material, lecture notes, and subject-specific resources."
+				}
+			/>
+		);
+	}
+
+	if (tab === "TAB04") {
 		return (
 			<RolePanel
 				icon={Briefcase}

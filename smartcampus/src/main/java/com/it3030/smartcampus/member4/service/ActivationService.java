@@ -325,6 +325,8 @@ public class ActivationService {
 		String prefix = switch (role) {
 			case LECTURER -> "LEC";
 			case STUDENT -> "STU";
+			case TIMETABLE_MANAGER -> "STAFF";
+			case RESOURCE_ADMINISTATOR -> "STAFF";
 			default -> "USR";
 		};
 

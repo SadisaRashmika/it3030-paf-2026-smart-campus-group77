@@ -135,7 +135,8 @@ EXECUTE FUNCTION update_timestamp();
 INSERT INTO roles (name) VALUES
 ('ADMIN'),
 ('LECTURER'),
-('STUDENT');
+('STUDENT'),
+('TIMETABLE_MANAGER');
 
 -- Seed requested admin user
 -- Password is plain 12345 as requested
