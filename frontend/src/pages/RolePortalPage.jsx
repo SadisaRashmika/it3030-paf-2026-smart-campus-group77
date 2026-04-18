@@ -1,5 +1,5 @@
 import { useOutletContext } from "react-router-dom";
-import PortalTabContent from "../member4-notifications-oauth/components/PortalTabContent";
+import PortalTabContent from "../components/PortalTabContent";
 
 export default function RolePortalPage() {
   const {

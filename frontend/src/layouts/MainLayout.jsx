@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import AuthModal from "../member4-notifications-oauth/components/AuthModal";
-import TopNavHeader from "../member4-notifications-oauth/components/TopNavHeader";
+import TopNavHeader from "../components/TopNavHeader";
 import {
   assignLecturerWork,
   approveRecoveryRequest,
@@ -23,17 +23,19 @@ import {
 } from "../services/authService";
 import ProfileModal from "../member4-notifications-oauth/components/ProfileModal";
 
-const VALID_TABS = new Set(["home", "resource", "timetable", "jobs", "ticket"]);
+const VALID_TABS = new Set(["TAB01", "TAB02", "TAB03", "TAB04", "TAB05"]);
 
 const DEFAULT_TAB_BY_PATH = {
-  "/": "home",
-  "/admin": "timetable",
-  "/lecturer": "resource",
-  "/student": "home"
+  "/": "TAB01",
+  "/admin": "TAB01",
+  "/lecturer": "TAB01",
+  "/student": "TAB01",
+  "/timetable-manager": "TAB01",
+  "/resource-administator": "TAB01"
 };
 
 function getDefaultTab(pathname) {
-  return DEFAULT_TAB_BY_PATH[pathname] || "home";
+  return DEFAULT_TAB_BY_PATH[pathname] || "TAB01";
 }
 
 function resolveActiveTab(pathname, search) {
@@ -55,6 +57,12 @@ function targetPathForUser(user) {
   }
   if (role === "student") {
     return "/student";
+  }
+  if (role === "timetable_manager" || role === "timetablemanager") {
+    return "/timetable-manager";
+  }
+  if (role === "resource_administator" || role === "resourceadministator") {
+    return "/resource-administator";
   }
   return "/";
 }
@@ -238,7 +246,7 @@ export default function MainLayout() {
   }, [role, fetchAdminData]);
 
   useEffect(() => {
-    if (role === "admin" && activeTab === "ticket") {
+    if (role === "admin" && activeTab === "TAB05") {
       fetchRecoveryRequests();
     }
   }, [role, activeTab, fetchRecoveryRequests]);
