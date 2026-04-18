@@ -1,9 +1,9 @@
 import { CalendarClock, Briefcase, BookOpenText, MessageSquareText } from "lucide-react";
-import AdminRoleManagementPanel from "./AdminRoleManagementPanel";
-import AdminUserManagementPanel from "./AdminUserManagementPanel";
-import AdminUsersPanel from "./AdminUsersPanel";
-import RecoveryRequestsPanel from "./RecoveryRequestsPanel";
-import PortalHomeContent from "./PortalHomeContent";
+import AdminRoleManagementPanel from "../member4-notifications-oauth/components/AdminRoleManagementPanel";
+import AdminUserManagementPanel from "../member4-notifications-oauth/components/AdminUserManagementPanel";
+import AdminUsersPanel from "../member4-notifications-oauth/components/AdminUsersPanel";
+import RecoveryRequestsPanel from "../member4-notifications-oauth/components/RecoveryRequestsPanel";
+import PortalHomeContent from "../member4-notifications-oauth/components/PortalHomeContent";
 
 export default function PortalTabContent({
 	tab,

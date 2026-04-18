@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import AuthModal from "../member4-notifications-oauth/components/AuthModal";
-import TopNavHeader from "../member4-notifications-oauth/components/TopNavHeader";
+import TopNavHeader from "../components/TopNavHeader";
 import {
   assignLecturerWork,
   approveRecoveryRequest,
