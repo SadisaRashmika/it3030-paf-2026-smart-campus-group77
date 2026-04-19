@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { bookingApi } from "../services/bookingApi";
 
 const TimetableWeeklyGrid = () => {
@@ -6,25 +6,35 @@ const TimetableWeeklyGrid = () => {
   const [resources, setResources] = useState([]);
   const [selectedResourceId, setSelectedResourceId] = useState("all");
   const [loading, setLoading] = useState(true);
-
-  // Hardcoded for visibility - the current week (example)
-  const [weekStart] = useState(() => {
-    const d = new Date();
-    const day = d.getDay(); // 0 is Sun, 1 is Mon...
-    const diff = d.getDate() - day + (day === 0 ? -6 : 1);
-    const start = new Date(d.setDate(diff));
+  const [visibleStart, setVisibleStart] = useState(() => {
+    const start = new Date();
     start.setHours(0, 0, 0, 0);
     return start;
   });
 
-  useEffect(() => {
-    fetchData();
-  }, [weekStart]);
+  // 7-day window starting from selected day.
+  const rangeStart = useMemo(() => {
+    const start = new Date(visibleStart);
+    start.setHours(0, 0, 0, 0);
+    return start;
+  }, [visibleStart]);
 
-  const fetchData = async () => {
+  const rangeEnd = useMemo(() => {
+    const end = new Date(rangeStart);
+    end.setDate(end.getDate() + 6);
+    return end;
+  }, [rangeStart]);
+
+  const isCurrentWindow = useMemo(() => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return rangeStart.getTime() === today.getTime();
+  }, [rangeStart]);
+
+  const fetchData = useCallback(async () => {
     try {
       setLoading(true);
-      const weekEnd = new Date(weekStart);
+      const weekEnd = new Date(rangeStart);
       weekEnd.setDate(weekEnd.getDate() + 7);
 
       // Helper to get ISO string without the 'Z' (Local Time)
@@ -36,7 +46,7 @@ const TimetableWeeklyGrid = () => {
 
       const [resData, bookingData] = await Promise.all([
         bookingApi.getResources(),
-        bookingApi.getWeeklyBookings(toLocalISO(weekStart), toLocalISO(weekEnd))
+        bookingApi.getWeeklyBookings(toLocalISO(rangeStart), toLocalISO(weekEnd))
       ]);
       setResources(resData);
       setWeeklyBookings(bookingData);
@@ -45,21 +55,76 @@ const TimetableWeeklyGrid = () => {
     } finally {
       setLoading(false);
     }
+  }, [rangeStart]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  useEffect(() => {
+    // Keep timetable live while page stays open.
+    const refreshInterval = window.setInterval(() => {
+      fetchData();
+    }, 30000);
+
+    const onFocus = () => {
+      fetchData();
+    };
+
+    window.addEventListener("focus", onFocus);
+
+    return () => {
+      window.clearInterval(refreshInterval);
+      window.removeEventListener("focus", onFocus);
+    };
+  }, [fetchData]);
+
+  const shiftWeek = (days) => {
+    setVisibleStart((previous) => {
+      const next = new Date(previous);
+      next.setDate(next.getDate() + days);
+      next.setHours(0, 0, 0, 0);
+      return next;
+    });
   };
 
-  const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+  const goToToday = () => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    setVisibleStart(today);
+  };
+
+  const days = Array.from({ length: 7 }, (_, offset) => {
+    const date = new Date(rangeStart);
+    date.setDate(rangeStart.getDate() + offset);
+    return {
+      key: date.toISOString(),
+      label: date.toLocaleDateString([], { weekday: "short" }),
+      date
+    };
+  });
   const hours = Array.from({ length: 14 }, (_, i) => i + 8); // 8 AM to 9 PM
 
   const filteredBookings = selectedResourceId === "all" 
     ? weeklyBookings 
     : weeklyBookings.filter(b => b.resourceId === parseInt(selectedResourceId));
 
-  const getBookingsForSlot = (dayIndex, hour) => {
+  const getBookingsForSlot = (dayDate, hour) => {
+    const slotStart = new Date(dayDate);
+    slotStart.setHours(hour, 0, 0, 0);
+    const slotEnd = new Date(slotStart);
+    slotEnd.setHours(slotEnd.getHours() + 1);
+
     return filteredBookings.filter(b => {
       const d = new Date(b.startTime);
-      const dayOfBooking = (d.getDay() + 6) % 7; // Convert Sun=0..Sat=6 to Mon=0..Sun=6
-      const startHour = d.getHours();
-      return dayOfBooking === dayIndex && startHour === hour;
+      const end = new Date(b.endTime);
+      return (
+        d.getFullYear() === dayDate.getFullYear() &&
+        d.getMonth() === dayDate.getMonth() &&
+        d.getDate() === dayDate.getDate() &&
+        d < slotEnd &&
+        end > slotStart
+      );
     });
   };
 
@@ -73,20 +138,50 @@ const TimetableWeeklyGrid = () => {
             Weekly Master Timetable
           </h1>
           <p className="text-slate-500">Global overview of all approved resource allocations.</p>
+          <p className="mt-1 text-xs font-semibold uppercase tracking-wide text-slate-500">
+            {rangeStart.toLocaleDateString([], { month: "short", day: "numeric" })} to {rangeEnd.toLocaleDateString([], { month: "short", day: "numeric", year: "numeric" })}
+          </p>
         </div>
 
-        <div className="flex flex-col gap-2">
-          <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-1">Filter by Resource</label>
-          <select 
-            className="bg-white border border-slate-200 px-4 py-2 rounded-xl outline-none focus:ring-2 focus:ring-amber-500 shadow-sm"
-            value={selectedResourceId}
-            onChange={(e) => setSelectedResourceId(e.target.value)}
-          >
-            <option value="all">Global View (All Resources)</option>
-            {resources.map(res => (
-                <option key={res.id} value={res.id}>{res.name}</option>
-            ))}
-          </select>
+        <div className="flex flex-col gap-3">
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => shiftWeek(-7)}
+              className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-bold text-slate-700 transition hover:border-amber-300 hover:bg-amber-50"
+            >
+              Previous Week
+            </button>
+            <button
+              type="button"
+              onClick={goToToday}
+              disabled={isCurrentWindow}
+              className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-bold text-slate-700 transition hover:border-amber-300 hover:bg-amber-50 disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              Today
+            </button>
+            <button
+              type="button"
+              onClick={() => shiftWeek(7)}
+              className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-bold text-slate-700 transition hover:border-amber-300 hover:bg-amber-50"
+            >
+              Next Week
+            </button>
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-1">Filter by Resource</label>
+            <select
+              className="bg-white border border-slate-200 px-4 py-2 rounded-xl outline-none focus:ring-2 focus:ring-amber-500 shadow-sm"
+              value={selectedResourceId}
+              onChange={(e) => setSelectedResourceId(e.target.value)}
+            >
+              <option value="all">Global View (All Resources)</option>
+              {resources.map(res => (
+                  <option key={res.id} value={res.id}>{res.name}</option>
+              ))}
+            </select>
+          </div>
         </div>
       </header>
 
@@ -94,11 +189,11 @@ const TimetableWeeklyGrid = () => {
           {/* Header row */}
           <div className="grid grid-cols-8 border-b border-slate-100 bg-slate-50/50">
               <div className="p-4 border-r border-slate-100"></div>
-              {days.map((day, i) => (
-                  <div key={day} className="p-4 text-center border-r border-slate-100 last:border-r-0">
-                      <span className="block text-xs font-black text-slate-400 uppercase tracking-tighter">{day}</span>
+              {days.map((day) => (
+                  <div key={day.key} className="p-4 text-center border-r border-slate-100 last:border-r-0">
+                      <span className="block text-xs font-black text-slate-400 uppercase tracking-tighter">{day.label}</span>
                       <span className="text-sm font-bold text-slate-700">
-                        {new Date(new Date(weekStart).setDate(weekStart.getDate() + i)).getDate()}
+                        {day.date.getDate()}
                       </span>
                   </div>
               ))}
@@ -111,10 +206,10 @@ const TimetableWeeklyGrid = () => {
                     <div className="p-3 border-r border-slate-50 text-right bg-slate-50/30">
                         <span className="text-[10px] font-bold text-slate-400">{hour}:00</span>
                     </div>
-                    {days.map((_, dayIndex) => {
-                        const slots = getBookingsForSlot(dayIndex, hour);
+                    {days.map((day) => {
+                      const slots = getBookingsForSlot(day.date, hour);
                         return (
-                            <div key={dayIndex} className="p-1 border-r border-slate-50 last:border-r-0 relative group hover:bg-slate-50/30 transition-colors">
+                        <div key={day.key} className="p-1 border-r border-slate-50 last:border-r-0 relative group hover:bg-slate-50/30 transition-colors">
                                 {slots.map(s => (
                                     <div 
                                       key={s.id} 

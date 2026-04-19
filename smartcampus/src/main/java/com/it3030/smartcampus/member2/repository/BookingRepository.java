@@ -30,7 +30,11 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             @Param("startTime") LocalDateTime startTime,
             @Param("endTime") LocalDateTime endTime);
 
-    @Query("SELECT b FROM Booking b LEFT JOIN FETCH b.resource LEFT JOIN FETCH b.user WHERE b.status = 'APPROVED'")
+    @Query("SELECT b FROM Booking b LEFT JOIN FETCH b.resource LEFT JOIN FETCH b.user " +
+            "WHERE b.status = 'APPROVED' " +
+            "AND b.startTime < :weekEnd " +
+            "AND b.endTime > :weekStart " +
+            "ORDER BY b.startTime ASC")
     List<Booking> findAllApprovedInWeek(
             @Param("weekStart") LocalDateTime weekStart,
             @Param("weekEnd") LocalDateTime weekEnd);
