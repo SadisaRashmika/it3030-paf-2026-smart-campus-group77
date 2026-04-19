@@ -55,9 +55,9 @@ public class AuthController {
 	private final NotificationService notificationService;
 
 	public AuthController(AuthenticationManager authenticationManager,
-						 UserRepository userRepository,
-						 PasswordResetService passwordResetService,
-						 NotificationService notificationService) {
+			UserRepository userRepository,
+			PasswordResetService passwordResetService,
+			NotificationService notificationService) {
 		this.authenticationManager = authenticationManager;
 		this.userRepository = userRepository;
 		this.passwordResetService = passwordResetService;
@@ -65,7 +65,8 @@ public class AuthController {
 	}
 
 	@PostMapping("/login")
-	public ResponseEntity<AuthUserResponse> login(@Valid @RequestBody LoginRequest request, HttpServletRequest httpRequest) {
+	public ResponseEntity<AuthUserResponse> login(@Valid @RequestBody LoginRequest request,
+			HttpServletRequest httpRequest) {
 		String principal = resolveLoginPrincipal(request);
 
 		Authentication authentication = authenticationManager.authenticate(
@@ -98,7 +99,8 @@ public class AuthController {
 	}
 
 	@PostMapping("/forgot-password/reset")
-	public ResponseEntity<MessageResponse> resetForgottenPassword(@Valid @RequestBody ForgotPasswordResetRequest request) {
+	public ResponseEntity<MessageResponse> resetForgottenPassword(
+			@Valid @RequestBody ForgotPasswordResetRequest request) {
 		passwordResetService.resetPassword(request);
 		notificationService.createPasswordChangeAlert(request.email());
 		return ResponseEntity.ok(new MessageResponse("Password reset successful. You can now login."));
@@ -106,7 +108,8 @@ public class AuthController {
 
 	@GetMapping("/me")
 	public ResponseEntity<AuthUserResponse> me(Authentication authentication) {
-		if (authentication == null || !authentication.isAuthenticated() || authentication instanceof AnonymousAuthenticationToken) {
+		if (authentication == null || !authentication.isAuthenticated()
+				|| authentication instanceof AnonymousAuthenticationToken) {
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 		}
 
@@ -115,7 +118,7 @@ public class AuthController {
 
 	@PatchMapping("/profile-picture")
 	public ResponseEntity<AuthUserResponse> updateProfilePicture(Authentication authentication,
-																	 @Valid @RequestBody ProfilePictureUpdateRequest request) {
+			@Valid @RequestBody ProfilePictureUpdateRequest request) {
 		UserAccount user = requireAuthenticatedUser(authentication);
 		user.setProfilePictureDataUrl(validateAndNormalizeProfilePicture(request.profilePictureDataUrl()));
 		userRepository.save(user);
@@ -125,7 +128,8 @@ public class AuthController {
 	private AuthUserResponse toAuthUserResponse(Authentication authentication) {
 		String principal = resolvePrincipal(authentication);
 		UserAccount user = findAuthenticatedUser(principal)
-				.orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Authenticated user not found"));
+				.orElseThrow(
+						() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Authenticated user not found"));
 		ensureLoginAllowed(user);
 
 		return toAuthUserResponse(user);
@@ -140,13 +144,15 @@ public class AuthController {
 	}
 
 	private UserAccount requireAuthenticatedUser(Authentication authentication) {
-		if (authentication == null || !authentication.isAuthenticated() || authentication instanceof AnonymousAuthenticationToken) {
+		if (authentication == null || !authentication.isAuthenticated()
+				|| authentication instanceof AnonymousAuthenticationToken) {
 			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Authentication required");
 		}
 
 		String principal = resolvePrincipal(authentication);
 		UserAccount user = findAuthenticatedUser(principal)
-				.orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Authenticated user not found"));
+				.orElseThrow(
+						() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Authenticated user not found"));
 		ensureLoginAllowed(user);
 		return user;
 	}
@@ -195,7 +201,8 @@ public class AuthController {
 						ensureLoginAllowed(u);
 						return u.getEmail();
 					})
-					.orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid user ID or password"));
+					.orElseThrow(
+							() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid user ID or password"));
 		}
 
 		if (email != null) {
@@ -219,11 +226,13 @@ public class AuthController {
 
 	private void ensureLoginAllowed(UserAccount user) {
 		if (!user.isActive()) {
-			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Account is deactivated. Please activate your account.");
+			throw new ResponseStatusException(HttpStatus.FORBIDDEN,
+					"Account is deactivated. Please activate your account.");
 		}
 
 		if (user.temporaryPasswordExpired(Instant.now())) {
-			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Temporary password expired. Please request a new recovery request.");
+			throw new ResponseStatusException(HttpStatus.FORBIDDEN,
+					"Temporary password expired. Please request a new recovery request.");
 		}
 	}
 

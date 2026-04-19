@@ -108,10 +108,60 @@ Member 1, Member 2, and Member 3 architecture diagrams can be appended after thi
 
 To be completed by Member 1.
 
-## Member 2 Architecture (Pending)
+## Member 2 Architecture (Completed)
 
-To be completed by Member 2.
+This section captures the architecture designed for Member 2 features:
+- Resource Booking Management with conflict-checking engine (409 Conflict handling)
+- Official Timetable system with weekly grid views
+- Role-specific dashboards for Lecturers, Students, and Timetable Managers
+- Pending request management and smart attendance tracking
 
+### 1) Backend (Spring Boot) - Layered Architecture
+
+```mermaid
+flowchart TD
+		A[React Client] --> B[Booking/Timetable Controllers]
+		B --> C[Service Layer]
+		C --> D[Repository Layer]
+		D --> E[(PostgreSQL)]
+
+		B --> F[DTO Validation]
+		B --> G[Conflict Resolution Engine]
+```
+
+#### Member 2 backend components
+
+- Controllers
+	- BookingController
+	- TimetableController
+	- AttendanceController
+	- ResourceController
+- Services
+	- BookingService (handles schedule conflict logic)
+	- TimetableService
+	- AttendanceService
+- Data Models
+	- Bookings, Resources, Timetables, Attendances (Schemas defined in `copythis*.sql`)
+
+### 2) Frontend (React) - Component Architecture
+
+```mermaid
+flowchart TD
+		M[PortalTabContent] --> U[Student Dashboard]
+		M --> V[Lecturer Dashboard]
+		M --> W[Timetable Manager Dashboard]
+
+		U --> X[Weekly Grid View]
+		V --> Y[Smart Attendance Tracker]
+		W --> Z[Pending Booking Requests]
+```
+
+#### Member 2 frontend responsibilities
+
+- Role-specific dashboards with quick actions.
+- Interactive weekly grid views for checking available slots.
+- Form processing for safe concurrency/bookings.
+- Error handling specifically for HTTP 409 Conflicts during simultaneous bookings.
 ## Member 3 Architecture (Pending)
 
 To be completed by Member 3.
