@@ -6,11 +6,11 @@ import RecoveryRequestsPanel from "../member4-notifications-oauth/components/Rec
 import PortalHomeContent from "../member4-notifications-oauth/components/PortalHomeContent";
 
 // Member 2 Imports
-import BookingPanel from "../member2-bookings-management/components/BookingPanel";
-import TimetableWeeklyGrid from "../member2-bookings-management/components/TimetableWeeklyGrid";
-import ResourceAvailabilityView from "../member2-bookings-management/components/ResourceAvailabilityView";
-import ResourceManagementPanel from "../member2-bookings-management/components/ResourceManagementPanel";
-import PendingApprovalsPanel from "../member2-bookings-management/components/PendingApprovalsPanel";
+import BookingsPage from "../member2-bookings-management/pages/BookingsPage";
+import TimetablePage from "../member2-bookings-management/pages/TimetablePage";
+import ApprovalsPage from "../member2-bookings-management/pages/ApprovalsPage";
+import ResourceInventoryPage from "../member2-bookings-management/pages/ResourceInventoryPage";
+import ResourceAvailabilityPage from "../member2-bookings-management/pages/ResourceAvailabilityPage";
 
 export default function PortalTabContent({
 	tab,
@@ -92,25 +92,25 @@ export default function PortalTabContent({
 		}
 
 		if (tab === "TAB02") {
-			return <TimetableWeeklyGrid />;
+			return <TimetablePage />;
 		}
 
 		if (tab === "TAB03") {
-			return <PendingApprovalsPanel user={user} />;
+			return <ApprovalsPage user={user} />;
 		}
 	}
 
 	if (role === "resource_administator") {
 		if (tab === "TAB01") {
-			return <ResourceManagementPanel />;
+			return <ResourceInventoryPage />;
 		}
 
 		if (tab === "TAB02") {
-			return <TimetableWeeklyGrid />;
+			return <TimetablePage />;
 		}
 
 		if (tab === "TAB03") {
-			return <ResourceAvailabilityView />;
+			return <ResourceAvailabilityPage />;
 		}
 	}
 
@@ -119,11 +119,11 @@ export default function PortalTabContent({
 	}
 
 	if (tab === "TAB02") {
-		return <TimetableWeeklyGrid />;
+		return <TimetablePage />;
 	}
 
 	if (tab === "TAB03") {
-		return <BookingPanel user={user} />;
+		return <BookingsPage user={user} />;
 	}
 
 	if (tab === "TAB04") {
