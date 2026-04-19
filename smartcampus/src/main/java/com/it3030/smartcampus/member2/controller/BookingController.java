@@ -56,7 +56,7 @@ public class BookingController {
     }
 
     @GetMapping("/weekly")
-    @PreAuthorize("hasAnyRole('STUDENT', 'LECTURER', 'TIMETABLE_MANAGER', 'ADMIN')")
+    @PreAuthorize("hasAnyRole('STUDENT', 'LECTURER', 'TIMETABLE_MANAGER', 'ADMIN', 'RESOURCE_ADMINISTATOR')")
     public List<BookingResponse> getWeeklyBookings(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime start,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime end) {

@@ -106,11 +106,11 @@ export default function PortalTabContent({
 		}
 
 		if (tab === "TAB02") {
-			return <TimetablePage />;
+			return <ResourceAvailabilityPage />;
 		}
 
 		if (tab === "TAB03") {
-			return <ResourceAvailabilityPage />;
+			return <TimetablePage />;
 		}
 	}
 
