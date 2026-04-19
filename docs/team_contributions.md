@@ -126,9 +126,90 @@ Current observed run summary (local):
 
 Pending update by Member 1.
 
-## Member 2
+## Member 2 - Booking Management, Timetable, and Resource Availability
 
-Pending update by Member 2.
+### Summary
+
+Implemented the full Member 2 module scope around booking lifecycle management, approval workflow, conflict prevention, weekly timetable visibility, and resource inventory/availability management across backend + frontend.
+
+### Backend Contributions
+
+1. Booking lifecycle APIs
+- Create booking request
+- List own bookings
+- Cancel booking (owner)
+- Approve/reject booking (timetable manager or admin)
+
+2. Timetable and approvals APIs
+- List pending bookings for review
+- List approved bookings for a requested weekly date range
+
+3. Resource management APIs
+- List available resources for authenticated users
+- Create/update/delete resources for admin and resource administator roles
+
+4. Conflict prevention and validation logic
+- Overlap check against already approved bookings
+- 409 conflict response handling on booking collisions
+- Time-range and past-date validation for create-booking flow
+
+5. Database migration and schema support
+- Added booking enhancement migration `V12__booking_enhancements.sql`
+- Added `purpose`, `expected_attendees`, and `rejection_reason` fields to `bookings`
+- Added index for approved booking conflict checks
+
+### Frontend Contributions
+
+1. Booking experience for student/lecturer
+- Booking request form with resource/time/purpose/attendees inputs
+- My booking history view with status badges and cancel actions
+
+2. Timetable manager experience
+- Weekly master timetable view with resource filtering
+- Pending approvals panel with approve/reject flow
+
+3. Resource administator experience
+- Resource inventory CRUD panel
+- Resource availability status panel
+
+4. Timetable UX improvements
+- Rolling 7-day window and weekly navigation controls
+- Previous week / next week / today actions
+- Live refresh behavior and approved-slot rendering improvements
+
+5. Frontend UI consistency pass
+- Aligned Member 2 UI typography and palette with shared portal style
+- Removed decorative emojis from Member 2 text labels
+
+### Member 2 Endpoint Count Evidence
+
+Member 2 implemented more than four endpoints and used multiple HTTP methods:
+- GET: examples include `/api/member2/resources`, `/api/member2/bookings/mine`, `/api/member2/bookings/weekly`
+- POST: examples include `/api/member2/bookings`, `/api/member2/resources`
+- PATCH: examples include `/api/member2/bookings/{id}/approve`, `/api/member2/bookings/{id}/reject`, `/api/member2/bookings/{id}/cancel`
+- PUT: examples include `/api/member2/resources/{id}`
+- DELETE: examples include `/api/member2/resources/{id}`
+
+### Key Files (Member 2)
+
+- Backend controllers/services/repositories under:
+	- `smartcampus/src/main/java/com/it3030/smartcampus/member2/**`
+- Backend migration:
+	- `smartcampus/src/main/resources/db/migration/V12__booking_enhancements.sql`
+- Frontend module components/pages/services under:
+	- `frontend/src/member2-bookings-management/**`
+- Shared integration points:
+	- `frontend/src/components/PortalTabContent.jsx`
+	- `frontend/src/components/TopNavHeader.jsx`
+
+### Testing Evidence Added (Member 2)
+
+- Backend test file:
+	- `smartcampus/src/test/java/com/it3030/smartcampus/member2/service/BookingServiceTest.java`
+
+Current observed run summary (local):
+- Member 2 backend service tests: passing
+- Frontend production build: passing
 
 ## Member 3
 

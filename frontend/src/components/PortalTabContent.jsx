@@ -5,6 +5,13 @@ import AdminUsersPanel from "../member4-notifications-oauth/components/AdminUser
 import RecoveryRequestsPanel from "../member4-notifications-oauth/components/RecoveryRequestsPanel";
 import PortalHomeContent from "../member4-notifications-oauth/components/PortalHomeContent";
 
+// Member 2 Imports
+import BookingsPage from "../member2-bookings-management/pages/BookingsPage";
+import TimetablePage from "../member2-bookings-management/pages/TimetablePage";
+import ApprovalsPage from "../member2-bookings-management/pages/ApprovalsPage";
+import ResourceInventoryPage from "../member2-bookings-management/pages/ResourceInventoryPage";
+import ResourceAvailabilityPage from "../member2-bookings-management/pages/ResourceAvailabilityPage";
+
 export default function PortalTabContent({
 	tab,
 	user,
@@ -81,65 +88,29 @@ export default function PortalTabContent({
 
 	if (role === "timetable_manager") {
 		if (tab === "TAB01") {
-			return (
-				<RolePanel
-					icon={CalendarClock}
-					title="Timetable"
-					body="Manage class schedules, session slots, and timetable updates in one place."
-				/>
-			);
+			return <PortalHomeContent user={user} onLogin={onLogin} onNavigate={onNavigate} />;
 		}
 
 		if (tab === "TAB02") {
-			return (
-				<RolePanel
-					icon={BookOpenText}
-					title="Resource Planning"
-					body="Coordinate room and resource allocation details for timetable activities."
-				/>
-			);
+			return <TimetablePage />;
 		}
 
 		if (tab === "TAB03") {
-			return (
-				<RolePanel
-					icon={Briefcase}
-					title="Operations"
-					body="Track operational tasks related to timetable publishing and updates."
-				/>
-			);
+			return <ApprovalsPage user={user} />;
 		}
 	}
 
 	if (role === "resource_administator") {
 		if (tab === "TAB01") {
-			return (
-				<RolePanel
-					icon={BookOpenText}
-					title="Resource Overview"
-					body="Monitor resource usage and review allocation priorities across the campus."
-				/>
-			);
+			return <PortalHomeContent user={user} onLogin={onLogin} onNavigate={onNavigate} />;
 		}
 
 		if (tab === "TAB02") {
-			return (
-				<RolePanel
-					icon={CalendarClock}
-					title="Allocation Schedule"
-					body="Plan and adjust timetable-linked resource allocations with conflict visibility."
-				/>
-			);
-			}
+			return <ResourceInventoryPage />;
+		}
 
 		if (tab === "TAB03") {
-			return (
-				<RolePanel
-					icon={Briefcase}
-					title="Operations"
-					body="Coordinate operational resource tasks and approvals for upcoming sessions."
-				/>
-			);
+			return <ResourceAvailabilityPage />;
 		}
 	}
 
@@ -148,31 +119,11 @@ export default function PortalTabContent({
 	}
 
 	if (tab === "TAB02") {
-		return (
-			<RolePanel
-				icon={CalendarClock}
-				title="Timetable"
-				body={
-					role === "lecturer"
-						? "View your teaching sessions and manage your weekly schedule."
-						: "Track classes and upcoming session changes in one place."
-				}
-			/>
-		);
+		return <TimetablePage />;
 	}
 
 	if (tab === "TAB03") {
-		return (
-			<RolePanel
-				icon={BookOpenText}
-				title="Resource Management"
-				body={
-					role === "lecturer"
-						? "Upload and update module content, notes, and announcements for your students."
-						: "Browse course material, lecture notes, and subject-specific resources."
-				}
-			/>
-		);
+		return <BookingsPage user={user} />;
 	}
 
 	if (tab === "TAB04") {
