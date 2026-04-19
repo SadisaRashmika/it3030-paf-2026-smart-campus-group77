@@ -113,13 +113,13 @@ export default function TopNavHeader({
 	const tabLabelForRole = (tab) => {
 		if (isTimetableManager) {
 			if (tab.key === "TAB01") {
-				return "Tab 1";
+				return "Home";
 			}
 			if (tab.key === "TAB02") {
-				return "Tab 2";
+				return "Timetable";
 			}
 			if (tab.key === "TAB03") {
-				return "Tab 3";
+				return "Approvals";
 			}
 		}
 
@@ -154,36 +154,15 @@ export default function TopNavHeader({
 			return tab.label;
 		}
 
-		if (roleKey === "student") {
+		if (roleKey === "lecturer" || roleKey === "student") {
 			if (tab.key === "TAB01") {
 				return "Home";
 			}
 			if (tab.key === "TAB02") {
-				return "Member 1";
+				return "Timetable";
 			}
 			if (tab.key === "TAB03") {
-				return "Member 2";
-			}
-			if (tab.key === "TAB04") {
-				return "Member 3";
-			}
-			if (tab.key === "TAB05") {
-				return "Member 4";
-			}
-		}
-
-		if (roleKey === "lecturer") {
-			if (tab.key === "TAB01") {
-				return "Home";
-			}
-			if (tab.key === "TAB02") {
-				return "Member 1";
-			}
-			if (tab.key === "TAB03") {
-				return "Member 2";
-			}
-			if (tab.key === "TAB04") {
-				return "Member 3";
+				return "Bookings";
 			}
 		}
 
