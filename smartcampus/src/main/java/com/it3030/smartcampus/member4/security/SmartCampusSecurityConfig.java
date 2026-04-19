@@ -80,6 +80,7 @@ public class SmartCampusSecurityConfig {
 				.requestMatchers("/api/admin/**").hasRole("ADMIN")
 				.requestMatchers("/api/lecturer/**").hasRole("LECTURER")
 				.requestMatchers("/api/student/**").hasRole("STUDENT")
+				.requestMatchers("/api/member3/**").authenticated()
 				.anyRequest().authenticated());
 		ClientRegistrationRepository clientRegistrationRepository = clientRegistrationRepositoryProvider.getIfAvailable();
 		if (clientRegistrationRepository != null) {

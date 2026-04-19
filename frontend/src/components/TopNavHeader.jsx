@@ -6,11 +6,13 @@ const tabs = [
 	{ key: "TAB02", label: "Timetable", public: false },
 	{ key: "TAB03", label: "Resource", public: false },
 	{ key: "TAB04", label: "Jobs", public: false },
-	{ key: "TAB05", label: "Ticket", public: false }
+	{ key: "TAB05", label: "Ticket", public: false },
+	{ key: "TAB06", label: "Ticket Mgmt", public: false },
+	{ key: "TAB07", label: "Assignments", public: false }
 ];
 
 const TIMETABLE_MANAGER_TAB_KEYS = new Set(["TAB01", "TAB02", "TAB03"]);
-const ADMIN_TAB_KEYS = new Set(["TAB01", "TAB02", "TAB03", "TAB04", "TAB05"]);
+const ADMIN_TAB_KEYS = new Set(["TAB01", "TAB02", "TAB03", "TAB04", "TAB05", "TAB06", "TAB07"]);
 const LECTURER_TAB_KEYS = new Set(["TAB01", "TAB02", "TAB03", "TAB04"]);
 const RESOURCE_ADMINISTATOR_TAB_KEYS = new Set(["TAB01", "TAB02", "TAB03"]);
 
@@ -151,6 +153,12 @@ export default function TopNavHeader({
 			if (tab.key === "TAB05") {
 				return "Recovery Tickets";
 			}
+			if (tab.key === "TAB06") {
+				return "Ticket Mgmt";
+			}
+			if (tab.key === "TAB07") {
+				return "Assignments";
+			}
 			return tab.label;
 		}
 
@@ -168,7 +176,7 @@ export default function TopNavHeader({
 				return "Member 3";
 			}
 			if (tab.key === "TAB05") {
-				return "Member 4";
+				return "Tickets";
 			}
 		}
 

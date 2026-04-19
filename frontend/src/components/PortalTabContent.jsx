@@ -4,6 +4,9 @@ import AdminUserManagementPanel from "../member4-notifications-oauth/components/
 import AdminUsersPanel from "../member4-notifications-oauth/components/AdminUsersPanel";
 import RecoveryRequestsPanel from "../member4-notifications-oauth/components/RecoveryRequestsPanel";
 import PortalHomeContent from "../member4-notifications-oauth/components/PortalHomeContent";
+import StudentTicketDashboard from "../member3-ticketing/components/StudentTicketDashboard";
+import AdminTicketManagement from "../member3-ticketing/components/AdminTicketManagement";
+import AdminTechnicianAssignment from "../member3-ticketing/components/AdminTechnicianAssignment";
 
 export default function PortalTabContent({
 	tab,
@@ -77,6 +80,14 @@ export default function PortalTabContent({
 				onRejectRecoveryRequest={onRejectRecoveryRequest}
 			/>
 		);
+	}
+
+	if (role === "admin" && tab === "TAB06") {
+		return <AdminTicketManagement user={user} />;
+	}
+
+	if (role === "admin" && tab === "TAB07") {
+		return <AdminTechnicianAssignment user={user} />;
 	}
 
 	if (role === "timetable_manager") {
@@ -187,6 +198,10 @@ export default function PortalTabContent({
 				}
 			/>
 		);
+	}
+
+	if (tab === "TAB05") {
+		return <StudentTicketDashboard user={user} />;
 	}
 
 	return (

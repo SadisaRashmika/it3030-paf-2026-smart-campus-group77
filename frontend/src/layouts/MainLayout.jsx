@@ -23,7 +23,7 @@ import {
 } from "../services/authService";
 import ProfileModal from "../member4-notifications-oauth/components/ProfileModal";
 
-const VALID_TABS = new Set(["TAB01", "TAB02", "TAB03", "TAB04", "TAB05"]);
+const VALID_TABS = new Set(["TAB01", "TAB02", "TAB03", "TAB04", "TAB05", "TAB06", "TAB07"]);
 
 const DEFAULT_TAB_BY_PATH = {
   "/": "TAB01",
