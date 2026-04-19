@@ -113,14 +113,14 @@ To be completed by Member 1.
 This section captures the architecture designed for Member 2 features:
 - Resource Booking Management with conflict-checking engine (409 Conflict handling)
 - Official Timetable system with weekly grid views
-- Role-specific dashboards for Lecturers, Students, and Timetable Managers
-- Pending request management and smart attendance tracking
+- Role-specific dashboards for Students, Lecturers, Timetable Managers, and Resource Administators
+- Pending request management and resource inventory/availability workflows
 
 ### 1) Backend (Spring Boot) - Layered Architecture
 
 ```mermaid
 flowchart TD
-		A[React Client] --> B[Booking/Timetable Controllers]
+		A[React Client] --> B[Booking/Resource Controllers]
 		B --> C[Service Layer]
 		C --> D[Repository Layer]
 		D --> E[(PostgreSQL)]
@@ -133,35 +133,42 @@ flowchart TD
 
 - Controllers
 	- BookingController
-	- TimetableController
-	- AttendanceController
 	- ResourceController
 - Services
 	- BookingService (handles schedule conflict logic)
-	- TimetableService
-	- AttendanceService
+	- ResourceService
 - Data Models
-	- Bookings, Resources, Timetables, Attendances (Schemas defined in `copythis*.sql`)
+	- Booking, Resource, BookingStatus
+- Repositories
+	- BookingRepository
+	- ResourceRepository
+- Migration
+	- `V12__booking_enhancements.sql` for booking-purpose enhancements
 
 ### 2) Frontend (React) - Component Architecture
 
 ```mermaid
 flowchart TD
-		M[PortalTabContent] --> U[Student Dashboard]
-		M --> V[Lecturer Dashboard]
-		M --> W[Timetable Manager Dashboard]
+		M[PortalTabContent] --> U[Student Booking View]
+		M --> V[Lecturer Booking View]
+		M --> W[Timetable Manager Views]
+		M --> R[Resource Administator Views]
 
-		U --> X[Weekly Grid View]
-		V --> Y[Smart Attendance Tracker]
-		W --> Z[Pending Booking Requests]
+		U --> X[BookingPanel]
+		V --> X
+		W --> T[TimetableWeeklyGrid]
+		W --> Z[PendingApprovalsPanel]
+		R --> I[ResourceManagementPanel]
+		R --> A[ResourceAvailabilityView]
 ```
 
 #### Member 2 frontend responsibilities
 
-- Role-specific dashboards with quick actions.
-- Interactive weekly grid views for checking available slots.
-- Form processing for safe concurrency/bookings.
-- Error handling specifically for HTTP 409 Conflicts during simultaneous bookings.
+- Booking request form and booking history for students/lecturers.
+- Weekly timetable grid with approved-slot rendering and week navigation.
+- Pending booking approvals panel for timetable manager.
+- Resource inventory CRUD and availability views for resource administator.
+- Error handling for HTTP 409 conflicts during overlapping booking attempts.
 ## Member 3 Architecture (Pending)
 
 To be completed by Member 3.
