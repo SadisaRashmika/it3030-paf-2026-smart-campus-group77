@@ -132,12 +132,12 @@ export default function ResourceManagementPanel() {
       {/* Header Section */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-slate-900">Resource Inventory</h2>
+          <h2 className="font-display text-2xl font-extrabold text-slate-900">Resource Inventory</h2>
           <p className="text-sm text-slate-500">Manage campus labs, classrooms, and shared facilities.</p>
         </div>
         <button 
           onClick={openAddModal}
-          className="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-bold text-white shadow-lg shadow-blue-200 transition hover:bg-blue-700 hover:shadow-blue-300"
+          className="inline-flex items-center gap-2 rounded-xl bg-amber-500 px-4 py-2.5 text-sm font-bold text-amber-950 shadow-lg shadow-amber-200 transition hover:bg-amber-600 hover:shadow-amber-300"
         >
           <Plus size={18} /> Add New Resource
         </button>
@@ -155,9 +155,9 @@ export default function ResourceManagementPanel() {
             {resources.filter(r => r.available).length}
           </p>
         </div>
-        <div className="rounded-2xl border border-slate-200 bg-blue-50 p-5 shadow-sm">
-          <p className="text-xs font-bold uppercase tracking-wider text-blue-600">Resource Types</p>
-          <p className="mt-2 text-3xl font-black text-blue-700">
+        <div className="rounded-2xl border border-slate-200 bg-amber-50 p-5 shadow-sm">
+          <p className="text-xs font-bold uppercase tracking-wider text-amber-700">Resource Types</p>
+          <p className="mt-2 text-3xl font-black text-amber-800">
             {new Set(resources.map(r => r.type)).size}
           </p>
         </div>
@@ -173,7 +173,7 @@ export default function ResourceManagementPanel() {
               placeholder="Search resources by name or type..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full rounded-xl border border-slate-200 bg-white py-2 pl-10 pr-4 text-sm transition focus:border-blue-400 focus:outline-none focus:ring-4 focus:ring-blue-100"
+              className="w-full rounded-xl border border-slate-200 bg-white py-2 pl-10 pr-4 text-sm transition focus:border-amber-400 focus:outline-none focus:ring-4 focus:ring-amber-100"
             />
           </div>
         </div>
@@ -241,7 +241,7 @@ export default function ResourceManagementPanel() {
                       <div className="flex items-center gap-3">
                         <button 
                           onClick={() => openEditModal(res)}
-                          className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-100 text-slate-600 hover:bg-blue-100 hover:text-blue-700 transition"
+                          className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-100 text-slate-600 hover:bg-amber-100 hover:text-amber-700 transition"
                           title="Edit"
                         >
                           <Edit2 size={14} />
@@ -293,7 +293,7 @@ export default function ResourceManagementPanel() {
                   placeholder="e.g. Lab 01 - Computer Science"
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm transition focus:border-blue-400 focus:outline-none focus:ring-4 focus:ring-blue-100"
+                  className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm transition focus:border-amber-400 focus:outline-none focus:ring-4 focus:ring-amber-100"
                 />
               </div>
 
@@ -302,7 +302,7 @@ export default function ResourceManagementPanel() {
                 <select
                   value={formData.type}
                   onChange={(e) => setFormData({ ...formData, type: e.target.value })}
-                  className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm transition focus:border-blue-400 focus:outline-none focus:ring-4 focus:ring-blue-100"
+                  className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm transition focus:border-amber-400 focus:outline-none focus:ring-4 focus:ring-amber-100"
                 >
                   <option value="LAB">Laboratory</option>
                   <option value="CLASSROOM">Classroom</option>
@@ -319,7 +319,7 @@ export default function ResourceManagementPanel() {
                     id="available"
                     checked={formData.available}
                     onChange={(e) => setFormData({ ...formData, available: e.target.checked })}
-                    className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                    className="h-4 w-4 rounded border-slate-300 text-amber-600 focus:ring-amber-500"
                   />
                   <label htmlFor="available" className="text-sm font-bold text-slate-700">Active and bookable</label>
                 </div>
@@ -336,7 +336,7 @@ export default function ResourceManagementPanel() {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="flex-[2] inline-flex items-center justify-center gap-2 rounded-xl bg-blue-600 py-2.5 text-sm font-bold text-white shadow-lg shadow-blue-200 transition hover:bg-blue-700 disabled:opacity-70 disabled:cursor-not-allowed"
+                  className="flex-[2] inline-flex items-center justify-center gap-2 rounded-xl bg-amber-500 py-2.5 text-sm font-bold text-amber-950 shadow-lg shadow-amber-200 transition hover:bg-amber-600 disabled:opacity-70 disabled:cursor-not-allowed"
                 >
                   {isSubmitting ? "Saving..." : editingResource ? "Save Changes" : "Create Resource"}
                 </button>

@@ -125,13 +125,13 @@ export default function TopNavHeader({
 
 		if (isResourceAdministator) {
 			if (tab.key === "TAB01") {
-				return "Inventory";
+				return "Home";
 			}
 			if (tab.key === "TAB02") {
-				return "Availability";
+				return "Inventory";
 			}
 			if (tab.key === "TAB03") {
-				return "Timetable";
+				return "Availability";
 			}
 		}
 

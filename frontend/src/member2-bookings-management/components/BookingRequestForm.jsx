@@ -66,10 +66,10 @@ const BookingRequestForm = ({ onBookingCreated }) => {
   };
 
   return (
-    <div className="bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden transition-all hover:shadow-2xl">
-      <div className="bg-gradient-to-r from-indigo-600 to-violet-600 px-6 py-4">
-        <h3 className="text-white font-bold text-lg flex items-center">
-          <span className="mr-2">📅</span> New Booking Request
+    <div className="bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden transition-all hover:shadow-2xl">
+      <div className="bg-gradient-to-r from-amber-500 to-amber-600 px-6 py-4">
+        <h3 className="font-display text-amber-950 font-extrabold text-lg flex items-center">
+          New Booking Request
         </h3>
       </div>
 
@@ -91,7 +91,7 @@ const BookingRequestForm = ({ onBookingCreated }) => {
             <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider">Resource</label>
             <select
               required
-              className="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:bg-white outline-none transition-all"
+              className="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-amber-500 focus:bg-white outline-none transition-all"
               value={formData.resourceId}
               onChange={(e) => setFormData({ ...formData, resourceId: e.target.value })}
             >
@@ -109,7 +109,7 @@ const BookingRequestForm = ({ onBookingCreated }) => {
             <input
               type="date"
               required
-              className="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:bg-white outline-none transition-all"
+              className="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-amber-500 focus:bg-white outline-none transition-all"
               value={formData.date}
               onChange={(e) => setFormData({ ...formData, date: e.target.value })}
             />
@@ -120,7 +120,7 @@ const BookingRequestForm = ({ onBookingCreated }) => {
             <input
               type="time"
               required
-              className="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:bg-white outline-none transition-all"
+              className="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-amber-500 focus:bg-white outline-none transition-all"
               value={formData.startTime}
               onChange={(e) => setFormData({ ...formData, startTime: e.target.value })}
             />
@@ -131,7 +131,7 @@ const BookingRequestForm = ({ onBookingCreated }) => {
             <input
               type="time"
               required
-              className="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:bg-white outline-none transition-all"
+              className="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-amber-500 focus:bg-white outline-none transition-all"
               value={formData.endTime}
               onChange={(e) => setFormData({ ...formData, endTime: e.target.value })}
             />
@@ -144,7 +144,7 @@ const BookingRequestForm = ({ onBookingCreated }) => {
             required
             rows="2"
             maxLength="500"
-            className="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:bg-white outline-none transition-all resize-none"
+            className="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-amber-500 focus:bg-white outline-none transition-all resize-none"
             placeholder="What is the reason for this booking?"
             value={formData.purpose}
             onChange={(e) => setFormData({ ...formData, purpose: e.target.value })}
@@ -156,7 +156,7 @@ const BookingRequestForm = ({ onBookingCreated }) => {
           <input
             type="number"
             min="1"
-            className="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:bg-white outline-none transition-all"
+            className="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-amber-500 focus:bg-white outline-none transition-all"
             placeholder="Approximate number of people"
             value={formData.expectedAttendees}
             onChange={(e) => setFormData({ ...formData, expectedAttendees: e.target.value })}
@@ -166,7 +166,7 @@ const BookingRequestForm = ({ onBookingCreated }) => {
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl shadow-lg shadow-indigo-200 transition-all transform hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full bg-amber-500 hover:bg-amber-600 text-amber-950 font-bold py-3 rounded-xl shadow-lg shadow-amber-200 transition-all transform hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {loading ? "Submitting..." : "Submit Booking Request"}
         </button>

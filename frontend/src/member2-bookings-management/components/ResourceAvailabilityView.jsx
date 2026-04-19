@@ -43,8 +43,8 @@ const ResourceAvailabilityView = () => {
   return (
     <div className="max-w-6xl mx-auto p-4 md:p-8 space-y-8 animate-in fade-in duration-500">
       <header>
-        <h1 className="text-3xl font-black text-slate-900 tracking-tight flex items-center">
-          <span className="mr-3">📡</span> Resource Status Tracker
+        <h1 className="font-display text-3xl font-extrabold text-slate-900 tracking-tight flex items-center">
+          Resource Status Tracker
         </h1>
         <p className="text-slate-500">Real-time availability monitoring for campus assets.</p>
       </header>
@@ -57,14 +57,14 @@ const ResourceAvailabilityView = () => {
           return (
             <div 
               key={res.id} 
-              className={`bg-white border rounded-3xl p-6 shadow-sm hover:shadow-xl transition-all border-l-8 ${isBusy ? 'border-l-rose-500' : 'border-l-emerald-500'}`}
+              className={`bg-white border border-slate-200 rounded-3xl p-6 shadow-sm hover:shadow-xl transition-all border-l-8 ${isBusy ? 'border-l-rose-500' : 'border-l-amber-500'}`}
             >
               <div className="flex justify-between items-start mb-4">
                 <div>
                   <h3 className="font-bold text-slate-800 text-lg">{res.name}</h3>
                   <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">{res.type}</span>
                 </div>
-                <div className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-tighter ${isBusy ? 'bg-rose-50 text-rose-600' : 'bg-emerald-50 text-emerald-600'}`}>
+                <div className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-tighter ${isBusy ? 'bg-rose-50 text-rose-600' : 'bg-amber-50 text-amber-700'}`}>
                   {isBusy ? 'Occupied' : 'Free'}
                 </div>
               </div>
@@ -76,13 +76,13 @@ const ResourceAvailabilityView = () => {
                   <div className="text-xs text-rose-500 mt-1 italic">until {new Date(activeBooking.endTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
                 </div>
               ) : (
-                <div className="bg-emerald-50/50 p-3 rounded-2xl border border-emerald-100">
-                  <p className="text-xs text-emerald-600 font-medium">Available for immediate booking.</p>
+                <div className="bg-amber-50/50 p-3 rounded-2xl border border-amber-100">
+                  <p className="text-xs text-amber-700 font-medium">Available for immediate booking.</p>
                 </div>
               )}
 
-              <button className="w-full mt-6 py-2 text-slate-400 hover:text-indigo-600 text-xs font-bold transition-colors">
-                View Weekly Schedule →
+              <button className="w-full mt-6 py-2 text-slate-500 hover:text-amber-700 text-xs font-bold transition-colors">
+                View Weekly Schedule
               </button>
             </div>
           );

@@ -64,8 +64,8 @@ const PendingApprovalsPanel = ({ user }) => {
     <div className="max-w-6xl mx-auto p-4 md:p-8 space-y-8 animate-in fade-in duration-500">
       <header className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-black text-slate-900 tracking-tight flex items-center">
-            <span className="mr-3">📥</span> Pending Approvals
+          <h1 className="font-display text-3xl font-extrabold text-slate-900 tracking-tight flex items-center">
+            Pending Approvals
           </h1>
           <p className="text-slate-500">Review and manage incoming resource booking requests.</p>
         </div>
@@ -76,12 +76,11 @@ const PendingApprovalsPanel = ({ user }) => {
 
       {pending.length === 0 ? (
         <div className="bg-white border-2 border-dashed border-slate-100 rounded-3xl p-20 text-center shadow-inner">
-          <div className="text-5xl mb-4 opacity-30">✨</div>
           <h3 className="text-xl font-bold text-slate-400">All caught up!</h3>
           <p className="text-slate-300">No pending requests at the moment.</p>
         </div>
       ) : (
-        <div className="overflow-x-auto bg-white rounded-3xl shadow-xl border border-slate-100">
+        <div className="overflow-x-auto bg-white rounded-3xl shadow-xl border border-slate-200">
           <table className="w-full text-left">
             <thead>
               <tr className="bg-slate-50 border-b border-slate-100">
@@ -96,7 +95,7 @@ const PendingApprovalsPanel = ({ user }) => {
                 <tr key={req.id} className="hover:bg-slate-50/50 transition-colors">
                   <td className="px-6 py-5">
                     <div className="font-bold text-slate-800">{req.userName}</div>
-                    <div className="text-xs text-indigo-500 font-medium">#{req.id}</div>
+                    <div className="text-xs text-amber-700 font-semibold">#{req.id}</div>
                   </td>
                   <td className="px-6 py-5">
                     <div className="font-semibold text-slate-700">{req.resourceName}</div>
@@ -128,11 +127,11 @@ const PendingApprovalsPanel = ({ user }) => {
                           className="p-2 hover:bg-rose-50 text-rose-400 hover:text-rose-600 rounded-xl transition-all border border-transparent hover:border-rose-100"
                           title="Reject"
                         >
-                          ✖
+                          Reject
                         </button>
                         <button
                           onClick={() => handleApprove(req.id)}
-                          className="bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-bold px-6 py-2.5 rounded-xl shadow-lg shadow-emerald-100 transition-all transform hover:-translate-y-0.5"
+                          className="bg-amber-500 hover:bg-amber-600 text-amber-950 text-sm font-bold px-6 py-2.5 rounded-xl shadow-lg shadow-amber-100 transition-all transform hover:-translate-y-0.5"
                         >
                           Approve Slot
                         </button>

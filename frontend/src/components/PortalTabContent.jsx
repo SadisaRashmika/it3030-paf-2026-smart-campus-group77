@@ -102,15 +102,15 @@ export default function PortalTabContent({
 
 	if (role === "resource_administator") {
 		if (tab === "TAB01") {
-			return <ResourceInventoryPage />;
+			return <PortalHomeContent user={user} onLogin={onLogin} onNavigate={onNavigate} />;
 		}
 
 		if (tab === "TAB02") {
-			return <ResourceAvailabilityPage />;
+			return <ResourceInventoryPage />;
 		}
 
 		if (tab === "TAB03") {
-			return <TimetablePage />;
+			return <ResourceAvailabilityPage />;
 		}
 	}
 

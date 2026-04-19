@@ -18,10 +18,10 @@ const BookingPanel = ({ user }) => {
     <div className="max-w-6xl mx-auto p-4 md:p-8 space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
       {/* Welcome Header */}
       <section className="space-y-2">
-        <h1 className="text-3xl md:text-4xl font-black text-slate-900 tracking-tight">
-          Welcome, <span className="text-indigo-600 underline decoration-indigo-200 underline-offset-8">{user?.name || "Member"}</span>
+        <h1 className="font-display text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight">
+          Welcome, <span className="text-amber-700 underline decoration-amber-300 underline-offset-8">{user?.name || "Member"}</span>
         </h1>
-        <p className="text-slate-500 text-lg">
+        <p className="text-slate-600 text-lg">
           Manage your campus resource bookings from one central location.
         </p>
       </section>
@@ -31,9 +31,9 @@ const BookingPanel = ({ user }) => {
         <div className="lg:col-span-5 sticky top-8">
           <BookingRequestForm onBookingCreated={handleBookingCreated} />
           
-          <div className="mt-6 p-4 bg-indigo-50 rounded-xl border border-indigo-100 flex items-start gap-3">
-            <span className="text-xl">💡</span>
-            <p className="text-xs text-indigo-700 font-medium leading-relaxed">
+          <div className="mt-6 p-4 bg-amber-50 rounded-xl border border-amber-200 flex items-start gap-3">
+            <span className="text-xl text-amber-700">Info</span>
+            <p className="text-xs text-amber-800 font-semibold leading-relaxed">
               Your requests will stay <strong>PENDING</strong> until a Timetable Manager reviews them. 
               Once approved, you'll see a badge update in your history list.
             </p>
