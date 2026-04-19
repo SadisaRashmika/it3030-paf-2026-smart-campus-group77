@@ -58,7 +58,7 @@ public class BookingServiceTest {
         when(bookingRepository.findOverlappingApprovedBookings(anyLong(), any(), any()))
                 .thenReturn(Collections.emptyList());
         when(resourceService.getResourceById(1L)).thenReturn(resource);
-        when(bookingRepository.save(any(Booking.class))).thenAnswer(i -> i.getArguments()[0]);
+        when(bookingRepository.save(any(Booking.class))).thenAnswer(i -> i.getArgument(0, Booking.class));
 
         // Act
         BookingResponse response = bookingService.createBooking(request, user);
@@ -66,7 +66,7 @@ public class BookingServiceTest {
         // Assert
         assertNotNull(response);
         assertEquals("Lab A", response.getResourceName());
-        verify(bookingRepository, times(1)).save(any());
+        verify(bookingRepository, times(1)).save(any(Booking.class));
     }
 
     @Test
@@ -84,7 +84,7 @@ public class BookingServiceTest {
         assertThrows(BookingConflictException.class, () -> {
             bookingService.createBooking(request, mock(UserAccount.class));
         });
-        verify(bookingRepository, never()).save(any());
+        verify(bookingRepository, never()).save(any(Booking.class));
     }
 
     @Test

@@ -10,11 +10,13 @@ import com.it3030.smartcampus.member2.model.Resource;
 import com.it3030.smartcampus.member2.repository.BookingRepository;
 import com.it3030.smartcampus.member4.model.UserAccount;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -121,8 +123,9 @@ public class BookingService {
         return mapToResponse(bookingRepository.save(booking));
     }
 
-    private Booking getBookingById(Long id) {
-        return bookingRepository.findById(id)
+    private Booking getBookingById(@NonNull Long id) {
+        Long bookingId = Objects.requireNonNull(id, "id must not be null");
+        return bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new IllegalArgumentException("Booking not found with id: " + id));
     }
 
