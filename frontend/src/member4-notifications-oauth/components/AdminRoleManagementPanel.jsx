@@ -5,7 +5,8 @@ const ROLE_OPTIONS = [
 	{ value: "LECTURER", label: "Lecturer" },
 	{ value: "STUDENT", label: "Student" },
 	{ value: "TIMETABLE_MANAGER", label: "Timetable Manager" },
-	{ value: "RESOURCE_ADMINISTATOR", label: "Resource Administator" }
+	{ value: "RESOURCE_ADMINISTATOR", label: "Resource Administator" },
+	{ value: "TICKET_ADMINISTRATOR", label: "Ticket Administrator" }
 ];
 
 export default function AdminRoleManagementPanel({ onCreateStaffLogin }) {

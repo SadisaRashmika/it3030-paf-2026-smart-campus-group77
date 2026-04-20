@@ -36,6 +36,19 @@ const advantages = [
 
 export default function PortalHomeContent({ user, onLogin, onNavigate }) {
 	const role = (user?.role || "").replace("ROLE_", "").toLowerCase();
+	const welcomeRoleLabel = role === "lecturer"
+		? "Lecturer"
+		: role === "admin"
+			? "Admin"
+			: role === "timetable_manager" || role === "timetablemanager"
+				? "Timetable Manager"
+				: role === "resource_administator" || role === "resourceadministator"
+					? "Resource Administrator"
+					: role === "ticket_administrator" || role === "ticketadministrator"
+						? "Ticket Administrator"
+					: role === "student"
+						? "Student"
+						: "User";
 	const heroImage = !user
 		? { src: "/assets/home.png", alt: "SmartCampus home illustration" }
 		: role === "admin"
@@ -61,7 +74,7 @@ export default function PortalHomeContent({ user, onLogin, onNavigate }) {
 						{user ? (
 							<>
 								<h1 className="font-display text-3xl font-bold leading-tight text-slate-900 sm:text-5xl">
-									Welcome back, {role === "lecturer" ? "Lecturer" : role === "admin" ? "Admin" : "Student"}
+									Welcome back, {welcomeRoleLabel}
 								</h1>
 								<p className="max-w-xl text-sm leading-relaxed text-slate-600 sm:text-base">
 									Your personalized SmartCampus dashboard is ready. Open the modules below to continue your work.

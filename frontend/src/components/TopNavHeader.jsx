@@ -6,13 +6,17 @@ const tabs = [
 	{ key: "TAB02", label: "Timetable", public: false },
 	{ key: "TAB03", label: "Resource", public: false },
 	{ key: "TAB04", label: "Jobs", public: false },
-	{ key: "TAB05", label: "Ticket", public: false }
+	{ key: "TAB05", label: "Ticket", public: false },
+	{ key: "TAB06", label: "Ticket Mgmt", public: false },
+	{ key: "TAB07", label: "Assignments", public: false }
 ];
 
 const TIMETABLE_MANAGER_TAB_KEYS = new Set(["TAB01", "TAB02", "TAB03"]);
 const ADMIN_TAB_KEYS = new Set(["TAB01", "TAB02", "TAB03", "TAB04", "TAB05"]);
 const LECTURER_TAB_KEYS = new Set(["TAB01", "TAB02", "TAB03", "TAB04"]);
+const STUDENT_TAB_KEYS = new Set(["TAB01", "TAB02", "TAB03", "TAB04", "TAB05"]);
 const RESOURCE_ADMINISTATOR_TAB_KEYS = new Set(["TAB01", "TAB02", "TAB03"]);
+const TICKET_ADMINISTRATOR_TAB_KEYS = new Set(["TAB01", "TAB06", "TAB07"]);
 
 export default function TopNavHeader({
 	activeTab,
@@ -83,6 +87,7 @@ export default function TopNavHeader({
 	const isLecturer = roleKey === "lecturer";
 	const isTimetableManager = roleKey === "timetable_manager" || roleKey === "timetablemanager";
 	const isResourceAdministator = roleKey === "resource_administator" || roleKey === "resourceadministator";
+	const isTicketAdministrator = roleKey === "ticket_administrator" || roleKey === "ticketadministrator";
 	const visibleTabs = tabs.filter((tab) => {
 		if (!user) {
 			return tab.public;
@@ -100,8 +105,16 @@ export default function TopNavHeader({
 			return LECTURER_TAB_KEYS.has(tab.key);
 		}
 
+		if (roleKey === "student") {
+			return STUDENT_TAB_KEYS.has(tab.key);
+		}
+
 		if (isResourceAdministator) {
 			return RESOURCE_ADMINISTATOR_TAB_KEYS.has(tab.key);
+		}
+
+		if (isTicketAdministrator) {
+			return TICKET_ADMINISTRATOR_TAB_KEYS.has(tab.key);
 		}
 
 		return true;
@@ -113,25 +126,25 @@ export default function TopNavHeader({
 	const tabLabelForRole = (tab) => {
 		if (isTimetableManager) {
 			if (tab.key === "TAB01") {
-				return "Tab 1";
+				return "Home";
 			}
 			if (tab.key === "TAB02") {
-				return "Tab 2";
+				return "Timetable";
 			}
 			if (tab.key === "TAB03") {
-				return "Tab 3";
+				return "Approvals";
 			}
 		}
 
 		if (isResourceAdministator) {
 			if (tab.key === "TAB01") {
-				return "Tab 1";
+				return "Home";
 			}
 			if (tab.key === "TAB02") {
-				return "Tab 2";
+				return "Inventory";
 			}
 			if (tab.key === "TAB03") {
-				return "Tab 3";
+				return "Availability";
 			}
 		}
 
@@ -151,39 +164,39 @@ export default function TopNavHeader({
 			if (tab.key === "TAB05") {
 				return "Recovery Tickets";
 			}
+			if (tab.key === "TAB06") {
+				return "Ticket Mgmt";
+			}
+			if (tab.key === "TAB07") {
+				return "Assignments";
+			}
 			return tab.label;
 		}
 
-		if (roleKey === "student") {
+		if (isTicketAdministrator) {
 			if (tab.key === "TAB01") {
 				return "Home";
 			}
-			if (tab.key === "TAB02") {
-				return "Member 1";
+			if (tab.key === "TAB06") {
+				return "Ticket Mgmt";
 			}
-			if (tab.key === "TAB03") {
-				return "Member 2";
-			}
-			if (tab.key === "TAB04") {
-				return "Member 3";
-			}
-			if (tab.key === "TAB05") {
-				return "Member 4";
+			if (tab.key === "TAB07") {
+				return "Assignments";
 			}
 		}
 
-		if (roleKey === "lecturer") {
+		if (roleKey === "lecturer" || roleKey === "student") {
 			if (tab.key === "TAB01") {
 				return "Home";
 			}
 			if (tab.key === "TAB02") {
-				return "Member 1";
+				return "Timetable";
 			}
 			if (tab.key === "TAB03") {
-				return "Member 2";
+				return "Bookings";
 			}
-			if (tab.key === "TAB04") {
-				return "Member 3";
+			if (tab.key === "TAB05") {
+				return "Tickets";
 			}
 		}
 
