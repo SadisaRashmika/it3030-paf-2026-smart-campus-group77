@@ -69,12 +69,19 @@ CREATE TABLE bookings (
     resource_id BIGINT NOT NULL,
     start_time TIMESTAMP NOT NULL,
     end_time TIMESTAMP NOT NULL,
-    status VARCHAR(50) DEFAULT 'Pending',
+    status VARCHAR(50) DEFAULT 'PENDING',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    purpose VARCHAR(500),
+    expected_attendees INTEGER,
+    rejection_reason TEXT,
     CONSTRAINT fk_bookings_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     CONSTRAINT fk_bookings_resource FOREIGN KEY (resource_id) REFERENCES resources(id) ON DELETE CASCADE
 );
+
+CREATE INDEX idx_bookings_resource_status
+    ON bookings(resource_id, status)
+    WHERE status = 'APPROVED';
 
 CREATE TABLE notifications (
     id BIGSERIAL PRIMARY KEY,
