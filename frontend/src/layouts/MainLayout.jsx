@@ -23,7 +23,7 @@ import {
 } from "../services/authService";
 import ProfileModal from "../member4-notifications-oauth/components/ProfileModal";
 
-const VALID_TABS = new Set(["TAB01", "TAB02", "TAB03", "TAB04", "TAB05"]);
+const VALID_TABS = new Set(["TAB01", "TAB02", "TAB03", "TAB04", "TAB05", "TAB06", "TAB07"]);
 
 const DEFAULT_TAB_BY_PATH = {
   "/": "TAB01",
@@ -31,7 +31,8 @@ const DEFAULT_TAB_BY_PATH = {
   "/lecturer": "TAB01",
   "/student": "TAB01",
   "/timetable-manager": "TAB01",
-  "/resource-administator": "TAB01"
+  "/resource-administator": "TAB01",
+  "/ticket-administrator": "TAB01"
 };
 
 function getDefaultTab(pathname) {
@@ -63,6 +64,9 @@ function targetPathForUser(user) {
   }
   if (role === "resource_administator" || role === "resourceadministator") {
     return "/resource-administator";
+  }
+  if (role === "ticket_administrator" || role === "ticketadministrator") {
+    return "/ticket-administrator";
   }
   return "/";
 }

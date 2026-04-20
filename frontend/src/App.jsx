@@ -7,6 +7,7 @@ import HelpPage from "./pages/HelpPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import ResourceAdministatorPage from "./pages/ResourceAdministatorPage";
 import StudentPage from "./pages/StudentPage";
+import TicketAdministratorPage from "./pages/TicketAdministratorPage";
 import TimetableManagerPage from "./pages/TimetableManagerPage";
 
 export default function App() {
@@ -19,6 +20,7 @@ export default function App() {
         <Route path="student" element={<StudentPage />} />
         <Route path="timetable-manager" element={<TimetableManagerPage />} />
         <Route path="resource-administator" element={<ResourceAdministatorPage />} />
+        <Route path="ticket-administrator" element={<TicketAdministratorPage />} />
         <Route path="help" element={<HelpPage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Route>

@@ -128,3 +128,47 @@ Set-Location ".\smartcampus"
 .\mvnw.cmd -DskipTests package
 ```
 
+---
+
+## Member 3 Module Quick Run/Check
+
+### Roles and Pages
+
+- Student: create and track personal tickets in the portal ticket tab
+- Ticket Administrator: manage all tickets, update status, assign technicians, and manage comments
+- Admin: retains account and portal administration, but no longer handles ticket management tabs
+
+### APIs used by Member 3 frontend
+
+- `/api/member3/tickets`
+- `/api/member3/tickets/my`
+- `/api/member3/tickets/all`
+- `/api/member3/tickets/assigned`
+- `/api/member3/tickets/{id}`
+- `/api/member3/tickets/{id}/status`
+- `/api/member3/tickets/{id}/assign`
+- `/api/member3/tickets/{id}/comments`
+
+### Validation commands
+
+Frontend build:
+
+```powershell
+Set-Location ".\frontend"
+npm run build
+```
+
+Backend package:
+
+```powershell
+Set-Location ".\smartcampus"
+.\mvnw.cmd -DskipTests package
+```
+
+Backend run check:
+
+```powershell
+Set-Location ".\smartcampus"
+.\mvnw.cmd spring-boot:run
+```
+

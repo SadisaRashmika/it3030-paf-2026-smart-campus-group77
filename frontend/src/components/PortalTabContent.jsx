@@ -4,6 +4,9 @@ import AdminUserManagementPanel from "../member4-notifications-oauth/components/
 import AdminUsersPanel from "../member4-notifications-oauth/components/AdminUsersPanel";
 import RecoveryRequestsPanel from "../member4-notifications-oauth/components/RecoveryRequestsPanel";
 import PortalHomeContent from "../member4-notifications-oauth/components/PortalHomeContent";
+import StudentTicketDashboard from "../member3-ticketing/components/StudentTicketDashboard";
+import AdminTicketManagement from "../member3-ticketing/components/AdminTicketManagement";
+import AdminTechnicianAssignment from "../member3-ticketing/components/AdminTechnicianAssignment";
 
 // Member 2 Imports
 import BookingsPage from "../member2-bookings-management/pages/BookingsPage";
@@ -86,6 +89,18 @@ export default function PortalTabContent({
 		);
 	}
 
+	if (role === "ticket_administrator" && tab === "TAB01") {
+		return <PortalHomeContent user={user} onLogin={onLogin} onNavigate={onNavigate} />;
+	}
+
+	if (role === "ticket_administrator" && tab === "TAB06") {
+		return <AdminTicketManagement user={user} />;
+	}
+
+	if (role === "ticket_administrator" && tab === "TAB07") {
+		return <AdminTechnicianAssignment user={user} />;
+	}
+
 	if (role === "timetable_manager") {
 		if (tab === "TAB01") {
 			return <PortalHomeContent user={user} onLogin={onLogin} onNavigate={onNavigate} />;
@@ -114,6 +129,10 @@ export default function PortalTabContent({
 		}
 	}
 
+	if (role === "student" && (tab === "TAB06" || tab === "TAB07")) {
+		return <PortalHomeContent user={user} onLogin={onLogin} onNavigate={onNavigate} />;
+	}
+
 	if (tab === "TAB01") {
 		return <PortalHomeContent user={user} onLogin={onLogin} onNavigate={onNavigate} />;
 	}
@@ -138,6 +157,10 @@ export default function PortalTabContent({
 				}
 			/>
 		);
+	}
+
+	if (tab === "TAB05") {
+		return <StudentTicketDashboard user={user} />;
 	}
 
 	return (

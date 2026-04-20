@@ -1,6 +1,6 @@
 # Architecture Diagrams
 
-> Working draft note: This file is currently Member-4-first and will be expanded with Member 1/2/3 architecture when their modules are merged.
+> Working draft note: This file now includes the merged Member 3 ticketing architecture. Member 1 remains pending.
 
 ## Member 4 Architecture (Completed)
 
@@ -100,10 +100,6 @@ flowchart TD
 
 ---
 
-## Remaining Team Architecture Sections
-
-Member 1, Member 2, and Member 3 architecture diagrams can be appended after this section.
-
 ## Member 1 Architecture (Pending)
 
 To be completed by Member 1.
@@ -169,7 +165,90 @@ flowchart TD
 - Pending booking approvals panel for timetable manager.
 - Resource inventory CRUD and availability views for resource administator.
 - Error handling for HTTP 409 conflicts during overlapping booking attempts.
-## Member 3 Architecture (Pending)
+## Member 3 Architecture (Completed)
 
-To be completed by Member 3.
+This section captures the architecture implemented for the maintenance and incident ticketing module.
+
+### 1) Backend (Spring Boot) - Layered Architecture
+
+```mermaid
+flowchart TD
+		A[React Client] --> B[Ticket Controller]
+		B --> C[Ticket Service]
+		C --> D[Ticket Repositories]
+		D --> E[(PostgreSQL)]
+
+		B --> F[DTO Validation]
+		B --> G[Access Control]
+		H[Spring Security] --> B
+```
+
+#### Member 3 backend components
+
+- Controllers
+	- TicketController
+- Services
+	- TicketService
+- Data Models
+	- IncidentTicket
+	- TicketComment
+	- TicketAttachment
+	- TicketStatus
+	- TicketPriority
+	- TicketCategory
+- Repositories
+	- IncidentTicketRepository
+	- TicketCommentRepository
+	- TicketAttachmentRepository
+- DTOs
+	- CreateTicketRequest
+	- UpdateTicketStatusRequest
+	- AssignTechnicianRequest
+	- AddCommentRequest
+	- UpdateCommentRequest
+	- TicketResponse
+	- TicketSummaryResponse
+	- CommentResponse
+	- TicketMessageResponse
+
+### 2) Frontend (React) - Component Architecture
+
+```mermaid
+flowchart TD
+		M[PortalTabContent] --> U[StudentTicketDashboard]
+		M --> V[AdminTicketManagement]
+		M --> W[AdminTechnicianAssignment]
+		V --> X[TicketDetailPanel]
+		U --> Y[CreateTicketModal]
+		X --> Z[TicketCommentSection]
+		Y --> A[ImageUploader]
+```
+
+#### Member 3 frontend responsibilities
+
+- Student ticket dashboard for creating, filtering, and tracking personal tickets.
+- Admin ticket management table with status counts, search, and delete actions.
+- Technician assignment workflow for privileged users.
+- Ticket detail panel with status transitions, rejection/resolution notes, attachments, and comments.
+- Supporting badges and modal components for a consistent ticketing UI.
+
+### 3) Data Model Additions (Member 3)
+
+- `incident_tickets`
+- `ticket_comments`
+- `ticket_attachments`
+- `TICKET_ADMINISTRATOR` role support for privileged ticket operations
+
+### 4) Security and Access Notes
+
+- Public ticket creation is not used; users must be authenticated to work with ticket endpoints.
+- Ticket reporters can view and edit their own open tickets.
+- Assigned technicians can view their assigned tickets.
+- Ticket Administrator can list all tickets, assign technicians, update status, and delete tickets/comments.
+
+### 5) Quality and CI Notes (Member 3)
+
+- Frontend ticketing components were restyled to match the shared portal theme used by Members 2 and 4.
+- Frontend build passes after the Member 3 UI refresh.
+- The ticketing module uses reusable status and priority badges plus a scrollable create-ticket modal.
 
