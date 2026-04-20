@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
-import { ArrowLeft, MapPin, Mail, Phone, User2, Calendar, AlertTriangle } from "lucide-react";
+import { ArrowLeft, MapPin, Mail, Phone, User2, Calendar, AlertTriangle, Edit3, Trash2 } from "lucide-react";
 import TicketStatusBadge from "./TicketStatusBadge";
 import TicketPriorityBadge from "./TicketPriorityBadge";
 import TicketCommentSection from "./TicketCommentSection";
-import { getTicketById, updateTicketStatus, addComment, updateComment, deleteComment } from "../services/ticketService";
+import CreateTicketModal from "./CreateTicketModal";
+import { getTicketById, updateTicketStatus, addComment, updateComment, deleteComment, updateTicket, deleteTicket } from "../services/ticketService";
 
 const CATEGORY_LABELS = {
   HARDWARE: "Hardware", SOFTWARE: "Software", NETWORK: "Network",
@@ -29,6 +30,8 @@ export default function TicketDetailPanel({ ticketId, onClose, user, isAdmin }) 
   const [rejectionReason, setRejectionReason] = useState("");
   const [resolutionNotes, setResolutionNotes] = useState("");
   const [updatingStatus, setUpdatingStatus] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const [editModalOpen, setEditModalOpen] = useState(false);
   const [imageModal, setImageModal] = useState(null);
 
   const loadTicket = async () => {
@@ -107,6 +110,24 @@ export default function TicketDetailPanel({ ticketId, onClose, user, isAdmin }) 
     }));
   };
 
+  const handleEditSubmit = async (payload) => {
+    const updated = await updateTicket(ticketId, payload);
+    setTicket(updated);
+    setEditModalOpen(false);
+  };
+
+  const handleDeleteTicket = async () => {
+    if (!window.confirm("Are you sure you want to delete this ticket? This action cannot be undone.")) return;
+    setDeleting(true);
+    try {
+      await deleteTicket(ticketId);
+      onClose();
+    } catch (err) {
+      setError(err.message);
+      setDeleting(false);
+    }
+  };
+
   const formatDate = (dateStr) => {
     if (!dateStr) return "";
     try { return new Date(dateStr).toLocaleString(); } catch { return ""; }
@@ -115,6 +136,9 @@ export default function TicketDetailPanel({ ticketId, onClose, user, isAdmin }) 
   const transitions = STATUS_TRANSITIONS[ticket?.status] || [];
   const adminActions = isAdmin ? (ADMIN_EXTRA_TRANSITIONS[ticket?.status] || []) : [];
   const allActions = [...transitions, ...adminActions];
+
+  const isReporter = ticket?.reporterEmail?.toLowerCase() === user?.email?.toLowerCase();
+  const canModify = isReporter && ticket?.status === "OPEN";
 
   if (loading) {
     return (
@@ -142,7 +166,26 @@ export default function TicketDetailPanel({ ticketId, onClose, user, isAdmin }) 
         <button onClick={onClose} className="flex items-center gap-1 text-sm font-semibold text-slate-500 transition hover:text-slate-900">
           <ArrowLeft size={16} /> Back to list
         </button>
-        <span className="text-xs font-semibold text-slate-400">#{ticket.id}</span>
+        <div className="flex items-center gap-3">
+          {canModify && !deleting && (
+            <div className="flex items-center gap-2 mr-2">
+              <button
+                onClick={() => setEditModalOpen(true)}
+                className="flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-bold text-slate-600 transition hover:bg-slate-50 hover:text-slate-900"
+              >
+                <Edit3 size={14} /> Edit
+              </button>
+              <button
+                onClick={handleDeleteTicket}
+                className="flex items-center gap-1.5 rounded-lg border border-rose-100 bg-white px-3 py-1.5 text-xs font-bold text-rose-600 transition hover:bg-rose-50 hover:text-rose-700"
+              >
+                <Trash2 size={14} /> Delete
+              </button>
+            </div>
+          )}
+          {deleting && <span className="text-xs font-bold text-rose-500 animate-pulse">Deleting...</span>}
+          <span className="text-xs font-semibold text-slate-400">#{ticket.id}</span>
+        </div>
       </div>
 
       {error && (
@@ -338,6 +381,15 @@ export default function TicketDetailPanel({ ticketId, onClose, user, isAdmin }) 
           </div>
         </div>
       )}
+
+      {/* Edit Modal */}
+      <CreateTicketModal
+        isOpen={editModalOpen}
+        onClose={() => setEditModalOpen(false)}
+        onSubmit={handleEditSubmit}
+        userEmail={user?.email}
+        initialData={ticket}
+      />
     </div>
   );
 }

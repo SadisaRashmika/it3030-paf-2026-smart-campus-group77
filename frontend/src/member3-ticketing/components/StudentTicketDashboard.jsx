@@ -3,7 +3,7 @@ import { Plus, Search, Filter, TicketCheck, Clock, CheckCircle2, XCircle, AlertC
 import TicketCard from "./TicketCard";
 import CreateTicketModal from "./CreateTicketModal";
 import TicketDetailPanel from "./TicketDetailPanel";
-import { getMyTickets, createTicket } from "../services/ticketService";
+import { getMyTickets, createTicket, updateTicket, deleteTicket } from "../services/ticketService";
 
 const STATUS_FILTERS = [
   { key: "ALL", label: "All", icon: Filter },
@@ -21,6 +21,7 @@ export default function StudentTicketDashboard({ user }) {
   const [statusFilter, setStatusFilter] = useState("ALL");
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [selectedTicketId, setSelectedTicketId] = useState(null);
+  const [ticketToEdit, setTicketToEdit] = useState(null);
   const [error, setError] = useState("");
 
   const loadTickets = useCallback(async () => {
@@ -38,9 +39,29 @@ export default function StudentTicketDashboard({ user }) {
 
   useEffect(() => { loadTickets(); }, [loadTickets]);
 
-  const handleCreateTicket = async (payload) => {
-    await createTicket(payload);
+  const handleCreateOrUpdate = async (payload) => {
+    if (ticketToEdit) {
+      await updateTicket(ticketToEdit.id, payload);
+    } else {
+      await createTicket(payload);
+    }
+    setTicketToEdit(null);
     await loadTickets();
+  };
+
+  const handleEditClick = (ticket) => {
+    setTicketToEdit(ticket);
+    setCreateModalOpen(true);
+  };
+
+  const handleDeleteClick = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this ticket?")) return;
+    try {
+      await deleteTicket(id);
+      await loadTickets();
+    } catch (err) {
+      setError(err.message);
+    }
   };
 
   const filteredTickets = tickets.filter(t => {
@@ -173,6 +194,8 @@ export default function StudentTicketDashboard({ user }) {
               key={ticket.id}
               ticket={ticket}
               onClick={() => setSelectedTicketId(ticket.id)}
+              onEdit={() => handleEditClick(ticket)}
+              onDelete={() => handleDeleteClick(ticket.id)}
             />
           ))}
         </div>
@@ -181,9 +204,10 @@ export default function StudentTicketDashboard({ user }) {
       {/* Create Modal */}
       <CreateTicketModal
         isOpen={createModalOpen}
-        onClose={() => setCreateModalOpen(false)}
-        onSubmit={handleCreateTicket}
+        onClose={() => { setCreateModalOpen(false); setTicketToEdit(null); }}
+        onSubmit={handleCreateOrUpdate}
         userEmail={user?.email}
+        initialData={ticketToEdit}
       />
     </div>
   );

@@ -4,6 +4,7 @@ import java.util.List;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 public record CreateTicketRequest(
@@ -13,6 +14,7 @@ public record CreateTicketRequest(
     @NotNull String priority,
     String resourceLocation,
     String contactEmail,
+    @Pattern(regexp = "^0\\d{9}$", message = "Phone number must start with 0 and be exactly 10 digits")
     String contactPhone,
     @Size(max = 3, message = "Maximum 3 attachments allowed") List<AttachmentData> attachments
 ) {

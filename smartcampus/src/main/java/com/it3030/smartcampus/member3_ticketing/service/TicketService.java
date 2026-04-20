@@ -155,10 +155,61 @@ public class TicketService {
     }
 
     @Transactional
-    public void deleteTicket(Long ticketId) {
-        if (!ticketRepository.existsById(ticketId)) {
-            throw new IllegalArgumentException("Ticket not found");
+    public TicketResponse updateTicket(Long ticketId, CreateTicketRequest request, String currentUserEmail, boolean isAdmin) {
+        IncidentTicket ticket = ticketRepository.findById(ticketId)
+            .orElseThrow(() -> new IllegalArgumentException("Ticket not found"));
+
+        if (!isAdmin && !ticket.getReporterEmail().equalsIgnoreCase(currentUserEmail)) {
+            throw new IllegalArgumentException("You can only edit your own tickets");
         }
+
+        if (!isAdmin && ticket.getStatus() != TicketStatus.OPEN) {
+            throw new IllegalArgumentException("You can only edit tickets that are in OPEN status");
+        }
+
+        ticket.setTitle(request.title());
+        ticket.setDescription(request.description());
+        ticket.setCategory(TicketCategory.valueOf(request.category().toUpperCase()));
+        ticket.setPriority(TicketPriority.valueOf(request.priority().toUpperCase()));
+        ticket.setResourceLocation(request.resourceLocation());
+        ticket.setContactEmail(request.contactEmail());
+        ticket.setContactPhone(request.contactPhone());
+
+        ticketRepository.save(ticket);
+        
+        // Handle attachments: If new ones are provided, we could append or replace.
+        // For now, let's allow adding new ones if under the limit of 3.
+        if (request.attachments() != null && !request.attachments().isEmpty()) {
+            List<TicketAttachment> existing = attachmentRepository.findByTicketId(ticketId);
+            if (existing.size() + request.attachments().size() > 3) {
+                throw new IllegalArgumentException("Total attachments cannot exceed 3");
+            }
+            for (CreateTicketRequest.AttachmentData att : request.attachments()) {
+                if (att.dataUrl() != null && !att.dataUrl().isBlank()) {
+                    attachmentRepository.save(new TicketAttachment(ticketId, att.dataUrl(), att.fileName()));
+                }
+            }
+        }
+
+        return getTicketById(ticketId, currentUserEmail, isAdmin);
+    }
+
+    @Transactional
+    public void deleteTicket(Long ticketId, String currentUserEmail, boolean isAdmin) {
+        IncidentTicket ticket = ticketRepository.findById(ticketId)
+            .orElseThrow(() -> new IllegalArgumentException("Ticket not found"));
+
+        if (!isAdmin) {
+            if (!ticket.getReporterEmail().equalsIgnoreCase(currentUserEmail)) {
+                throw new IllegalArgumentException("You can only delete your own tickets");
+            }
+            if (ticket.getStatus() != TicketStatus.OPEN) {
+                throw new IllegalArgumentException("You can only delete tickets that are in OPEN status");
+            }
+        }
+
+        attachmentRepository.deleteByTicketId(ticketId);
+        commentRepository.deleteByTicketId(ticketId);
         ticketRepository.deleteById(ticketId);
     }
 

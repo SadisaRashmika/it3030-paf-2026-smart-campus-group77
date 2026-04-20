@@ -74,13 +74,19 @@ public class TicketController {
         return ResponseEntity.ok(ticketService.assignTechnician(id, request, authentication.getName()));
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<TicketResponse> updateTicket(@PathVariable Long id,
+                                                        @Valid @RequestBody CreateTicketRequest request,
+                                                        Authentication authentication) {
+        boolean isAdmin = hasRole(authentication, "ROLE_ADMIN");
+        return ResponseEntity.ok(ticketService.updateTicket(id, request, authentication.getName(), isAdmin));
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<TicketMessageResponse> deleteTicket(@PathVariable Long id,
                                                                Authentication authentication) {
-        if (!hasRole(authentication, "ROLE_ADMIN")) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        }
-        ticketService.deleteTicket(id);
+        boolean isAdmin = hasRole(authentication, "ROLE_ADMIN");
+        ticketService.deleteTicket(id, authentication.getName(), isAdmin);
         return ResponseEntity.ok(new TicketMessageResponse("Ticket deleted successfully"));
     }
 

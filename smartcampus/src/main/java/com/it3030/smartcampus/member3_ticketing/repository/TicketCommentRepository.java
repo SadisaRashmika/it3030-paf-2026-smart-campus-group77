@@ -13,4 +13,6 @@ public interface TicketCommentRepository extends JpaRepository<TicketComment, Lo
     List<TicketComment> findByTicketIdOrderByCreatedAtAsc(Long ticketId);
 
     int countByTicketId(Long ticketId);
+
+    void deleteByTicketId(Long ticketId);
 }

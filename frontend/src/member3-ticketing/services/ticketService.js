@@ -9,6 +9,13 @@ export function createTicket(payload) {
   });
 }
 
+export function updateTicket(id, payload) {
+  return requestJson(`${BASE}/${id}`, {
+    method: "PUT",
+    body: JSON.stringify(payload)
+  });
+}
+
 export function getMyTickets() {
   return requestJson(`${BASE}/my`);
 }
