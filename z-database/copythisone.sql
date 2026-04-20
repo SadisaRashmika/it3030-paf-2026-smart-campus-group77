@@ -147,7 +147,8 @@ INSERT INTO roles (name) VALUES
 ('LECTURER'),
 ('STUDENT'),
 ('TIMETABLE_MANAGER'),
-('RESOURCE_ADMINISTATOR');
+('RESOURCE_ADMINISTATOR'),
+('TICKET_ADMINISTRATOR');
 
 -- Seed requested admin user
 -- Password is plain 12345 as requested

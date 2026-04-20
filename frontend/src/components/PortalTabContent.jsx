@@ -89,11 +89,15 @@ export default function PortalTabContent({
 		);
 	}
 
-	if (role === "admin" && tab === "TAB06") {
+	if (role === "ticket_administrator" && tab === "TAB01") {
+		return <PortalHomeContent user={user} onLogin={onLogin} onNavigate={onNavigate} />;
+	}
+
+	if (role === "ticket_administrator" && tab === "TAB06") {
 		return <AdminTicketManagement user={user} />;
 	}
 
-	if (role === "admin" && tab === "TAB07") {
+	if (role === "ticket_administrator" && tab === "TAB07") {
 		return <AdminTechnicianAssignment user={user} />;
 	}
 
@@ -123,6 +127,10 @@ export default function PortalTabContent({
 		if (tab === "TAB03") {
 			return <ResourceAvailabilityPage />;
 		}
+	}
+
+	if (role === "student" && (tab === "TAB06" || tab === "TAB07")) {
+		return <PortalHomeContent user={user} onLogin={onLogin} onNavigate={onNavigate} />;
 	}
 
 	if (tab === "TAB01") {

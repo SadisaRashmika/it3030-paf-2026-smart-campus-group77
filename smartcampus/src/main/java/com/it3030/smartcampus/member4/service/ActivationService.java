@@ -327,6 +327,7 @@ public class ActivationService {
 			case STUDENT -> "STU";
 			case TIMETABLE_MANAGER -> "STAFF";
 			case RESOURCE_ADMINISTATOR -> "STAFF";
+			case TICKET_ADMINISTRATOR -> "STAFF";
 			default -> "USR";
 		};
 

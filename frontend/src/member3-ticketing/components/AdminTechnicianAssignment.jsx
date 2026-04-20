@@ -84,11 +84,11 @@ export default function AdminTechnicianAssignment({ user }) {
   return (
     <div className="space-y-5">
       {/* Header */}
-      <div className="rounded-2xl border border-slate-200 bg-gradient-to-r from-white via-emerald-50/20 to-white p-6 shadow-sm">
-        <div className="inline-flex items-center gap-2 rounded-xl bg-emerald-50 px-3 py-1.5 text-sm font-bold text-emerald-700 mb-2">
+      <div className="rounded-3xl border border-slate-200 bg-gradient-to-r from-white via-amber-50/30 to-white p-6 shadow-sm">
+        <div className="inline-flex items-center gap-2 rounded-full border border-amber-200 bg-amber-50 px-3 py-1.5 text-sm font-bold text-amber-700 mb-3">
           <Users size={16} /> Technician Management
         </div>
-        <h1 className="text-2xl font-bold text-slate-900">Assignment Dashboard</h1>
+        <h1 className="font-display text-3xl font-bold text-slate-900">Assignment Dashboard</h1>
         <p className="mt-1 text-sm text-slate-500">Assign technicians and monitor workload distribution</p>
 
         {/* Quick Stats */}
@@ -110,7 +110,7 @@ export default function AdminTechnicianAssignment({ user }) {
 
       {/* Technician Workload */}
       {technicianList.length > 0 && (
-        <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+        <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
           <h3 className="mb-3 text-xs font-bold uppercase tracking-wide text-slate-500">Technician Workload</h3>
           <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
             {technicianList.map((tech) => (
@@ -166,7 +166,7 @@ export default function AdminTechnicianAssignment({ user }) {
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="Search tickets..."
-            className="w-full rounded-lg border border-slate-200 bg-white py-2 pl-9 pr-3 text-sm focus:border-amber-400 focus:outline-none focus:ring-2 focus:ring-amber-100"
+            className="w-full rounded-xl border border-slate-200 bg-white py-2.5 pl-9 pr-3 text-sm focus:border-amber-400 focus:outline-none focus:ring-2 focus:ring-amber-100"
           />
         </div>
       </div>
@@ -190,7 +190,7 @@ export default function AdminTechnicianAssignment({ user }) {
       ) : (
         <div className="space-y-2">
           {displayTickets.map((t) => (
-            <div key={t.id} className="flex items-center justify-between rounded-xl border border-slate-200 bg-white px-4 py-3 transition hover:border-amber-200 hover:shadow-sm">
+            <div key={t.id} className="flex items-center justify-between rounded-2xl border border-slate-200 bg-white px-4 py-3 transition hover:-translate-y-0.5 hover:border-amber-200 hover:shadow-sm">
               <div className="flex items-center gap-3 flex-1 min-w-0">
                 <span className="text-xs font-semibold text-slate-400 w-8">#{t.id}</span>
                 <div className="flex-1 min-w-0">

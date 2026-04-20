@@ -85,11 +85,12 @@ export default function CreateTicketModal({ isOpen, onClose, onSubmit, userEmail
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
-      <div className="relative w-full max-w-5xl rounded-2xl border border-slate-200 bg-white shadow-2xl">
+      <div className="relative w-full max-w-5xl overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-2xl">
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-slate-100 bg-white px-6 py-4 rounded-t-2xl">
+        <div className="flex items-center justify-between border-b border-slate-100 bg-gradient-to-r from-white via-amber-50/40 to-white px-6 py-4">
           <div>
-            <h2 className="text-lg font-bold text-slate-900">{initialData ? "Edit Ticket" : "Create New Ticket"}</h2>
+            <p className="text-xs font-bold uppercase tracking-[0.2em] text-slate-500">Maintenance Ticket</p>
+            <h2 className="mt-1 text-2xl font-bold text-slate-900">{initialData ? "Edit Ticket" : "Create New Ticket"}</h2>
             <p className="text-xs text-slate-500 mt-0.5">{initialData ? "Modify your ticket details" : "Report an incident or maintenance request"}</p>
           </div>
           <button onClick={onClose} className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 transition hover:bg-slate-100 hover:text-slate-700">
@@ -97,7 +98,7 @@ export default function CreateTicketModal({ isOpen, onClose, onSubmit, userEmail
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-6">
+        <form onSubmit={handleSubmit} className="max-h-[calc(100vh-5rem)] overflow-y-auto p-6">
           {error && (
             <div className="mb-5 rounded-xl border border-rose-200 bg-rose-50 px-4 py-2 text-sm text-rose-700">{error}</div>
           )}
@@ -126,7 +127,7 @@ export default function CreateTicketModal({ isOpen, onClose, onSubmit, userEmail
                       title={p.label}
                       className={`flex flex-1 items-center justify-center rounded-lg border py-2 transition ${
                         form.priority === p.value
-                          ? "border-amber-400 bg-amber-50 ring-2 ring-amber-100"
+                            ? "border-amber-400 bg-amber-50 ring-2 ring-amber-100"
                           : "border-slate-200 bg-white hover:bg-slate-50"
                       }`}
                     >
@@ -178,7 +179,7 @@ export default function CreateTicketModal({ isOpen, onClose, onSubmit, userEmail
                   />
                 </div>
                 <div>
-                  <label className="mb-1.5 block text-xs font-bold uppercase tracking-wide text-slate-600">Evidence (Images)</label>
+                  <label className="mb-1.5 block text-xs font-bold uppercase tracking-wide text-slate-600">Evidence</label>
                   <ImageUploader images={images} onChange={setImages} max={3} />
                 </div>
               </div>
@@ -232,7 +233,7 @@ export default function CreateTicketModal({ isOpen, onClose, onSubmit, userEmail
             <button
               type="submit"
               disabled={submitting}
-              className="rounded-xl bg-gradient-to-b from-amber-400 to-amber-500 px-8 py-2.5 text-sm font-bold text-amber-950 shadow-md hover:brightness-105 transition disabled:opacity-60"
+              className="rounded-xl bg-gradient-to-b from-amber-400 to-amber-500 px-8 py-2.5 text-sm font-bold text-amber-950 shadow-[0_6px_14px_rgba(245,158,11,0.28)] hover:brightness-105 transition disabled:opacity-60"
             >
               {submitting ? (initialData ? "Updating..." : "Creating...") : (initialData ? "Update Ticket" : "Create Ticket")}
             </button>

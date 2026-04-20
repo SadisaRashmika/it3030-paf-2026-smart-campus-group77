@@ -2,6 +2,16 @@ import { Clock, MessageSquare, Paperclip, User2, Edit3, Trash2 } from "lucide-re
 import TicketStatusBadge from "./TicketStatusBadge";
 import TicketPriorityBadge from "./TicketPriorityBadge";
 
+const CATEGORY_LABELS = {
+  HARDWARE: "Hardware",
+  SOFTWARE: "Software",
+  NETWORK: "Network",
+  ELECTRICAL: "Electrical",
+  PLUMBING: "Plumbing",
+  GENERAL: "General",
+  OTHER: "Other"
+};
+
 const CATEGORY_ICONS = {
   HARDWARE: "🖥️",
   SOFTWARE: "💿",
@@ -37,12 +47,14 @@ export default function TicketCard({ ticket, onClick, onEdit, onDelete }) {
   return (
     <div
       onClick={onClick}
-      className="group relative w-full cursor-pointer rounded-2xl border border-slate-200 bg-white p-5 text-left shadow-sm transition-all hover:border-amber-200 hover:shadow-md hover:shadow-amber-100/40 active:scale-[0.99]"
+      className="group relative w-full cursor-pointer rounded-2xl border border-slate-200 bg-white p-5 text-left shadow-sm transition-all hover:-translate-y-0.5 hover:border-amber-200 hover:shadow-lg hover:shadow-amber-100/40 active:scale-[0.99]"
     >
       <div className="mb-3 flex items-start justify-between gap-3">
-        <div className="flex items-center gap-2">
-          <span className="text-lg">{CATEGORY_ICONS[ticket.category] || "📌"}</span>
-          <h3 className="text-sm font-bold text-slate-900 line-clamp-1 group-hover:text-amber-800 transition">{ticket.title}</h3>
+        <div className="min-w-0">
+          <h3 className="line-clamp-1 text-sm font-bold text-slate-900 transition group-hover:text-amber-800">{ticket.title}</h3>
+          <p className="mt-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-400">
+            {CATEGORY_ICONS[ticket.category] || "📌"} {CATEGORY_LABELS[ticket.category] || ticket.category || "General"}
+          </p>
         </div>
         <div className="flex items-center gap-2">
           {ticket.status === "OPEN" && (
@@ -73,7 +85,7 @@ export default function TicketCard({ ticket, onClick, onEdit, onDelete }) {
         <TicketPriorityBadge priority={ticket.priority} />
 
         {ticket.resourceLocation && (
-          <span className="flex items-center gap-1 truncate max-w-[140px]" title={ticket.resourceLocation}>
+          <span className="flex max-w-[140px] items-center gap-1 truncate" title={ticket.resourceLocation}>
             📍 {ticket.resourceLocation}
           </span>
         )}

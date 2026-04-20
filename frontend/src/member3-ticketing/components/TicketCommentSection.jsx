@@ -71,15 +71,15 @@ export default function TicketCommentSection({ comments, onAdd, onUpdate, onDele
   };
 
   return (
-    <div className="mt-5">
-      <h4 className="mb-3 text-xs font-bold uppercase tracking-wide text-slate-500">
+    <div className="mt-5 rounded-2xl border border-slate-200 bg-slate-50/40 p-4">
+      <h4 className="mb-3 text-xs font-bold uppercase tracking-[0.16em] text-slate-500">
         Comments ({comments.length})
       </h4>
 
       {/* Comments List */}
       <div className="max-h-72 space-y-3 overflow-y-auto pr-1">
         {comments.length === 0 && (
-          <p className="rounded-xl bg-slate-50 px-4 py-3 text-center text-sm text-slate-400">
+          <p className="rounded-xl bg-white px-4 py-3 text-center text-sm text-slate-400 shadow-sm">
             No comments yet. Start the conversation!
           </p>
         )}

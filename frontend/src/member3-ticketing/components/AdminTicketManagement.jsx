@@ -112,11 +112,11 @@ export default function AdminTicketManagement({ user }) {
   return (
     <div className="space-y-5">
       {/* Header */}
-      <div className="rounded-2xl border border-slate-200 bg-gradient-to-r from-white via-blue-50/30 to-white p-6 shadow-sm">
-        <div className="inline-flex items-center gap-2 rounded-xl bg-blue-50 px-3 py-1.5 text-sm font-bold text-blue-700 mb-2">
+      <div className="rounded-3xl border border-slate-200 bg-gradient-to-r from-white via-amber-50/30 to-white p-6 shadow-sm">
+        <div className="inline-flex items-center gap-2 rounded-full border border-amber-200 bg-amber-50 px-3 py-1.5 text-sm font-bold text-amber-700 mb-3">
           <TicketCheck size={16} /> Admin Panel
         </div>
-        <h1 className="text-2xl font-bold text-slate-900">Ticket Management</h1>
+        <h1 className="font-display text-3xl font-bold text-slate-900">Ticket Management</h1>
         <p className="mt-1 text-sm text-slate-500">Manage all campus maintenance and incident tickets</p>
 
         {/* Summary Cards */}
@@ -168,7 +168,7 @@ export default function AdminTicketManagement({ user }) {
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="Search by title, reporter, technician..."
-            className="w-full rounded-lg border border-slate-200 bg-white py-2 pl-9 pr-3 text-sm focus:border-amber-400 focus:outline-none focus:ring-2 focus:ring-amber-100"
+            className="w-full rounded-xl border border-slate-200 bg-white py-2.5 pl-9 pr-3 text-sm focus:border-amber-400 focus:outline-none focus:ring-2 focus:ring-amber-100"
           />
         </div>
       </div>
@@ -188,7 +188,7 @@ export default function AdminTicketManagement({ user }) {
           <p className="text-sm font-semibold text-slate-500">No tickets found</p>
         </div>
       ) : (
-        <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+        <div className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
               <thead>
@@ -211,7 +211,7 @@ export default function AdminTicketManagement({ user }) {
                       <button onClick={() => setSelectedTicketId(t.id)} className="text-sm font-semibold text-slate-800 hover:text-amber-700 transition text-left line-clamp-1">
                         {t.title}
                       </button>
-                      {t.resourceLocation && <p className="text-[11px] text-slate-400 mt-0.5">📍 {t.resourceLocation}</p>}
+                      {t.resourceLocation && <p className="mt-0.5 text-[11px] text-slate-400">📍 {t.resourceLocation}</p>}
                     </td>
                     <td className="px-4 py-3"><TicketStatusBadge status={t.status} /></td>
                     <td className="px-4 py-3"><TicketPriorityBadge priority={t.priority} /></td>

@@ -44,6 +44,8 @@ export default function PortalHomeContent({ user, onLogin, onNavigate }) {
 				? "Timetable Manager"
 				: role === "resource_administator" || role === "resourceadministator"
 					? "Resource Administrator"
+					: role === "ticket_administrator" || role === "ticketadministrator"
+						? "Ticket Administrator"
 					: role === "student"
 						? "Student"
 						: "User";

@@ -39,13 +39,13 @@ public class TicketController {
     @GetMapping("/{id}")
     public ResponseEntity<TicketResponse> getTicketById(@PathVariable Long id,
                                                          Authentication authentication) {
-        boolean isAdmin = hasRole(authentication, "ROLE_ADMIN");
-        return ResponseEntity.ok(ticketService.getTicketById(id, authentication.getName(), isAdmin));
+        boolean isTicketAdministrator = hasRole(authentication, "ROLE_TICKET_ADMINISTRATOR");
+        return ResponseEntity.ok(ticketService.getTicketById(id, authentication.getName(), isTicketAdministrator));
     }
 
     @GetMapping("/all")
     public ResponseEntity<List<TicketSummaryResponse>> getAllTickets(Authentication authentication) {
-        if (!hasRole(authentication, "ROLE_ADMIN")) {
+        if (!hasRole(authentication, "ROLE_TICKET_ADMINISTRATOR")) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
         return ResponseEntity.ok(ticketService.getAllTickets());
@@ -60,15 +60,15 @@ public class TicketController {
     public ResponseEntity<TicketResponse> updateTicketStatus(@PathVariable Long id,
                                                               @Valid @RequestBody UpdateTicketStatusRequest request,
                                                               Authentication authentication) {
-        boolean isAdmin = hasRole(authentication, "ROLE_ADMIN");
-        return ResponseEntity.ok(ticketService.updateTicketStatus(id, request, authentication.getName(), isAdmin));
+        boolean isTicketAdministrator = hasRole(authentication, "ROLE_TICKET_ADMINISTRATOR");
+        return ResponseEntity.ok(ticketService.updateTicketStatus(id, request, authentication.getName(), isTicketAdministrator));
     }
 
     @PatchMapping("/{id}/assign")
     public ResponseEntity<TicketResponse> assignTechnician(@PathVariable Long id,
                                                             @Valid @RequestBody AssignTechnicianRequest request,
                                                             Authentication authentication) {
-        if (!hasRole(authentication, "ROLE_ADMIN")) {
+        if (!hasRole(authentication, "ROLE_TICKET_ADMINISTRATOR")) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
         return ResponseEntity.ok(ticketService.assignTechnician(id, request, authentication.getName()));
@@ -78,15 +78,15 @@ public class TicketController {
     public ResponseEntity<TicketResponse> updateTicket(@PathVariable Long id,
                                                         @Valid @RequestBody CreateTicketRequest request,
                                                         Authentication authentication) {
-        boolean isAdmin = hasRole(authentication, "ROLE_ADMIN");
-        return ResponseEntity.ok(ticketService.updateTicket(id, request, authentication.getName(), isAdmin));
+        boolean isTicketAdministrator = hasRole(authentication, "ROLE_TICKET_ADMINISTRATOR");
+        return ResponseEntity.ok(ticketService.updateTicket(id, request, authentication.getName(), isTicketAdministrator));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<TicketMessageResponse> deleteTicket(@PathVariable Long id,
                                                                Authentication authentication) {
-        boolean isAdmin = hasRole(authentication, "ROLE_ADMIN");
-        ticketService.deleteTicket(id, authentication.getName(), isAdmin);
+        boolean isTicketAdministrator = hasRole(authentication, "ROLE_TICKET_ADMINISTRATOR");
+        ticketService.deleteTicket(id, authentication.getName(), isTicketAdministrator);
         return ResponseEntity.ok(new TicketMessageResponse("Ticket deleted successfully"));
     }
 
@@ -110,8 +110,8 @@ public class TicketController {
     public ResponseEntity<TicketMessageResponse> deleteComment(@PathVariable Long id,
                                                                 @PathVariable Long commentId,
                                                                 Authentication authentication) {
-        boolean isAdmin = hasRole(authentication, "ROLE_ADMIN");
-        ticketService.deleteComment(id, commentId, authentication.getName(), isAdmin);
+        boolean isTicketAdministrator = hasRole(authentication, "ROLE_TICKET_ADMINISTRATOR");
+        ticketService.deleteComment(id, commentId, authentication.getName(), isTicketAdministrator);
         return ResponseEntity.ok(new TicketMessageResponse("Comment deleted successfully"));
     }
 

@@ -125,7 +125,7 @@ public class TicketService {
 
         if (newStatus == TicketStatus.REJECTED) {
             if (!isAdmin) {
-                throw new IllegalArgumentException("Only admin can reject tickets");
+                throw new IllegalArgumentException("Only ticket administrators can reject tickets");
             }
             if (request.rejectionReason() == null || request.rejectionReason().isBlank()) {
                 throw new IllegalArgumentException("Rejection reason is required");

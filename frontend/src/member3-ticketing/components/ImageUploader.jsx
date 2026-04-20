@@ -67,7 +67,7 @@ export default function ImageUploader({ images, onChange, max = 3 }) {
       {images.length > 0 && (
         <div className="flex flex-wrap gap-3">
           {images.map((img, i) => (
-            <div key={i} className="group relative h-20 w-20 overflow-hidden rounded-lg border border-slate-200 shadow-sm">
+            <div key={i} className="group relative h-20 w-20 overflow-hidden rounded-xl border border-slate-200 shadow-sm">
               <img src={img.dataUrl} alt={img.fileName || `Attachment ${i + 1}`} className="h-full w-full object-cover" />
               <button
                 type="button"

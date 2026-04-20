@@ -100,13 +100,13 @@ export default function StudentTicketDashboard({ user }) {
   return (
     <div className="space-y-5">
       {/* Hero Header */}
-      <div className="rounded-2xl border border-slate-200 bg-gradient-to-r from-white via-amber-50/30 to-white p-6 shadow-sm">
+      <div className="rounded-3xl border border-slate-200 bg-gradient-to-r from-white via-amber-50/30 to-white p-6 shadow-sm">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <div className="inline-flex items-center gap-2 rounded-xl bg-amber-50 px-3 py-1.5 text-sm font-bold text-amber-700 mb-2">
+            <div className="inline-flex items-center gap-2 rounded-full border border-amber-200 bg-amber-50 px-3 py-1.5 text-sm font-bold text-amber-700 mb-3">
               <TicketCheck size={16} /> Maintenance Tickets
             </div>
-            <h1 className="text-2xl font-bold text-slate-900">My Tickets</h1>
+            <h1 className="font-display text-3xl font-bold text-slate-900">My Tickets</h1>
             <p className="mt-1 text-sm text-slate-500">Report campus incidents and track resolution progress</p>
           </div>
           <button
@@ -188,7 +188,7 @@ export default function StudentTicketDashboard({ user }) {
           )}
         </div>
       ) : (
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
           {filteredTickets.map((ticket) => (
             <TicketCard
               key={ticket.id}
