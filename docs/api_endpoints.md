@@ -1,6 +1,6 @@
 # SmartCampus API Endpoints
 
-> Working draft note: This file is currently Member-4-first and will be extended as Member 1/2/3 modules are finalized.
+> Working draft note: This file is now organized by completed module scope. Member 1 remains pending.
 
 ## Member 4 Scope (Completed)
 
@@ -98,12 +98,6 @@ Sample response (me):
 
 ---
 
-## Notes for Remaining Team Sections
-
-Member 1, Member 2, and Member 3 endpoint documentation can be appended below this section using the same table format.
-
-Suggested placeholders for next updates:
-
 ## Member 1 Scope (Pending)
 
 To be completed by Member 1.
@@ -147,7 +141,40 @@ This section documents endpoints implemented under Member 2 responsibilities:
 | PUT | /api/member2/resources/{id} | Admin, Resource Administator | Update resource details | 200, 400, 403 |
 | DELETE | /api/member2/resources/{id} | Admin, Resource Administator | Delete resource | 200, 403 |
 
-## Member 3 Scope (Pending)
+## Member 3 Scope (Completed)
 
-To be completed by Member 3.
+This section documents the merged maintenance and incident ticketing module.
+
+### Ticket Management
+
+| Method | Path | Access | Description | Typical Responses |
+|---|---|---|---|---|
+| POST | /api/member3/tickets | Student, Lecturer, Admin | Create a new maintenance or incident ticket | 201, 400 |
+| GET | /api/member3/tickets/my | Authenticated | List current user ticket history | 200, 401 |
+| GET | /api/member3/tickets/{id} | Reporter, Assigned Technician, Ticket Administrator | Retrieve a single ticket with comments and attachments | 200, 401, 403, 404 |
+| GET | /api/member3/tickets/all | Ticket Administrator | List all tickets in the system | 200, 403 |
+| GET | /api/member3/tickets/assigned | Authenticated | List tickets assigned to the current technician account | 200, 401 |
+| PUT | /api/member3/tickets/{id} | Reporter, Ticket Administrator | Update an existing ticket | 200, 400, 403, 404 |
+| DELETE | /api/member3/tickets/{id} | Reporter, Ticket Administrator | Delete a ticket | 200, 403, 404 |
+
+### Ticket Status and Assignment
+
+| Method | Path | Access | Description | Typical Responses |
+|---|---|---|---|---|
+| PATCH | /api/member3/tickets/{id}/status | Ticket Administrator | Update ticket status, including reject/resolved transitions | 200, 400, 403, 404 |
+| PATCH | /api/member3/tickets/{id}/assign | Ticket Administrator | Assign or reassign a technician to the ticket | 200, 403, 404 |
+
+### Ticket Comments
+
+| Method | Path | Access | Description | Typical Responses |
+|---|---|---|---|---|
+| POST | /api/member3/tickets/{id}/comments | Authenticated | Add a comment to a ticket | 201, 400, 404 |
+| PUT | /api/member3/tickets/{id}/comments/{commentId} | Comment owner | Edit one of your own comments | 200, 400, 403, 404 |
+| DELETE | /api/member3/tickets/{id}/comments/{commentId} | Comment owner, Ticket Administrator | Delete a comment | 200, 403, 404 |
+
+### Member 3 Notes
+
+- Ticket access is role-aware in the shared portal shell.
+- Ticket Administrator now owns the privileged ticket management and technician assignment tabs.
+- The ticketing module supports attachments, status transitions, and comment history in the ticket detail view.
 

@@ -211,7 +211,85 @@ Current observed run summary (local):
 - Member 2 backend service tests: passing
 - Frontend production build: passing
 
-## Member 3
+## Member 3 - Maintenance and Incident Ticketing
 
-Pending update by Member 3.
+### Summary
+
+Implemented the merged Member 3 ticketing module for reporting, tracking, assigning, and resolving maintenance and incident tickets.
+
+### Backend Contributions
+
+1. Ticket lifecycle APIs
+- Create ticket
+- List current user's tickets
+- Retrieve single ticket with access checks
+- Update ticket
+- Delete ticket
+
+2. Ticket admin workflows
+- List all tickets for privileged users
+- Update ticket status with reject/resolved transitions
+- Assign technicians to tickets
+
+3. Comment and attachment workflows
+- Add comments to a ticket
+- Edit and delete owned comments
+- Preserve attachment history in ticket detail responses
+
+4. Database and access support
+- Ticketing tables and schema support for tickets, comments, and attachments
+- Ticket administrator role support for privileged management actions
+
+### Frontend Contributions
+
+1. Student ticket dashboard
+- Create-ticket modal
+- Search and status filtering
+- Ticket card grid and ticket detail flow
+
+2. Admin ticket management
+- All-ticket table with status summaries
+- Technician assignment workflow
+- Delete and view actions for privileged users
+
+3. Ticket detail and comment UX
+- Status actions, rejection reason, and resolution notes
+- Comment list and edit/delete controls
+- Attachment viewing in detail panel
+
+4. Frontend styling updates
+- Aligned ticketing UI with the shared amber/slate portal theme
+- Restored emoji cues where they help distinguish ticket categories and locations
+- Added internal scrolling to the create-ticket modal so actions remain reachable on smaller screens
+
+### Member 3 Endpoint Count Evidence
+
+Member 3 implemented more than four endpoints and used multiple HTTP methods:
+- GET: examples include `/api/member3/tickets/my`, `/api/member3/tickets/all`, `/api/member3/tickets/{id}`
+- POST: examples include `/api/member3/tickets`, `/api/member3/tickets/{id}/comments`
+- PATCH: examples include `/api/member3/tickets/{id}/status`, `/api/member3/tickets/{id}/assign`
+- PUT: examples include `/api/member3/tickets/{id}`, `/api/member3/tickets/{id}/comments/{commentId}`
+- DELETE: examples include `/api/member3/tickets/{id}`, `/api/member3/tickets/{id}/comments/{commentId}`
+
+### Key Files (Member 3)
+
+- Backend controllers/services/models/repositories under:
+	- `smartcampus/src/main/java/com/it3030/smartcampus/member3_ticketing/**`
+- Frontend module components/services under:
+	- `frontend/src/member3-ticketing/**`
+- Shared integration points:
+	- `frontend/src/components/PortalTabContent.jsx`
+	- `frontend/src/components/TopNavHeader.jsx`
+	- `frontend/src/layouts/MainLayout.jsx`
+
+### Testing Evidence Added (Member 3)
+
+- Frontend production build passes after the ticketing UI refresh.
+- Backend package build passes with the merged ticketing module in place.
+
+### Current Status
+
+- Ticket Administrator owns the admin ticket management and technician assignment tabs.
+- Student users keep the ticket creation and personal ticket history flow.
+
 
