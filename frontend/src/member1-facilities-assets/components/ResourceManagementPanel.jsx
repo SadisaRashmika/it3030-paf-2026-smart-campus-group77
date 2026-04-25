@@ -1,18 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { Package, Plus, Search, Table as TableIcon, CheckCircle2, XCircle, X, Edit2, Trash2, AlertCircle, Trash } from "lucide-react";
-import { requestJson } from "../../services/apiClient";
+import { resourceApi } from "../services/resourceApi";
 
 export default function ResourceManagementPanel() {
   const [resources, setResources] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   
-  // Modals States
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   
-  // Data States
   const [editingResource, setEditingResource] = useState(null);
   const [resourceToDelete, setResourceToDelete] = useState(null);
   const [formData, setFormData] = useState({ name: "", type: "LAB", available: true });
@@ -26,7 +24,7 @@ export default function ResourceManagementPanel() {
   const fetchResources = async () => {
     try {
       setLoading(true);
-      const data = await requestJson("/api/member2/resources");
+      const data = await resourceApi.getResources();
       setResources(data || []);
     } catch (error) {
       console.error("Failed to fetch resources:", error);
@@ -44,17 +42,16 @@ export default function ResourceManagementPanel() {
 
   const openEditModal = (resource) => {
     setEditingResource(resource);
-    setFormData({ 
-      name: resource.name, 
-      type: resource.type, 
-      available: resource.available 
+    setFormData({
+      name: resource.name,
+      type: resource.type,
+      available: resource.available
     });
     setFormError("");
     setIsModalOpen(true);
   };
 
   const openDeleteModal = (resource) => {
-    console.log("Opening delete modal for:", resource);
     setResourceToDelete(resource);
     setDeleteError("");
     setIsDeleteModalOpen(true);
@@ -69,16 +66,11 @@ export default function ResourceManagementPanel() {
 
     try {
       setIsSubmitting(true);
-      const url = editingResource 
-        ? `/api/member2/resources/${editingResource.id}` 
-        : "/api/member2/resources";
-      
-      const method = editingResource ? "PUT" : "POST";
-
-      await requestJson(url, {
-        method,
-        body: JSON.stringify(formData)
-      });
+      if (editingResource) {
+        await resourceApi.updateResource(editingResource.id, formData);
+      } else {
+        await resourceApi.createResource(formData);
+      }
 
       setIsModalOpen(false);
       fetchResources();
@@ -91,29 +83,19 @@ export default function ResourceManagementPanel() {
 
   const confirmDelete = async () => {
     if (!resourceToDelete) {
-      console.error("No resource selected to delete");
       return;
     }
 
-    console.log(`Attempting to delete resource: ${resourceToDelete.name} (ID: ${resourceToDelete.id})`);
-    
     try {
       setIsSubmitting(true);
       setDeleteError("");
-      
-      // Explicitly ensuring no body is sent with DELETE which sometimes confuses proxies
-      await requestJson(`/api/member2/resources/${resourceToDelete.id}`, { 
-        method: "DELETE" 
-      });
+      await resourceApi.deleteResource(resourceToDelete.id);
 
-      console.log("Delete successful");
       setIsDeleteModalOpen(false);
       setResourceToDelete(null);
       fetchResources();
     } catch (error) {
-      console.error("Delete failed:", error);
-      // Detailed error message for the user
-      const msg = error.message?.toLowerCase().includes("constraint") 
+      const msg = error.message?.toLowerCase().includes("constraint")
         ? "Cannot delete this resource because it is currently linked to existing bookings."
         : error.message || "Server error occurred during deletion.";
       setDeleteError(msg);
@@ -122,20 +104,19 @@ export default function ResourceManagementPanel() {
     }
   };
 
-  const filteredResources = resources.filter(res => 
+  const filteredResources = resources.filter(res =>
     res.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     res.type.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
     <div className="space-y-6">
-      {/* Header Section */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h2 className="font-display text-2xl font-extrabold text-slate-900">Resource Inventory</h2>
           <p className="text-sm text-slate-500">Manage campus labs, classrooms, and shared facilities.</p>
         </div>
-        <button 
+        <button
           onClick={openAddModal}
           className="inline-flex items-center gap-2 rounded-xl bg-amber-500 px-4 py-2.5 text-sm font-bold text-amber-950 shadow-lg shadow-amber-200 transition hover:bg-amber-600 hover:shadow-amber-300"
         >
@@ -143,7 +124,6 @@ export default function ResourceManagementPanel() {
         </button>
       </div>
 
-      {/* Stats Cards */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
           <p className="text-xs font-bold uppercase tracking-wider text-slate-500">Total Resources</p>
@@ -163,7 +143,6 @@ export default function ResourceManagementPanel() {
         </div>
       </div>
 
-      {/* Table Section */}
       <div className="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
         <div className="border-b border-slate-100 bg-slate-50/50 p-4">
           <div className="relative max-w-md">
@@ -239,14 +218,14 @@ export default function ResourceManagementPanel() {
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
-                        <button 
+                        <button
                           onClick={() => openEditModal(res)}
                           className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-100 text-slate-600 hover:bg-amber-100 hover:text-amber-700 transition"
                           title="Edit"
                         >
                           <Edit2 size={14} />
                         </button>
-                        <button 
+                        <button
                           onClick={() => openDeleteModal(res)}
                           className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-100 text-slate-600 hover:bg-rose-100 hover:text-rose-700 transition"
                           title="Delete"
@@ -263,7 +242,6 @@ export default function ResourceManagementPanel() {
         </div>
       </div>
 
-      {/* Modal - Add/Edit Resource */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4 backdrop-blur-sm">
           <div className="w-full max-w-md animate-in slide-in-from-bottom-4 duration-300 rounded-2xl border border-slate-200 bg-white p-6 shadow-2xl">
@@ -271,7 +249,7 @@ export default function ResourceManagementPanel() {
               <h3 className="text-xl font-bold text-slate-900">
                 {editingResource ? "Edit Resource" : "Add New Resource"}
               </h3>
-              <button 
+              <button
                 onClick={() => setIsModalOpen(false)}
                 className="rounded-lg p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition"
               >
@@ -346,7 +324,6 @@ export default function ResourceManagementPanel() {
         </div>
       )}
 
-      {/* Modal - Delete Confirmation */}
       {isDeleteModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4 backdrop-blur-sm">
           <div className="w-full max-w-sm animate-in zoom-in-95 duration-200 rounded-2xl border border-slate-200 bg-white p-6 shadow-2xl">
@@ -356,7 +333,7 @@ export default function ResourceManagementPanel() {
               </div>
               <h3 className="text-xl font-bold text-slate-900">Delete Resource?</h3>
               <p className="mt-2 text-sm text-slate-600">
-                Are you sure you want to delete <span className="font-bold text-slate-900">"{resourceToDelete?.name}"</span>? 
+                Are you sure you want to delete <span className="font-bold text-slate-900">"{resourceToDelete?.name}"</span>?
                 This action is permanent and cannot be undone.
               </p>
             </div>

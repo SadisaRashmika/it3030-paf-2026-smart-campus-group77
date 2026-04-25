@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { bookingApi } from "../services/bookingApi";
+import { resourceApi } from "../../member1-facilities-assets/services/resourceApi";
 
 const BookingRequestForm = ({ onBookingCreated }) => {
   const [resources, setResources] = useState([]);
@@ -22,7 +23,7 @@ const BookingRequestForm = ({ onBookingCreated }) => {
 
   const fetchResources = async () => {
     try {
-      const data = await bookingApi.getResources();
+      const data = await resourceApi.getResources();
       setResources(data);
     } catch (err) {
       console.error("Failed to fetch resources", err);

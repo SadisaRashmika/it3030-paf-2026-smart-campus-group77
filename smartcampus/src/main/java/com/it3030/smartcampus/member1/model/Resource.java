@@ -1,12 +1,9 @@
-package com.it3030.smartcampus.member2.model;
+package com.it3030.smartcampus.member1.model;
 
 import jakarta.persistence.*;
+
 import java.time.LocalDateTime;
 
-/**
- * Partial representation of a Campus Resource (Room, Lab, Equipment) 
- * for Member 2's booking logic.
- */
 @Entity
 @Table(name = "resources")
 public class Resource {
@@ -30,10 +27,9 @@ public class Resource {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt = LocalDateTime.now();
 
-    // No-args constructor for JPA
-    public Resource() {}
+    public Resource() {
+    }
 
-    // Getters and Setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 

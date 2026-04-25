@@ -184,11 +184,11 @@ Implemented the full Member 2 module scope around booking lifecycle management, 
 ### Member 2 Endpoint Count Evidence
 
 Member 2 implemented more than four endpoints and used multiple HTTP methods:
-- GET: examples include `/api/member2/resources`, `/api/member2/bookings/mine`, `/api/member2/bookings/weekly`
-- POST: examples include `/api/member2/bookings`, `/api/member2/resources`
+- GET: examples include `/api/member1/resources`, `/api/member2/bookings/mine`, `/api/member2/bookings/weekly`
+- POST: examples include `/api/member2/bookings`, `/api/member1/resources`
 - PATCH: examples include `/api/member2/bookings/{id}/approve`, `/api/member2/bookings/{id}/reject`, `/api/member2/bookings/{id}/cancel`
-- PUT: examples include `/api/member2/resources/{id}`
-- DELETE: examples include `/api/member2/resources/{id}`
+- PUT: examples include `/api/member1/resources/{id}`
+- DELETE: examples include `/api/member1/resources/{id}`
 
 ### Key Files (Member 2)
 

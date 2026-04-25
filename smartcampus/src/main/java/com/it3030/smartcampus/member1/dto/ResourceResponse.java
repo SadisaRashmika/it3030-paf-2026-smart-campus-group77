@@ -1,4 +1,4 @@
-package com.it3030.smartcampus.member2.dto;
+package com.it3030.smartcampus.member1.dto;
 
 public class ResourceResponse {
     private Long id;
@@ -6,7 +6,6 @@ public class ResourceResponse {
     private String type;
     private Boolean available;
 
-    // Getters and Setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 

@@ -106,7 +106,7 @@ or:
 
 ### APIs used by Member 2 frontend
 
-- `/api/member2/resources`
+- `/api/member1/resources`
 - `/api/member2/bookings`
 - `/api/member2/bookings/mine`
 - `/api/member2/bookings/pending`
