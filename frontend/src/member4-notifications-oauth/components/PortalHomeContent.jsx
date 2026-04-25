@@ -61,9 +61,9 @@ export default function PortalHomeContent({ user, onLogin, onNavigate }) {
 
 	return (
 		<section className="space-y-6">
-			<div className="glass relative overflow-hidden rounded-3xl border border-slate-200 p-7 shadow-glass sm:p-10">
-				<div className="pointer-events-none absolute -right-20 -top-20 h-56 w-56 rounded-full bg-amber-100/70 blur-3xl" />
-				<div className="pointer-events-none absolute -bottom-20 -left-20 h-56 w-56 rounded-full bg-orange-100/60 blur-3xl" />
+			<div className="dashboard-welcome-card glass relative overflow-hidden rounded-3xl border border-slate-200 p-7 shadow-glass sm:p-10">
+				<div className="dashboard-welcome-glow pointer-events-none absolute -right-20 -top-20 h-56 w-56 rounded-full bg-amber-100/70 blur-3xl" />
+				<div className="dashboard-welcome-glow pointer-events-none absolute -bottom-20 -left-20 h-56 w-56 rounded-full bg-orange-100/60 blur-3xl" />
 
 				<div className="relative flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
 					<div className="max-w-3xl space-y-4">

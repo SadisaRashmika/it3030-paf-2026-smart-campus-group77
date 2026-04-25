@@ -1,4 +1,4 @@
-import { Bell, Camera, ChevronDown, LogOut, Menu, ShieldAlert, UserCircle2, X } from "lucide-react";
+import { Bell, Camera, ChevronDown, LogOut, Menu, MoonStar, ShieldAlert, SunMedium, UserCircle2, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 const tabs = [
@@ -32,7 +32,9 @@ export default function TopNavHeader({
 	onReportSuspicious,
 	onOpenProfile,
 	lastSeenNotificationAt = "",
-	reportingSuspicious = false
+	reportingSuspicious = false,
+	darkMode = false,
+	onToggleDarkMode
 }) {
 	const [mobileOpen, setMobileOpen] = useState(false);
 	const [menuOpen, setMenuOpen] = useState(false);
@@ -244,6 +246,14 @@ export default function TopNavHeader({
 				</div>
 
 				<div className="flex items-center gap-2">
+					<button
+						type="button"
+						onClick={onToggleDarkMode}
+						title={darkMode ? "Switch to light mode" : "Switch to dark mode"}
+						className="theme-toggle-btn inline-flex h-10 w-10 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-700 transition hover:bg-slate-100"
+					>
+						{darkMode ? <SunMedium size={16} /> : <MoonStar size={16} />}
+					</button>
 					{user ? (
 						<>
 							{canSeeNotifications ? (
