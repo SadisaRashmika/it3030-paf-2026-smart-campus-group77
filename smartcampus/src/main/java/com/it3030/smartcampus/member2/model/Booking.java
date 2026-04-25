@@ -1,5 +1,6 @@
 package com.it3030.smartcampus.member2.model;
 
+import com.it3030.smartcampus.member1.model.Resource;
 import com.it3030.smartcampus.member4.model.UserAccount;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { bookingApi } from "../services/bookingApi";
+import { bookingApi } from "../../member2-bookings-management/services/bookingApi";
+import { resourceApi } from "../services/resourceApi";
 
 const ResourceAvailabilityView = () => {
   const [resources, setResources] = useState([]);
@@ -14,7 +15,7 @@ const ResourceAvailabilityView = () => {
     try {
       setLoading(true);
       const [resData, bookingData] = await Promise.all([
-        bookingApi.getResources(),
+        resourceApi.getResources(),
         bookingApi.getWeeklyBookings(
             new Date(new Date().setHours(0,0,0,0)).toISOString(),
             new Date(new Date().setHours(23,59,59,999)).toISOString()
@@ -31,10 +32,10 @@ const ResourceAvailabilityView = () => {
 
   const isResourceBusyNow = (resourceId) => {
     const now = new Date();
-    return bookings.find(b => 
-        b.resourceId === resourceId && 
-        new Date(b.startTime) <= now && 
-        new Date(b.endTime) >= now
+    return bookings.find(b =>
+      b.resourceId === resourceId &&
+      new Date(b.startTime) <= now &&
+      new Date(b.endTime) >= now
     );
   };
 
@@ -55,8 +56,8 @@ const ResourceAvailabilityView = () => {
           const isBusy = !!activeBooking;
 
           return (
-            <div 
-              key={res.id} 
+            <div
+              key={res.id}
               className={`bg-white border border-slate-200 rounded-3xl p-6 shadow-sm hover:shadow-xl transition-all border-l-8 ${isBusy ? 'border-l-rose-500' : 'border-l-amber-500'}`}
             >
               <div className="flex justify-between items-start mb-4">

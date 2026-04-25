@@ -1,6 +1,6 @@
-package com.it3030.smartcampus.member2.repository;
+package com.it3030.smartcampus.member1.repository;
 
-import com.it3030.smartcampus.member2.model.Resource;
+import com.it3030.smartcampus.member1.model.Resource;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

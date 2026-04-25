@@ -12,8 +12,8 @@ import AdminTechnicianAssignment from "../member3-ticketing/components/AdminTech
 import BookingsPage from "../member2-bookings-management/pages/BookingsPage";
 import TimetablePage from "../member2-bookings-management/pages/TimetablePage";
 import ApprovalsPage from "../member2-bookings-management/pages/ApprovalsPage";
-import ResourceInventoryPage from "../member2-bookings-management/pages/ResourceInventoryPage";
-import ResourceAvailabilityPage from "../member2-bookings-management/pages/ResourceAvailabilityPage";
+import ResourceInventoryPage from "../member1-facilities-assets/pages/ResourceInventoryPage";
+import ResourceAvailabilityPage from "../member1-facilities-assets/pages/ResourceAvailabilityPage";
 
 export default function PortalTabContent({
 	tab,

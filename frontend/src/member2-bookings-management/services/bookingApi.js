@@ -3,9 +3,6 @@ import { requestJson } from "../../services/apiClient";
 const BASE_URL = "/api/member2";
 
 export const bookingApi = {
-    /** Resources */
-    getResources: () => requestJson(`${BASE_URL}/resources`),
-
     /** Booking Core */
     createBooking: (data) => requestJson(`${BASE_URL}/bookings`, {
         method: "POST",

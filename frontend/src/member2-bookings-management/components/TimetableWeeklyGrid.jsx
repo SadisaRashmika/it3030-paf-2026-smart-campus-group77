@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { bookingApi } from "../services/bookingApi";
+import { resourceApi } from "../../member1-facilities-assets/services/resourceApi";
 
 const TimetableWeeklyGrid = () => {
   const [weeklyBookings, setWeeklyBookings] = useState([]);
@@ -45,7 +46,7 @@ const TimetableWeeklyGrid = () => {
       };
 
       const [resData, bookingData] = await Promise.all([
-        bookingApi.getResources(),
+        resourceApi.getResources(),
         bookingApi.getWeeklyBookings(toLocalISO(rangeStart), toLocalISO(weekEnd))
       ]);
       setResources(resData);
