@@ -105,6 +105,16 @@ export default function MainLayout() {
   const [appError, setAppError] = useState("");
   const [appNotice, setAppNotice] = useState("");
   const [profileModalOpen, setProfileModalOpen] = useState(false);
+  const [darkMode, setDarkMode] = useState(() => {
+    const saved = window.localStorage.getItem("smartcampus:theme");
+    if (saved === "dark") {
+      return true;
+    }
+    if (saved === "light") {
+      return false;
+    }
+    return window.matchMedia("(prefers-color-scheme: dark)").matches;
+  });
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -115,6 +125,17 @@ export default function MainLayout() {
   );
 
   const role = useMemo(() => user?.role?.replace("ROLE_", "").toLowerCase() || "", [user]);
+
+  useEffect(() => {
+    const root = document.documentElement;
+    if (darkMode) {
+      root.classList.add("dark");
+      window.localStorage.setItem("smartcampus:theme", "dark");
+    } else {
+      root.classList.remove("dark");
+      window.localStorage.setItem("smartcampus:theme", "light");
+    }
+  }, [darkMode]);
 
   useEffect(() => {
     const storageKey = getNotificationStorageKey(user);
@@ -429,6 +450,10 @@ export default function MainLayout() {
     navigate(`${location.pathname}?${params.toString()}`);
   };
 
+  const handleToggleDarkMode = () => {
+    setDarkMode((prev) => !prev);
+  };
+
   return (
     <div className="min-h-screen">
       <TopNavHeader
@@ -446,6 +471,8 @@ export default function MainLayout() {
         onOpenProfile={openProfileModal}
         reportingSuspicious={reportingSuspicious}
         lastSeenNotificationAt={notificationsLastSeenAt}
+        darkMode={darkMode}
+        onToggleDarkMode={handleToggleDarkMode}
       />
 
       <main className="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 sm:py-8">
