@@ -13,8 +13,8 @@ const tabs = [
 
 const TIMETABLE_MANAGER_TAB_KEYS = new Set(["TAB01", "TAB02", "TAB03"]);
 const ADMIN_TAB_KEYS = new Set(["TAB01", "TAB02", "TAB03", "TAB04", "TAB05"]);
-const LECTURER_TAB_KEYS = new Set(["TAB01", "TAB02", "TAB03", "TAB04"]);
-const STUDENT_TAB_KEYS = new Set(["TAB01", "TAB02", "TAB03", "TAB04", "TAB05"]);
+const LECTURER_TAB_KEYS = new Set(["TAB01", "TAB02", "TAB03", "TAB05"]);
+const STUDENT_TAB_KEYS = new Set(["TAB01", "TAB02", "TAB03", "TAB05"]);
 const RESOURCE_ADMINISTATOR_TAB_KEYS = new Set(["TAB01", "TAB02", "TAB03"]);
 const TICKET_ADMINISTRATOR_TAB_KEYS = new Set(["TAB01", "TAB06", "TAB07"]);
 

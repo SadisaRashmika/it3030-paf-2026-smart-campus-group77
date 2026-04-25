@@ -46,17 +46,20 @@ const MyBookingsList = ({ refreshTrigger }) => {
     });
   };
 
-  if (loading) return <div className="text-center py-10 text-slate-400 italic">Loading your bookings...</div>;
+  if (loading) return <div className="rounded-xl bg-slate-50 px-3 py-6 text-center text-sm text-slate-500">Loading your bookings...</div>;
 
   return (
     <div className="space-y-4">
-      <h3 className="font-display text-slate-900 font-extrabold text-xl flex items-center px-2">
-        My Booking History
-      </h3>
+      <div className="flex items-center justify-between gap-3">
+        <h3 className="text-lg font-bold text-slate-900">My Booking History</h3>
+        <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-600">
+          {bookings.length} records
+        </span>
+      </div>
 
       {bookings.length === 0 ? (
-        <div className="bg-amber-50/50 border-2 border-dashed border-amber-200 rounded-2xl p-10 text-center">
-            <p className="text-slate-400">You haven't made any bookings yet.</p>
+        <div className="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-8 text-center">
+            <p className="text-sm text-slate-500">You have not made any bookings yet.</p>
         </div>
       ) : (
         <div className="grid gap-4">

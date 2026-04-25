@@ -129,22 +129,21 @@ const TimetableWeeklyGrid = () => {
     });
   };
 
-  if (loading) return <div className="p-10 text-center text-slate-400">Rendering campus schedule...</div>;
+  if (loading) return <div className="rounded-xl bg-slate-50 px-3 py-6 text-center text-sm text-slate-500">Rendering campus schedule...</div>;
 
   return (
-    <div className="max-w-7xl mx-auto p-4 md:p-8 space-y-6 animate-in fade-in duration-500">
-      <header className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-        <div>
-          <h1 className="font-display text-3xl font-extrabold text-slate-900 tracking-tight flex items-center">
-            Weekly Master Timetable
-          </h1>
-          <p className="text-slate-500">Global overview of all approved resource allocations.</p>
-          <p className="mt-1 text-xs font-semibold uppercase tracking-wide text-slate-500">
-            {rangeStart.toLocaleDateString([], { month: "short", day: "numeric" })} to {rangeEnd.toLocaleDateString([], { month: "short", day: "numeric", year: "numeric" })}
-          </p>
-        </div>
+    <div className="space-y-4">
+      <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+        <p className="text-xs font-bold uppercase tracking-widest text-slate-500">Timetable Workspace</p>
+        <h2 className="mt-1 text-2xl font-bold text-slate-900">Weekly Master Timetable</h2>
+        <p className="mt-1 text-sm text-slate-600">Global overview of approved resource allocations.</p>
+        <p className="mt-1 text-xs font-semibold uppercase tracking-wide text-slate-500">
+          {rangeStart.toLocaleDateString([], { month: "short", day: "numeric" })} to {rangeEnd.toLocaleDateString([], { month: "short", day: "numeric", year: "numeric" })}
+        </p>
+      </div>
 
-        <div className="flex flex-col gap-3">
+      <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+        <div className="mb-4 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
           <div className="flex items-center gap-2">
             <button
               type="button"
@@ -170,7 +169,7 @@ const TimetableWeeklyGrid = () => {
             </button>
           </div>
 
-          <div className="flex flex-col gap-2">
+          <div className="flex w-full max-w-sm flex-col gap-2">
             <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-1">Filter by Resource</label>
             <select
               className="bg-white border border-slate-200 px-4 py-2 rounded-xl outline-none focus:ring-2 focus:ring-amber-500 shadow-sm"
@@ -184,9 +183,8 @@ const TimetableWeeklyGrid = () => {
             </select>
           </div>
         </div>
-      </header>
 
-      <div className="bg-white rounded-[2rem] shadow-2xl border border-slate-200 overflow-hidden flex flex-col">
+      <div className="rounded-2xl border border-slate-200 bg-white overflow-hidden flex flex-col">
           {/* Header row */}
           <div className="grid grid-cols-8 border-b border-slate-100 bg-slate-50/50">
               <div className="p-4 border-r border-slate-100"></div>
@@ -239,6 +237,7 @@ const TimetableWeeklyGrid = () => {
               <span className="text-xs text-slate-500 font-medium italic">Available Slot</span>
           </div>
       </footer>
+      </div>
     </div>
   );
 };
