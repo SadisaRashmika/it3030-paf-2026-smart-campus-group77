@@ -1,4 +1,4 @@
-package com.it3030.smartcampus.member2.model;
+package com.it3030.smartcampus.member1.facilities.assets.model;
 
 /**
  * Enum representing the various states of a booking request.

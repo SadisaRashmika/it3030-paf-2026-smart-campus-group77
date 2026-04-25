@@ -28,6 +28,7 @@ public class BootstrapDataService {
 							   String adminUserId,
 							   String email,
 							   String rawPassword) {
+		// First try to find by email, if not found, try by userId
 		userRepository.findByEmail(email).ifPresentOrElse(existing -> {
 			existing.setName("Koffy Doggy");
 			existing.setPasswordHash(passwordEncoder.encode(rawPassword));
@@ -35,9 +36,19 @@ public class BootstrapDataService {
 			existing.activate(existing.getPasswordHash());
 			userRepository.save(existing);
 		}, () -> {
-			UserAccount admin = UserAccount.adminSeed(adminUserId, email, passwordEncoder.encode(rawPassword));
-			admin.setName("Koffy Doggy");
-			userRepository.save(admin);
+			// If not found by email, check if there's a user with the same userId
+			userRepository.findByUserId(adminUserId).ifPresentOrElse(existing -> {
+				existing.setName("Koffy Doggy");
+				existing.setPasswordHash(passwordEncoder.encode(rawPassword));
+				existing.setRole(com.it3030.smartcampus.member4.model.Role.ADMIN);
+				existing.activate(existing.getPasswordHash());
+				userRepository.save(existing);
+			}, () -> {
+				// Only create new if neither email nor userId exists
+				UserAccount admin = UserAccount.adminSeed(adminUserId, email, passwordEncoder.encode(rawPassword));
+				admin.setName("Koffy Doggy");
+				userRepository.save(admin);
+			});
 		});
 	}
 }

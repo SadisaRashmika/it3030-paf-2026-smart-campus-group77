@@ -1,10 +1,10 @@
-package com.it3030.smartcampus.member2.controller;
+package com.it3030.smartcampus.member1.facilities.assets.controller;
 
-import com.it3030.smartcampus.member2.dto.ApproveRejectRequest;
-import com.it3030.smartcampus.member2.dto.BookingResponse;
-import com.it3030.smartcampus.member2.dto.CreateBookingRequest;
-import com.it3030.smartcampus.member2.exception.BookingConflictException;
-import com.it3030.smartcampus.member2.service.BookingService;
+import com.it3030.smartcampus.member1.facilities.assets.dto.ApproveRejectRequest;
+import com.it3030.smartcampus.member1.facilities.assets.dto.BookingResponse;
+import com.it3030.smartcampus.member1.facilities.assets.dto.CreateBookingRequest;
+import com.it3030.smartcampus.member1.facilities.assets.exception.BookingConflictException;
+import com.it3030.smartcampus.member1.facilities.assets.service.BookingService;
 import com.it3030.smartcampus.member4.model.UserAccount;
 import com.it3030.smartcampus.member4.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +20,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/member2/bookings")
+@RequestMapping("/api/member1/facilities-assets/bookings")
 public class BookingController {
 
     @Autowired

@@ -8,12 +8,17 @@ import StudentTicketDashboard from "../member3-ticketing/components/StudentTicke
 import AdminTicketManagement from "../member3-ticketing/components/AdminTicketManagement";
 import AdminTechnicianAssignment from "../member3-ticketing/components/AdminTechnicianAssignment";
 
-// Member 2 Imports
-import BookingsPage from "../member2-bookings-management/pages/BookingsPage";
-import TimetablePage from "../member2-bookings-management/pages/TimetablePage";
-import ApprovalsPage from "../member2-bookings-management/pages/ApprovalsPage";
-import ResourceInventoryPage from "../member2-bookings-management/pages/ResourceInventoryPage";
-import ResourceAvailabilityPage from "../member2-bookings-management/pages/ResourceAvailabilityPage";
+// Member 1 Imports (facilities and assets)
+import BookingsPage from "../member1-facilities-assets/pages/BookingsPage";
+import TimetablePage from "../member1-facilities-assets/pages/TimetablePage";
+import ApprovalsPage from "../member1-facilities-assets/pages/ApprovalsPage";
+import ResourceInventoryPage from "../member1-facilities-assets/pages/ResourceInventoryPage";
+import ResourceAvailabilityPage from "../member1-facilities-assets/pages/ResourceAvailabilityPage";
+
+// Member 2 Imports (resource management)
+import ResourcesPage from "../member2-bookings-management/pages/ResourcesPage";
+import ResourceSchedulePage from "../member2-bookings-management/pages/ResourceSchedulePage";
+import ResourceApprovalsPage from "../member2-bookings-management/pages/ResourceApprovalsPage";
 
 export default function PortalTabContent({
 	tab,

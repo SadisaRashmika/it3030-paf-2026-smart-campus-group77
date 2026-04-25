@@ -1,6 +1,6 @@
 import { requestJson } from "../../services/apiClient";
 
-const BASE_URL = "/api/member2";
+const BASE_URL = "/api/member1/facilities-assets";
 
 export const bookingApi = {
     /** Resources */

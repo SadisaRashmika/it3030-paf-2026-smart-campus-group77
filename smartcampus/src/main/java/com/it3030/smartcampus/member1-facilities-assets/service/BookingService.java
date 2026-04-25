@@ -1,13 +1,13 @@
-package com.it3030.smartcampus.member2.service;
+package com.it3030.smartcampus.member1.facilities.assets.service;
 
-import com.it3030.smartcampus.member2.dto.ApproveRejectRequest;
-import com.it3030.smartcampus.member2.dto.BookingResponse;
-import com.it3030.smartcampus.member2.dto.CreateBookingRequest;
-import com.it3030.smartcampus.member2.exception.BookingConflictException;
-import com.it3030.smartcampus.member2.model.Booking;
-import com.it3030.smartcampus.member2.model.BookingStatus;
-import com.it3030.smartcampus.member2.model.Resource;
-import com.it3030.smartcampus.member2.repository.BookingRepository;
+import com.it3030.smartcampus.member1.facilities.assets.dto.ApproveRejectRequest;
+import com.it3030.smartcampus.member1.facilities.assets.dto.BookingResponse;
+import com.it3030.smartcampus.member1.facilities.assets.dto.CreateBookingRequest;
+import com.it3030.smartcampus.member1.facilities.assets.exception.BookingConflictException;
+import com.it3030.smartcampus.member1.facilities.assets.model.Booking;
+import com.it3030.smartcampus.member1.facilities.assets.model.BookingStatus;
+import com.it3030.smartcampus.member1.facilities.assets.model.Resource;
+import com.it3030.smartcampus.member1.facilities.assets.repository.BookingRepository;
 import com.it3030.smartcampus.member4.model.UserAccount;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;

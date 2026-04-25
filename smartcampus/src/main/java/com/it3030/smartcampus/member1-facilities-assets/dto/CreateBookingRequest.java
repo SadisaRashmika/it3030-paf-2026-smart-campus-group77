@@ -1,4 +1,4 @@
-package com.it3030.smartcampus.member2.dto;
+package com.it3030.smartcampus.member1.facilities.assets.dto;
 
 import java.time.LocalDateTime;
 

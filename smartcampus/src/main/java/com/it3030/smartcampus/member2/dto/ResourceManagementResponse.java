@@ -1,9 +1,9 @@
 package com.it3030.smartcampus.member2.dto;
 
-import com.it3030.smartcampus.member2.model.BookingStatus;
+import com.it3030.smartcampus.member2.model.ResourceStatus;
 import java.time.LocalDateTime;
 
-public class BookingResponse {
+public class ResourceManagementResponse {
     private Long id;
     private Long resourceId;
     private String resourceName;
@@ -13,7 +13,7 @@ public class BookingResponse {
     private LocalDateTime startTime;
     @com.fasterxml.jackson.annotation.JsonFormat(shape = com.fasterxml.jackson.annotation.JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime endTime;
-    private BookingStatus status;
+    private ResourceStatus status;
     private String purpose;
     private Integer expectedAttendees;
     private String rejectionReason;

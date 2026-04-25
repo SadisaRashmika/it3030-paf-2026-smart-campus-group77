@@ -181,34 +181,34 @@ Implemented the full Member 2 module scope around booking lifecycle management, 
 - Aligned Member 2 UI typography and palette with shared portal style
 - Removed decorative emojis from Member 2 text labels
 
-### Member 2 Endpoint Count Evidence
+### Member 1 Endpoint Count Evidence (Moved from Member 2)
 
-Member 2 implemented more than four endpoints and used multiple HTTP methods:
-- GET: examples include `/api/member2/resources`, `/api/member2/bookings/mine`, `/api/member2/bookings/weekly`
-- POST: examples include `/api/member2/bookings`, `/api/member2/resources`
-- PATCH: examples include `/api/member2/bookings/{id}/approve`, `/api/member2/bookings/{id}/reject`, `/api/member2/bookings/{id}/cancel`
-- PUT: examples include `/api/member2/resources/{id}`
-- DELETE: examples include `/api/member2/resources/{id}`
+Member 1 (moved from Member 2) implemented more than four endpoints and used multiple HTTP methods:
+- GET: examples include `/api/member1/facilities-assets/resources`, `/api/member1/facilities-assets/bookings/mine`, `/api/member1/facilities-assets/bookings/weekly`
+- POST: examples include `/api/member1/facilities-assets/bookings`, `/api/member1/facilities-assets/resources`
+- PATCH: examples include `/api/member1/facilities-assets/bookings/{id}/approve`, `/api/member1/facilities-assets/bookings/{id}/reject`, `/api/member1/facilities-assets/bookings/{id}/cancel`
+- PUT: examples include `/api/member1/facilities-assets/resources/{id}`
+- DELETE: examples include `/api/member1/facilities-assets/resources/{id}`
 
-### Key Files (Member 2)
+### Key Files (Member 1 - Moved from Member 2)
 
 - Backend controllers/services/repositories under:
-	- `smartcampus/src/main/java/com/it3030/smartcampus/member2/**`
+	- `smartcampus/src/main/java/com/it3030/smartcampus/member1-facilities-assets/**`
 - Backend migration:
 	- `smartcampus/src/main/resources/db/migration/V12__booking_enhancements.sql`
 - Frontend module components/pages/services under:
-	- `frontend/src/member2-bookings-management/**`
+	- `frontend/src/member1-facilities-assets/**`
 - Shared integration points:
 	- `frontend/src/components/PortalTabContent.jsx`
 	- `frontend/src/components/TopNavHeader.jsx`
 
-### Testing Evidence Added (Member 2)
+### Testing Evidence Added (Member 1 - Moved from Member 2)
 
 - Backend test file:
-	- `smartcampus/src/test/java/com/it3030/smartcampus/member2/service/BookingServiceTest.java`
+	- `smartcampus/src/test/java/com/it3030/smartcampus/member1-facilities-assets/service/BookingServiceTest.java`
 
 Current observed run summary (local):
-- Member 2 backend service tests: passing
+- Member 1 backend service tests: passing
 - Frontend production build: passing
 
 ## Member 3 - Maintenance and Incident Ticketing

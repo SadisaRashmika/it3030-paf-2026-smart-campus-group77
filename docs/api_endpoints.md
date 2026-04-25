@@ -102,9 +102,9 @@ Sample response (me):
 
 To be completed by Member 1.
 
-## Member 2 Scope (Completed)
+## Member 1 Scope (Completed - Moved from Member 2)
 
-This section documents endpoints implemented under Member 2 responsibilities:
+This section documents endpoints implemented under Member 1 responsibilities (moved from Member 2):
 - Resource booking lifecycle
 - Weekly timetable approved slots API
 - Pending approval workflow
@@ -114,32 +114,32 @@ This section documents endpoints implemented under Member 2 responsibilities:
 
 | Method | Path | Access | Description | Typical Responses |
 |---|---|---|---|---|
-| POST | /api/member2/bookings | Student, Lecturer, Admin | Create booking request | 201, 400, 409 |
-| GET | /api/member2/bookings/mine | Authenticated | List current user booking history | 200, 401 |
-| PATCH | /api/member2/bookings/{id}/cancel | Authenticated (owner) | Cancel own approved booking | 200, 403, 400 |
+| POST | /api/member1/facilities-assets/bookings | Student, Lecturer, Admin | Create booking request | 201, 400, 409 |
+| GET | /api/member1/facilities-assets/bookings/mine | Authenticated | List current user booking history | 200, 401 |
+| PATCH | /api/member1/facilities-assets/bookings/{id}/cancel | Authenticated (owner) | Cancel own approved booking | 200, 403, 400 |
 
 ### Approval Workflow
 
 | Method | Path | Access | Description | Typical Responses |
 |---|---|---|---|---|
-| GET | /api/member2/bookings/pending | Timetable Manager, Admin | List pending booking requests | 200, 403 |
-| PATCH | /api/member2/bookings/{id}/approve | Timetable Manager, Admin | Approve booking request | 200, 409, 403 |
-| PATCH | /api/member2/bookings/{id}/reject | Timetable Manager, Admin | Reject booking request with reason | 200, 403 |
+| GET | /api/member1/facilities-assets/bookings/pending | Timetable Manager, Admin | List pending booking requests | 200, 403 |
+| PATCH | /api/member1/facilities-assets/bookings/{id}/approve | Timetable Manager, Admin | Approve booking request | 200, 409, 403 |
+| PATCH | /api/member1/facilities-assets/bookings/{id}/reject | Timetable Manager, Admin | Reject booking request with reason | 200, 403 |
 
 ### Timetable Data
 
 | Method | Path | Access | Description | Typical Responses |
 |---|---|---|---|---|
-| GET | /api/member2/bookings/weekly?start={ISO}&end={ISO} | Student, Lecturer, Timetable Manager, Admin, Resource Administator | List approved bookings within requested date range | 200, 400, 403 |
+| GET | /api/member1/facilities-assets/bookings/weekly?start={ISO}&end={ISO} | Student, Lecturer, Timetable Manager, Admin, Resource Administator | List approved bookings within requested date range | 200, 400, 403 |
 
 ### Resource Management
 
 | Method | Path | Access | Description | Typical Responses |
 |---|---|---|---|---|
-| GET | /api/member2/resources | Authenticated | List available resources | 200, 401 |
-| POST | /api/member2/resources | Admin, Resource Administator | Create new resource | 200, 400, 403 |
-| PUT | /api/member2/resources/{id} | Admin, Resource Administator | Update resource details | 200, 400, 403 |
-| DELETE | /api/member2/resources/{id} | Admin, Resource Administator | Delete resource | 200, 403 |
+| GET | /api/member1/facilities-assets/resources | Authenticated | List available resources | 200, 401 |
+| POST | /api/member1/facilities-assets/resources | Admin, Resource Administator | Create new resource | 200, 400, 403 |
+| PUT | /api/member1/facilities-assets/resources/{id} | Admin, Resource Administator | Update resource details | 200, 400, 403 |
+| DELETE | /api/member1/facilities-assets/resources/{id} | Admin, Resource Administator | Delete resource | 200, 403 |
 
 ## Member 3 Scope (Completed)
 
