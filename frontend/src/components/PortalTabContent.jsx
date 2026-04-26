@@ -30,6 +30,7 @@ export default function PortalTabContent({
 	onCreateStaffLogin,
 	onDeleteUser,
 	onDeactivateUser,
+	onClearSuspiciousUser,
 	onApproveRecoveryRequest,
 	onRejectRecoveryRequest
 }) {
@@ -60,6 +61,7 @@ export default function PortalTabContent({
 				loading={loadingAdminData}
 				onDeleteUser={onDeleteUser}
 				onDeactivateUser={onDeactivateUser}
+				onClearSuspiciousUser={onClearSuspiciousUser}
 			/>
 		);
 	}

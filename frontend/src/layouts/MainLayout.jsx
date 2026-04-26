@@ -4,6 +4,7 @@ import AuthModal from "../member4-notifications-oauth/components/AuthModal";
 import TopNavHeader from "../components/TopNavHeader";
 import {
   assignLecturerWork,
+  clearSuspiciousUser,
   approveRecoveryRequest,
   createStaffLogin,
   deactivateUser,
@@ -459,6 +460,11 @@ export default function MainLayout() {
     await fetchAdminData();
   };
 
+  const handleClearSuspiciousUser = async (userId) => {
+    await clearSuspiciousUser(userId);
+    await fetchAdminData();
+  };
+
   const handleApproveRecoveryRequest = async (requestId) => {
     await approveRecoveryRequest(requestId);
     await fetchRecoveryRequests();
@@ -528,6 +534,7 @@ export default function MainLayout() {
             onCreateStaffLogin: handleCreateStaffLogin,
             onDeleteUser: handleDeleteUser,
             onDeactivateUser: handleDeactivateUser,
+            onClearSuspiciousUser: handleClearSuspiciousUser,
             onApproveRecoveryRequest: handleApproveRecoveryRequest,
             onRejectRecoveryRequest: handleRejectRecoveryRequest
           }}

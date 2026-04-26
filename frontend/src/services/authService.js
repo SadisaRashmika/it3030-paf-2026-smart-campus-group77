@@ -116,6 +116,12 @@ export function deactivateUser(userId) {
   }).then(normalizeUser);
 }
 
+export function clearSuspiciousUser(userId) {
+  return requestJson(`/api/admin/users/${userId}/clear-suspicious`, {
+    method: "PATCH"
+  }).then(normalizeUser);
+}
+
 export function getRecoveryRequests() {
   return requestJson("/api/admin/recovery-requests");
 }

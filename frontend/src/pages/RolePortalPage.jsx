@@ -17,6 +17,7 @@ export default function RolePortalPage() {
     onCreateStaffLogin,
     onDeleteUser,
     onDeactivateUser,
+    onClearSuspiciousUser,
     onApproveRecoveryRequest,
     onRejectRecoveryRequest
   } = useOutletContext();
@@ -37,6 +38,7 @@ export default function RolePortalPage() {
       onCreateStaffLogin={onCreateStaffLogin}
       onDeleteUser={onDeleteUser}
       onDeactivateUser={onDeactivateUser}
+      onClearSuspiciousUser={onClearSuspiciousUser}
       onApproveRecoveryRequest={onApproveRecoveryRequest}
       onRejectRecoveryRequest={onRejectRecoveryRequest}
     />
