@@ -10,6 +10,7 @@ import com.it3030.smartcampus.member2.model.Booking;
 import com.it3030.smartcampus.member2.model.BookingStatus;
 import com.it3030.smartcampus.member2.repository.BookingRepository;
 import com.it3030.smartcampus.member4.model.UserAccount;
+import com.it3030.smartcampus.member4.service.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
@@ -28,6 +29,9 @@ public class BookingService {
 
     @Autowired
     private ResourceService resourceService;
+
+    @Autowired
+    private NotificationService notificationService;
 
     @Transactional
     public BookingResponse createBooking(CreateBookingRequest request, UserAccount user) {
@@ -60,6 +64,9 @@ public class BookingService {
         booking.setStatus(BookingStatus.PENDING);
 
         Booking saved = bookingRepository.save(booking);
+        notificationService.createSystemNotification(
+            user,
+            "Booking request submitted for " + resource.getName() + " and is now pending approval.");
         return mapToResponse(saved);
     }
 
@@ -98,7 +105,11 @@ public class BookingService {
 
         booking.setStatus(BookingStatus.APPROVED);
         booking.setUpdatedAt(LocalDateTime.now());
-        return mapToResponse(bookingRepository.save(booking));
+        Booking saved = bookingRepository.save(booking);
+        notificationService.createSystemNotification(
+            saved.getUser(),
+            "Your booking for " + saved.getResource().getName() + " has been approved.");
+        return mapToResponse(saved);
     }
 
     @Transactional
@@ -107,7 +118,14 @@ public class BookingService {
         booking.setStatus(BookingStatus.REJECTED);
         booking.setRejectionReason(request.getRejectionReason());
         booking.setUpdatedAt(LocalDateTime.now());
-        return mapToResponse(bookingRepository.save(booking));
+        Booking saved = bookingRepository.save(booking);
+        String reason = saved.getRejectionReason() == null || saved.getRejectionReason().isBlank()
+            ? "No reason provided"
+            : saved.getRejectionReason();
+        notificationService.createSystemNotification(
+            saved.getUser(),
+            "Your booking for " + saved.getResource().getName() + " was rejected. Reason: " + reason);
+        return mapToResponse(saved);
     }
 
     @Transactional
@@ -121,7 +139,11 @@ public class BookingService {
 
         booking.setStatus(BookingStatus.CANCELLED);
         booking.setUpdatedAt(LocalDateTime.now());
-        return mapToResponse(bookingRepository.save(booking));
+        Booking saved = bookingRepository.save(booking);
+        notificationService.createSystemNotification(
+            saved.getUser(),
+            "Your approved booking for " + saved.getResource().getName() + " has been cancelled.");
+        return mapToResponse(saved);
     }
 
     private Booking getBookingById(@NonNull Long id) {

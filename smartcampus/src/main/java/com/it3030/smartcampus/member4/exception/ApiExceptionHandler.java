@@ -1,4 +1,4 @@
-package com.it3030.smartcampus.member4.controller;
+package com.it3030.smartcampus.member4.exception;
 
 import java.util.Optional;
 

@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.it3030.smartcampus.member3_ticketing.dto.*;
 import com.it3030.smartcampus.member3_ticketing.model.*;
 import com.it3030.smartcampus.member3_ticketing.repository.*;
+import com.it3030.smartcampus.member4.service.NotificationService;
 
 @Service
 public class TicketService {
@@ -15,13 +16,16 @@ public class TicketService {
     private final IncidentTicketRepository ticketRepository;
     private final TicketCommentRepository commentRepository;
     private final TicketAttachmentRepository attachmentRepository;
+    private final NotificationService notificationService;
 
     public TicketService(IncidentTicketRepository ticketRepository,
                          TicketCommentRepository commentRepository,
-                         TicketAttachmentRepository attachmentRepository) {
+                         TicketAttachmentRepository attachmentRepository,
+                         NotificationService notificationService) {
         this.ticketRepository = ticketRepository;
         this.commentRepository = commentRepository;
         this.attachmentRepository = attachmentRepository;
+        this.notificationService = notificationService;
     }
 
     @Transactional
@@ -63,6 +67,10 @@ public class TicketService {
                 }
             }
         }
+
+        notificationService.createSystemNotification(
+            reporterEmail,
+            "Ticket #" + ticket.getId() + " created successfully and is now OPEN.");
 
         return getTicketById(ticket.getId(), reporterEmail, false);
     }
@@ -140,6 +148,16 @@ public class TicketService {
         ticket.setStatus(newStatus);
         ticketRepository.save(ticket);
 
+        notificationService.createSystemNotification(
+            ticket.getReporterEmail(),
+            "Ticket #" + ticket.getId() + " status updated to " + newStatus + ".");
+
+        if (ticket.getAssignedTechnicianEmail() != null && !ticket.getAssignedTechnicianEmail().isBlank()) {
+            notificationService.createSystemNotification(
+                ticket.getAssignedTechnicianEmail(),
+                "Ticket #" + ticket.getId() + " status is now " + newStatus + ".");
+        }
+
         return getTicketById(ticketId, currentUserEmail, isAdmin);
     }
 
@@ -150,6 +168,13 @@ public class TicketService {
 
         ticket.setAssignedTechnicianEmail(request.technicianEmail().trim().toLowerCase());
         ticketRepository.save(ticket);
+
+        notificationService.createSystemNotification(
+            ticket.getAssignedTechnicianEmail(),
+            "You have been assigned to Ticket #" + ticket.getId() + ": " + ticket.getTitle());
+        notificationService.createSystemNotification(
+            ticket.getReporterEmail(),
+            "A technician has been assigned to your Ticket #" + ticket.getId() + ".");
 
         return getTicketById(ticketId, currentUserEmail, true);
     }
@@ -221,6 +246,23 @@ public class TicketService {
 
         TicketComment comment = new TicketComment(ticketId, commenterEmail, request.content());
         comment = commentRepository.save(comment);
+
+        IncidentTicket ticket = ticketRepository.findById(ticketId)
+            .orElseThrow(() -> new IllegalArgumentException("Ticket not found"));
+
+        if (!ticket.getReporterEmail().equalsIgnoreCase(commenterEmail)) {
+            notificationService.createSystemNotification(
+                ticket.getReporterEmail(),
+                "New comment added on your Ticket #" + ticketId + ".");
+        }
+
+        if (ticket.getAssignedTechnicianEmail() != null
+            && !ticket.getAssignedTechnicianEmail().isBlank()
+            && !ticket.getAssignedTechnicianEmail().equalsIgnoreCase(commenterEmail)) {
+            notificationService.createSystemNotification(
+                ticket.getAssignedTechnicianEmail(),
+                "New comment added on assigned Ticket #" + ticketId + ".");
+        }
 
         return new CommentResponse(
             comment.getId(),

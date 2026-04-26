@@ -285,6 +285,35 @@ export default function MainLayout() {
     fetchNotifications();
   }, [user, fetchNotifications]);
 
+  useEffect(() => {
+    if (!user) {
+      return undefined;
+    }
+
+    const intervalId = window.setInterval(() => {
+      fetchNotifications();
+    }, 10000);
+
+    const handleWindowFocus = () => {
+      fetchNotifications();
+    };
+
+    const handleVisibilityChange = () => {
+      if (!document.hidden) {
+        fetchNotifications();
+      }
+    };
+
+    window.addEventListener("focus", handleWindowFocus);
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    return () => {
+      window.clearInterval(intervalId);
+      window.removeEventListener("focus", handleWindowFocus);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, [user, fetchNotifications]);
+
   const openLogin = (mode) => {
     setAuthModal({ open: true, mode, email: "" });
   };
