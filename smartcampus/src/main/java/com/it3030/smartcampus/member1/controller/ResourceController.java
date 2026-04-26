@@ -1,8 +1,8 @@
-package com.it3030.smartcampus.member2.controller;
+package com.it3030.smartcampus.member1.controller;
 
-import com.it3030.smartcampus.member2.dto.ResourceResponse;
-import com.it3030.smartcampus.member2.model.Resource;
-import com.it3030.smartcampus.member2.service.ResourceService;
+import com.it3030.smartcampus.member1.dto.ResourceResponse;
+import com.it3030.smartcampus.member1.model.Resource;
+import com.it3030.smartcampus.member1.service.ResourceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/member2/resources")
+@RequestMapping({"/api/member1/resources", "/api/member2/resources"})
 public class ResourceController {
 
     @Autowired

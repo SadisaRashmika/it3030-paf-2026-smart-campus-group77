@@ -1,6 +1,6 @@
 # SmartCampus API Endpoints
 
-> Working draft note: This file is now organized by completed module scope. Member 1 remains pending.
+> Working draft note: This file is now organized by completed module scope.
 
 ## Member 4 Scope (Completed)
 
@@ -98,9 +98,21 @@ Sample response (me):
 
 ---
 
-## Member 1 Scope (Pending)
+## Member 1 Scope (Completed)
 
-To be completed by Member 1.
+This section documents endpoints implemented under Module A responsibilities:
+- Maintain a catalogue of bookable resources
+- Track key metadata and status for resources
+- Support resource listing and management operations
+
+### Resource Management
+
+| Method | Path | Access | Description | Typical Responses |
+|---|---|---|---|---|
+| GET | /api/member1/resources | Authenticated | List available resources | 200, 401 |
+| POST | /api/member1/resources | Admin, Resource Administator | Create new resource | 200, 400, 403 |
+| PUT | /api/member1/resources/{id} | Admin, Resource Administator | Update resource details | 200, 400, 403 |
+| DELETE | /api/member1/resources/{id} | Admin, Resource Administator | Delete resource | 200, 403 |
 
 ## Member 2 Scope (Completed)
 
@@ -108,7 +120,7 @@ This section documents endpoints implemented under Member 2 responsibilities:
 - Resource booking lifecycle
 - Weekly timetable approved slots API
 - Pending approval workflow
-- Resource inventory and availability management APIs
+- Conflict handling for overlapping bookings
 
 ### Booking Management
 
@@ -131,15 +143,6 @@ This section documents endpoints implemented under Member 2 responsibilities:
 | Method | Path | Access | Description | Typical Responses |
 |---|---|---|---|---|
 | GET | /api/member2/bookings/weekly?start={ISO}&end={ISO} | Student, Lecturer, Timetable Manager, Admin, Resource Administator | List approved bookings within requested date range | 200, 400, 403 |
-
-### Resource Management
-
-| Method | Path | Access | Description | Typical Responses |
-|---|---|---|---|---|
-| GET | /api/member2/resources | Authenticated | List available resources | 200, 401 |
-| POST | /api/member2/resources | Admin, Resource Administator | Create new resource | 200, 400, 403 |
-| PUT | /api/member2/resources/{id} | Admin, Resource Administator | Update resource details | 200, 400, 403 |
-| DELETE | /api/member2/resources/{id} | Admin, Resource Administator | Delete resource | 200, 403 |
 
 ## Member 3 Scope (Completed)
 

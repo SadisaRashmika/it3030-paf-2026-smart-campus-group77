@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { bookingApi } from "../services/bookingApi";
+import { resourceApi } from "../../member1-facilities-assets/services/resourceApi";
 
 const BookingRequestForm = ({ onBookingCreated }) => {
   const [resources, setResources] = useState([]);
@@ -22,7 +23,7 @@ const BookingRequestForm = ({ onBookingCreated }) => {
 
   const fetchResources = async () => {
     try {
-      const data = await bookingApi.getResources();
+      const data = await resourceApi.getResources();
       setResources(data);
     } catch (err) {
       console.error("Failed to fetch resources", err);
@@ -66,14 +67,13 @@ const BookingRequestForm = ({ onBookingCreated }) => {
   };
 
   return (
-    <div className="bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden transition-all hover:shadow-2xl">
-      <div className="bg-gradient-to-r from-amber-500 to-amber-600 px-6 py-4">
-        <h3 className="font-display text-amber-950 font-extrabold text-lg flex items-center">
-          New Booking Request
-        </h3>
+    <div className="space-y-4">
+      <div>
+        <h3 className="text-lg font-bold text-slate-900">New Booking Request</h3>
+        <p className="text-sm text-slate-600">Provide date, time range, purpose, and expected attendees.</p>
       </div>
 
-      <form onSubmit={handleSubmit} className="p-6 space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-4">
         {error && (
           <div className="bg-rose-50 border-l-4 border-rose-500 p-4 rounded-md">
             <p className="text-rose-700 text-sm font-medium">{error}</p>
@@ -166,7 +166,7 @@ const BookingRequestForm = ({ onBookingCreated }) => {
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-amber-500 hover:bg-amber-600 text-amber-950 font-bold py-3 rounded-xl shadow-lg shadow-amber-200 transition-all transform hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full rounded-xl bg-amber-500 py-3 text-sm font-bold text-amber-950 transition hover:bg-amber-600 disabled:cursor-not-allowed disabled:opacity-50"
         >
           {loading ? "Submitting..." : "Submit Booking Request"}
         </button>

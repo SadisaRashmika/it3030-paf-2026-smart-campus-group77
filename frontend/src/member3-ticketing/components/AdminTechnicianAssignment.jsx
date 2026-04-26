@@ -82,9 +82,9 @@ export default function AdminTechnicianAssignment({ user }) {
   }
 
   return (
-    <div className="space-y-5">
+    <div className="tech-admin-panel space-y-5">
       {/* Header */}
-      <div className="rounded-3xl border border-slate-200 bg-gradient-to-r from-white via-amber-50/30 to-white p-6 shadow-sm">
+      <div className="tech-admin-header rounded-3xl border border-slate-200 bg-gradient-to-r from-white via-amber-50/30 to-white p-6 shadow-sm">
         <div className="inline-flex items-center gap-2 rounded-full border border-amber-200 bg-amber-50 px-3 py-1.5 text-sm font-bold text-amber-700 mb-3">
           <Users size={16} /> Technician Management
         </div>
@@ -93,15 +93,15 @@ export default function AdminTechnicianAssignment({ user }) {
 
         {/* Quick Stats */}
         <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3">
-          <div className="rounded-xl border border-amber-100 bg-amber-50/50 px-4 py-3 text-center">
+          <div className="tech-admin-stat-card rounded-xl border border-amber-100 bg-amber-50/50 px-4 py-3 text-center">
             <p className="text-2xl font-bold text-amber-700">{unassigned.length}</p>
             <p className="text-[10px] font-bold uppercase text-amber-500">Unassigned</p>
           </div>
-          <div className="rounded-xl border border-emerald-100 bg-emerald-50/50 px-4 py-3 text-center">
+          <div className="tech-admin-stat-card rounded-xl border border-emerald-100 bg-emerald-50/50 px-4 py-3 text-center">
             <p className="text-2xl font-bold text-emerald-700">{assigned.length}</p>
             <p className="text-[10px] font-bold uppercase text-emerald-500">Assigned</p>
           </div>
-          <div className="rounded-xl border border-blue-100 bg-blue-50/50 px-4 py-3 text-center">
+          <div className="tech-admin-stat-card rounded-xl border border-blue-100 bg-blue-50/50 px-4 py-3 text-center">
             <p className="text-2xl font-bold text-blue-700">{technicianList.length}</p>
             <p className="text-[10px] font-bold uppercase text-blue-500">Technicians</p>
           </div>
@@ -110,11 +110,11 @@ export default function AdminTechnicianAssignment({ user }) {
 
       {/* Technician Workload */}
       {technicianList.length > 0 && (
-        <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+        <div className="tech-admin-workload-card rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
           <h3 className="mb-3 text-xs font-bold uppercase tracking-wide text-slate-500">Technician Workload</h3>
           <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
             {technicianList.map((tech) => (
-              <div key={tech.email} className="flex items-center justify-between rounded-xl border border-slate-100 bg-slate-50/40 px-4 py-3">
+              <div key={tech.email} className="tech-admin-workload-item flex items-center justify-between rounded-xl border border-slate-100 bg-slate-50/40 px-4 py-3">
                 <div className="flex items-center gap-2">
                   <span className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-emerald-400 to-emerald-300 text-xs font-bold text-emerald-950">
                     {tech.email.substring(0, 2).toUpperCase()}

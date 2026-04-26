@@ -9,10 +9,23 @@
       radial-gradient(circle at 88% 12%, rgba(245, 158, 11, 0.22) 0%, rgba(245, 158, 11, 0) 34%),
       radial-gradient(circle at 0% 100%, rgba(250, 204, 21, 0.2) 0%, rgba(250, 204, 21, 0) 30%),
       linear-gradient(160deg, #fffbeb 0%, #fef3c7 44%, #fffbeb 100%);
+    transition: background 220ms ease, color 220ms ease;
   }
 
   #root {
     @apply min-h-screen;
+  }
+
+  html.dark body {
+    color: #f8fafc;
+    background:
+      radial-gradient(circle at 88% 12%, rgba(251, 146, 60, 0.18) 0%, rgba(251, 146, 60, 0) 28%),
+      radial-gradient(circle at 2% 98%, rgba(14, 165, 233, 0.18) 0%, rgba(14, 165, 233, 0) 30%),
+      linear-gradient(160deg, #06152b 0%, #0b2646 45%, #081c34 100%);
+  }
+
+  html.dark {
+    color-scheme: dark;
   }
 }
 
@@ -20,4 +33,143 @@
   .glass {
     @apply bg-white/90 backdrop-blur-[14px];
   }
+}
+
+/* Global dark mode support for existing Tailwind utility classes. */
+html.dark .bg-white,
+html.dark .bg-white\/90,
+html.dark .bg-white\/95 {
+  background-color: #0f2138 !important;
+}
+
+html.dark .bg-slate-50,
+html.dark .bg-slate-50\/30,
+html.dark .bg-slate-50\/50,
+html.dark .bg-slate-100,
+html.dark .bg-slate-100\/30 {
+  background-color: #152d4a !important;
+}
+
+html.dark .text-slate-900 {
+  color: #f8fafc !important;
+}
+
+html.dark .text-slate-800,
+html.dark .text-slate-700 {
+  color: #e2e8f0 !important;
+}
+
+html.dark .text-slate-600,
+html.dark .text-slate-500,
+html.dark .text-slate-400 {
+  color: #cbd5e1 !important;
+}
+
+html.dark .border-slate-200,
+html.dark .border-slate-100,
+html.dark .border-slate-300,
+html.dark .border-slate-50 {
+  border-color: #244366 !important;
+}
+
+html.dark input,
+html.dark select,
+html.dark textarea {
+  background-color: #10243d !important;
+  border-color: #2e527c !important;
+  color: #f8fafc !important;
+}
+
+html.dark input::placeholder,
+html.dark textarea::placeholder {
+  color: #94a3b8 !important;
+}
+
+html.dark .bg-amber-50,
+html.dark .bg-amber-50\/50 {
+  background-color: rgba(251, 146, 60, 0.16) !important;
+}
+
+html.dark .border-amber-200,
+html.dark .border-amber-300 {
+  border-color: #fb923c !important;
+}
+
+html.dark .text-amber-700,
+html.dark .text-amber-800,
+html.dark .text-amber-900 {
+  color: #fdba74 !important;
+}
+
+html.dark .text-amber-950 {
+  color: #fff7ed !important;
+}
+
+html.dark .theme-toggle-btn {
+  border-color: #fb923c !important;
+  background-color: #10243d !important;
+  color: #fdba74 !important;
+}
+
+html.dark .theme-toggle-btn:hover {
+  background-color: #173255 !important;
+}
+
+html.dark .shadow-sm,
+html.dark .shadow-xl,
+html.dark .shadow-2xl,
+html.dark .shadow-lg {
+  box-shadow: 0 10px 26px rgba(1, 9, 20, 0.35) !important;
+}
+
+/* Ticket admin dark mode clarity: use solid dark-blue panels with no mixed gradients. */
+html.dark .ticket-admin-panel .ticket-admin-header,
+html.dark .ticket-admin-panel .ticket-admin-stat-card,
+html.dark .ticket-admin-panel .ticket-admin-table,
+html.dark .ticket-admin-panel .ticket-admin-assign-modal,
+html.dark .tech-admin-panel .tech-admin-header,
+html.dark .tech-admin-panel .tech-admin-stat-card,
+html.dark .tech-admin-panel .tech-admin-workload-card,
+html.dark .tech-admin-panel .tech-admin-workload-item {
+  background: #0f2a49 !important;
+  background-image: none !important;
+  border-color: #315783 !important;
+}
+
+html.dark .dashboard-welcome-card,
+html.dark .bg-gradient-to-r.from-white.via-amber-50\/30.to-white {
+  background: #0f2a49 !important;
+  background-image: none !important;
+  border-color: #315783 !important;
+}
+
+html.dark .dashboard-welcome-glow {
+  display: none !important;
+}
+
+html.dark .help-page-shell,
+html.dark .help-hero-panel,
+html.dark .help-recovery-panel {
+  background: #0f2a49 !important;
+  background-image: none !important;
+  border-color: #315783 !important;
+}
+
+html.dark .help-hero-glow {
+  display: none !important;
+}
+
+html.dark .ticket-admin-panel .ticket-admin-header .text-slate-500,
+html.dark .ticket-admin-panel .ticket-admin-table .text-slate-500,
+html.dark .ticket-admin-panel .ticket-admin-table .text-slate-400,
+html.dark .tech-admin-panel .text-slate-500,
+html.dark .tech-admin-panel .text-slate-400 {
+  color: #c8d7ea !important;
+}
+
+html.dark .ticket-admin-panel .ticket-admin-table .text-slate-800,
+html.dark .ticket-admin-panel .ticket-admin-table .text-slate-700,
+html.dark .tech-admin-panel .text-slate-800,
+html.dark .tech-admin-panel .text-slate-700 {
+  color: #f4f8ff !important;
 }

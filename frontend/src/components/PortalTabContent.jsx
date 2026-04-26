@@ -1,4 +1,4 @@
-import { CalendarClock, Briefcase, BookOpenText, MessageSquareText } from "lucide-react";
+import { MessageSquareText } from "lucide-react";
 import AdminRoleManagementPanel from "../member4-notifications-oauth/components/AdminRoleManagementPanel";
 import AdminUserManagementPanel from "../member4-notifications-oauth/components/AdminUserManagementPanel";
 import AdminUsersPanel from "../member4-notifications-oauth/components/AdminUsersPanel";
@@ -12,8 +12,8 @@ import AdminTechnicianAssignment from "../member3-ticketing/components/AdminTech
 import BookingsPage from "../member2-bookings-management/pages/BookingsPage";
 import TimetablePage from "../member2-bookings-management/pages/TimetablePage";
 import ApprovalsPage from "../member2-bookings-management/pages/ApprovalsPage";
-import ResourceInventoryPage from "../member2-bookings-management/pages/ResourceInventoryPage";
-import ResourceAvailabilityPage from "../member2-bookings-management/pages/ResourceAvailabilityPage";
+import ResourceInventoryPage from "../member1-facilities-assets/pages/ResourceInventoryPage";
+import ResourceAvailabilityPage from "../member1-facilities-assets/pages/ResourceAvailabilityPage";
 
 export default function PortalTabContent({
 	tab,
@@ -143,20 +143,6 @@ export default function PortalTabContent({
 
 	if (tab === "TAB03") {
 		return <BookingsPage user={user} />;
-	}
-
-	if (tab === "TAB04") {
-		return (
-			<RolePanel
-				icon={Briefcase}
-				title="Jobs and Internships"
-				body={
-					role === "lecturer"
-						? "Review opportunities and post role-specific industry pathways."
-						: "Find internships and jobs aligned with your profile and program."
-				}
-			/>
-		);
 	}
 
 	if (tab === "TAB05") {

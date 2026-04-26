@@ -110,9 +110,9 @@ export default function AdminTicketManagement({ user }) {
   }
 
   return (
-    <div className="space-y-5">
+    <div className="ticket-admin-panel space-y-5">
       {/* Header */}
-      <div className="rounded-3xl border border-slate-200 bg-gradient-to-r from-white via-amber-50/30 to-white p-6 shadow-sm">
+      <div className="ticket-admin-header rounded-3xl border border-slate-200 bg-gradient-to-r from-white via-amber-50/30 to-white p-6 shadow-sm">
         <div className="inline-flex items-center gap-2 rounded-full border border-amber-200 bg-amber-50 px-3 py-1.5 text-sm font-bold text-amber-700 mb-3">
           <TicketCheck size={16} /> Admin Panel
         </div>
@@ -121,23 +121,23 @@ export default function AdminTicketManagement({ user }) {
 
         {/* Summary Cards */}
         <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-5">
-          <div className="rounded-xl border border-blue-100 bg-blue-50/50 px-3 py-2.5 text-center">
+          <div className="ticket-admin-stat-card rounded-xl border border-blue-100 bg-blue-50/50 px-3 py-2.5 text-center">
             <p className="text-lg font-bold text-blue-700">{statusCounts.OPEN}</p>
             <p className="text-[10px] font-bold uppercase text-blue-500">Open</p>
           </div>
-          <div className="rounded-xl border border-amber-100 bg-amber-50/50 px-3 py-2.5 text-center">
+          <div className="ticket-admin-stat-card rounded-xl border border-amber-100 bg-amber-50/50 px-3 py-2.5 text-center">
             <p className="text-lg font-bold text-amber-700">{statusCounts.IN_PROGRESS}</p>
             <p className="text-[10px] font-bold uppercase text-amber-500">In Progress</p>
           </div>
-          <div className="rounded-xl border border-emerald-100 bg-emerald-50/50 px-3 py-2.5 text-center">
+          <div className="ticket-admin-stat-card rounded-xl border border-emerald-100 bg-emerald-50/50 px-3 py-2.5 text-center">
             <p className="text-lg font-bold text-emerald-700">{statusCounts.RESOLVED}</p>
             <p className="text-[10px] font-bold uppercase text-emerald-500">Resolved</p>
           </div>
-          <div className="rounded-xl border border-slate-100 bg-slate-50/50 px-3 py-2.5 text-center">
+          <div className="ticket-admin-stat-card rounded-xl border border-slate-100 bg-slate-50/50 px-3 py-2.5 text-center">
             <p className="text-lg font-bold text-slate-600">{statusCounts.CLOSED}</p>
             <p className="text-[10px] font-bold uppercase text-slate-400">Closed</p>
           </div>
-          <div className="rounded-xl border border-rose-100 bg-rose-50/50 px-3 py-2.5 text-center">
+          <div className="ticket-admin-stat-card rounded-xl border border-rose-100 bg-rose-50/50 px-3 py-2.5 text-center">
             <p className="text-lg font-bold text-rose-600">{statusCounts.REJECTED}</p>
             <p className="text-[10px] font-bold uppercase text-rose-400">Rejected</p>
           </div>
@@ -188,7 +188,7 @@ export default function AdminTicketManagement({ user }) {
           <p className="text-sm font-semibold text-slate-500">No tickets found</p>
         </div>
       ) : (
-        <div className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
+        <div className="ticket-admin-table overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
               <thead>
@@ -248,7 +248,7 @@ export default function AdminTicketManagement({ user }) {
       {/* Assign Technician Modal */}
       {assignModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
-          <div className="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-6 shadow-2xl">
+          <div className="ticket-admin-assign-modal w-full max-w-md rounded-2xl border border-slate-200 bg-white p-6 shadow-2xl">
             <h3 className="text-lg font-bold text-slate-900 mb-1">Assign Technician</h3>
             <p className="text-xs text-slate-500 mb-4">Ticket #{assignModal}</p>
             <input

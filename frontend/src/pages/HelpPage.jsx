@@ -63,10 +63,10 @@ export default function HelpPage() {
 
 	return (
 		<main className="mx-auto min-h-[calc(100vh-5rem)] w-full max-w-7xl px-4 py-6 sm:px-6 sm:py-8">
-			<section className="overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-[0_30px_80px_-40px_rgba(15,23,42,0.45)]">
+			<section className="help-page-shell overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-[0_30px_80px_-40px_rgba(15,23,42,0.45)]">
 				<div className="grid gap-0 lg:grid-cols-[1.05fr_0.95fr]">
-					<div className="relative overflow-hidden bg-[radial-gradient(circle_at_top_left,_rgba(250,204,21,0.35),_transparent_36%),linear-gradient(145deg,_#fffdf3,_#fff8dc_58%,_#fffef9)] px-6 py-8 text-slate-900 sm:px-8 sm:py-10">
-						<div className="absolute right-0 top-0 h-40 w-40 translate-x-1/2 -translate-y-1/2 rounded-full bg-[#ffc111]/30 blur-3xl" />
+					<div className="help-hero-panel relative overflow-hidden bg-[radial-gradient(circle_at_top_left,_rgba(250,204,21,0.35),_transparent_36%),linear-gradient(145deg,_#fffdf3,_#fff8dc_58%,_#fffef9)] px-6 py-8 text-slate-900 sm:px-8 sm:py-10">
+						<div className="help-hero-glow absolute right-0 top-0 h-40 w-40 translate-x-1/2 -translate-y-1/2 rounded-full bg-[#ffc111]/30 blur-3xl" />
 						<div className="relative max-w-xl space-y-5">
 							<div className="inline-flex items-center gap-2 rounded-full border border-amber-300/60 bg-amber-100 px-4 py-1.5 text-xs font-bold uppercase tracking-[0.22em] text-amber-800">
 								<BadgeHelp size={14} /> Need help
@@ -97,7 +97,7 @@ export default function HelpPage() {
 						</div>
 					</div>
 
-					<div className="space-y-6 bg-slate-50 px-5 py-6 sm:px-8 sm:py-8">
+					<div className="help-recovery-panel space-y-6 bg-slate-50 px-5 py-6 sm:px-8 sm:py-8">
 						<section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
 							<div className="flex items-center gap-2 text-sm font-bold uppercase tracking-[0.18em] text-slate-500">
 								<Upload size={15} /> Recover your account

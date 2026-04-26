@@ -1,8 +1,8 @@
-package com.it3030.smartcampus.member2.service;
+package com.it3030.smartcampus.member1.service;
 
-import com.it3030.smartcampus.member2.dto.ResourceResponse;
-import com.it3030.smartcampus.member2.model.Resource;
-import com.it3030.smartcampus.member2.repository.ResourceRepository;
+import com.it3030.smartcampus.member1.dto.ResourceResponse;
+import com.it3030.smartcampus.member1.model.Resource;
+import com.it3030.smartcampus.member1.repository.ResourceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
