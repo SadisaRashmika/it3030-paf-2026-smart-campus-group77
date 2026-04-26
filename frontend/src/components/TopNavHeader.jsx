@@ -55,18 +55,8 @@ export default function TopNavHeader({
 
 	const isLoginAlert = (message) => String(message || "").toLowerCase().includes("logged in successfully");
 
-	const isSeenBeforeLastRefresh = (item) => {
-		if (!lastSeenNotificationAt || !item?.createdAt) {
-			return false;
-		}
-
-		const createdAt = new Date(item.createdAt).getTime();
-		const lastSeenAt = new Date(lastSeenNotificationAt).getTime();
-		if (Number.isNaN(createdAt) || Number.isNaN(lastSeenAt)) {
-			return false;
-		}
-
-		return createdAt <= lastSeenAt;
+	const isSeenBeforeLastRefresh = (_item) => {
+		return false;
 	};
 
 	useEffect(() => {
@@ -123,7 +113,7 @@ export default function TopNavHeader({
 	});
 	const canSeeNotifications = Boolean(user);
 	const canReportSuspicious = roleKey === "student" || roleKey === "lecturer";
-	const unreadCount = notifications.filter((item) => item?.read === false && !isSeenBeforeLastRefresh(item)).length;
+	const unreadCount = notifications.filter((item) => item?.read === false).length;
 	const displayName = user?.name?.trim() || user?.userId || "SmartCampus User";
 	const tabLabelForRole = (tab) => {
 		if (isTimetableManager) {
@@ -301,7 +291,7 @@ export default function TopNavHeader({
 												) : (
 													notifications.map((item) => {
 														const loginAlert = isLoginAlert(item.message);
-														const itemRead = item?.read === true || isSeenBeforeLastRefresh(item);
+														const itemRead = item?.read === true;
 														return (
 															<div key={item.id} className={`border-b border-slate-100 px-3 py-2.5 ${itemRead ? "bg-white" : "bg-amber-50/50"}`}>
 																<button
@@ -437,7 +427,7 @@ export default function TopNavHeader({
 										<p className="rounded-lg bg-white px-2 py-2 text-xs text-slate-500">No notifications yet.</p>
 									) : (
 										notifications.slice(0, 8).map((item) => (
-											<div key={`mobile-notice-${item.id}`} className={`rounded-lg bg-white px-2 py-2 text-xs ${item?.read === true || isSeenBeforeLastRefresh(item) ? "text-slate-600" : "font-semibold text-slate-800"}`}>
+											<div key={`mobile-notice-${item.id}`} className={`rounded-lg bg-white px-2 py-2 text-xs ${item?.read === true ? "text-slate-600" : "font-semibold text-slate-800"}`}>
 												<button type="button" onClick={() => onMarkNotificationRead?.(item.id)} className="w-full text-left">
 													<p>{item.message}</p>
 												</button>
