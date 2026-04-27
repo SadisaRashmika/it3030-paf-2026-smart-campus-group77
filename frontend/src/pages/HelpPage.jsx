@@ -62,8 +62,14 @@ export default function HelpPage() {
 	};
 
 	return (
-		<main className="mx-auto min-h-[calc(100vh-5rem)] w-full max-w-7xl px-4 py-6 sm:px-6 sm:py-8">
-			<section className="help-page-shell overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-[0_30px_80px_-40px_rgba(15,23,42,0.45)]">
+		<main className="relative mx-auto min-h-[calc(100vh-5rem)] w-full max-w-7xl px-4 py-6 sm:px-6 sm:py-8">
+			<div className="pointer-events-none fixed inset-0 z-0 bg-slate-900">
+				<video className="h-full w-full object-cover" autoPlay loop muted playsInline poster="/assets/home.png">
+					<source src="/assets/bghome.MP4" type="video/mp4" />
+				</video>
+				<div className="absolute inset-0 bg-black/35" />
+			</div>
+			<section className="help-page-shell relative z-10 overflow-hidden rounded-[2rem] border border-slate-200 bg-white/85 shadow-[0_30px_80px_-40px_rgba(15,23,42,0.45)] backdrop-blur-xl">
 				<div className="grid gap-0 lg:grid-cols-[1.05fr_0.95fr]">
 					<div className="help-hero-panel relative overflow-hidden bg-[radial-gradient(circle_at_top_left,_rgba(250,204,21,0.35),_transparent_36%),linear-gradient(145deg,_#fffdf3,_#fff8dc_58%,_#fffef9)] px-6 py-8 text-slate-900 sm:px-8 sm:py-10">
 						<div className="help-hero-glow absolute right-0 top-0 h-40 w-40 translate-x-1/2 -translate-y-1/2 rounded-full bg-[#ffc111]/30 blur-3xl" />
