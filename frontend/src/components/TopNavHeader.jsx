@@ -2,21 +2,21 @@ import { Bell, Camera, ChevronDown, LogOut, Menu, MoonStar, ShieldAlert, SunMedi
 import { useEffect, useRef, useState } from "react";
 
 const tabs = [
-	{ key: "TAB01", label: "Home", public: true },
-	{ key: "TAB02", label: "Timetable", public: false },
-	{ key: "TAB03", label: "Resource", public: false },
-	{ key: "TAB04", label: "Jobs", public: false },
-	{ key: "TAB05", label: "Ticket", public: false },
-	{ key: "TAB06", label: "Ticket Mgmt", public: false },
-	{ key: "TAB07", label: "Assignments", public: false }
+	{ key: "home", label: "Home", public: true },
+	{ key: "timetable", label: "Timetable", public: false },
+	{ key: "bookings", label: "Resource", public: false },
+	{ key: "role-management", label: "Jobs", public: false },
+	{ key: "tickets", label: "Ticket", public: false },
+	{ key: "ticket-management", label: "Ticket Mgmt", public: false },
+	{ key: "assignments", label: "Assignments", public: false }
 ];
 
-const TIMETABLE_MANAGER_TAB_KEYS = new Set(["TAB01", "TAB02", "TAB03"]);
-const ADMIN_TAB_KEYS = new Set(["TAB01", "TAB02", "TAB03", "TAB04", "TAB05"]);
-const LECTURER_TAB_KEYS = new Set(["TAB01", "TAB02", "TAB03", "TAB05"]);
-const STUDENT_TAB_KEYS = new Set(["TAB01", "TAB02", "TAB03", "TAB05"]);
-const RESOURCE_ADMINISTATOR_TAB_KEYS = new Set(["TAB01", "TAB02", "TAB03"]);
-const TICKET_ADMINISTRATOR_TAB_KEYS = new Set(["TAB01", "TAB06", "TAB07"]);
+const TIMETABLE_MANAGER_TAB_KEYS = new Set(["home", "timetable", "bookings"]);
+const ADMIN_TAB_KEYS = new Set(["home", "timetable", "bookings", "role-management", "tickets"]);
+const LECTURER_TAB_KEYS = new Set(["home", "timetable", "bookings", "tickets"]);
+const STUDENT_TAB_KEYS = new Set(["home", "timetable", "bookings", "tickets"]);
+const RESOURCE_ADMINISTATOR_TAB_KEYS = new Set(["home", "timetable", "bookings"]);
+const TICKET_ADMINISTRATOR_TAB_KEYS = new Set(["home", "ticket-management", "assignments"]);
 
 export default function TopNavHeader({
 	activeTab,
@@ -55,18 +55,8 @@ export default function TopNavHeader({
 
 	const isLoginAlert = (message) => String(message || "").toLowerCase().includes("logged in successfully");
 
-	const isSeenBeforeLastRefresh = (item) => {
-		if (!lastSeenNotificationAt || !item?.createdAt) {
-			return false;
-		}
-
-		const createdAt = new Date(item.createdAt).getTime();
-		const lastSeenAt = new Date(lastSeenNotificationAt).getTime();
-		if (Number.isNaN(createdAt) || Number.isNaN(lastSeenAt)) {
-			return false;
-		}
-
-		return createdAt <= lastSeenAt;
+	const isSeenBeforeLastRefresh = (_item) => {
+		return false;
 	};
 
 	useEffect(() => {
@@ -123,81 +113,81 @@ export default function TopNavHeader({
 	});
 	const canSeeNotifications = Boolean(user);
 	const canReportSuspicious = roleKey === "student" || roleKey === "lecturer";
-	const unreadCount = notifications.filter((item) => item?.read === false && !isSeenBeforeLastRefresh(item)).length;
+	const unreadCount = notifications.filter((item) => item?.read === false).length;
 	const displayName = user?.name?.trim() || user?.userId || "SmartCampus User";
 	const tabLabelForRole = (tab) => {
 		if (isTimetableManager) {
-			if (tab.key === "TAB01") {
+			if (tab.key === "home") {
 				return "Home";
 			}
-			if (tab.key === "TAB02") {
+			if (tab.key === "timetable") {
 				return "Timetable";
 			}
-			if (tab.key === "TAB03") {
+			if (tab.key === "bookings") {
 				return "Approvals";
 			}
 		}
 
 		if (isResourceAdministator) {
-			if (tab.key === "TAB01") {
+			if (tab.key === "home") {
 				return "Home";
 			}
-			if (tab.key === "TAB02") {
+			if (tab.key === "timetable") {
 				return "Inventory";
 			}
-			if (tab.key === "TAB03") {
+			if (tab.key === "bookings") {
 				return "Availability";
 			}
 		}
 
 		if (roleKey === "admin") {
-			if (tab.key === "TAB01") {
+			if (tab.key === "home") {
 				return "Home";
 			}
-			if (tab.key === "TAB02") {
+			if (tab.key === "timetable") {
 				return "Activity";
 			}
-			if (tab.key === "TAB03") {
+			if (tab.key === "bookings") {
 				return "User Management";
 			}
-			if (tab.key === "TAB04") {
+			if (tab.key === "role-management") {
 				return "Role Management";
 			}
-			if (tab.key === "TAB05") {
+			if (tab.key === "tickets") {
 				return "Recovery Tickets";
 			}
-			if (tab.key === "TAB06") {
+			if (tab.key === "ticket-management") {
 				return "Ticket Mgmt";
 			}
-			if (tab.key === "TAB07") {
+			if (tab.key === "assignments") {
 				return "Assignments";
 			}
 			return tab.label;
 		}
 
 		if (isTicketAdministrator) {
-			if (tab.key === "TAB01") {
+			if (tab.key === "home") {
 				return "Home";
 			}
-			if (tab.key === "TAB06") {
-				return "Ticket Mgmt";
+			if (tab.key === "ticket-management") {
+				return "Ticket Management";
 			}
-			if (tab.key === "TAB07") {
+			if (tab.key === "assignments") {
 				return "Assignments";
 			}
 		}
 
 		if (roleKey === "lecturer" || roleKey === "student") {
-			if (tab.key === "TAB01") {
+			if (tab.key === "home") {
 				return "Home";
 			}
-			if (tab.key === "TAB02") {
+			if (tab.key === "timetable") {
 				return "Timetable";
 			}
-			if (tab.key === "TAB03") {
+			if (tab.key === "bookings") {
 				return "Bookings";
 			}
-			if (tab.key === "TAB05") {
+			if (tab.key === "tickets") {
 				return "Tickets";
 			}
 		}
@@ -211,9 +201,12 @@ export default function TopNavHeader({
 		.map((part) => part[0]?.toUpperCase() || "")
 		.join("") || "SC";
 	const profilePhotoUrl = user?.profilePictureDataUrl?.trim() || "";
+	const guestNavbarClass = !user && darkMode
+		? "border-slate-700 bg-slate-900"
+		: "border-slate-200 bg-white/95 backdrop-blur-xl";
 
 	return (
-		<header className="sticky top-0 z-30 border-b border-slate-200 bg-white/95 backdrop-blur-xl">
+		<header className={`sticky top-0 z-30 border-b ${guestNavbarClass}`}>
 			<div className="mx-auto flex h-20 w-full max-w-7xl items-center justify-between gap-3 px-4 sm:px-6">
 				<div className="flex items-center gap-3 sm:gap-6">
 					<div className="flex items-center gap-3">
@@ -250,7 +243,7 @@ export default function TopNavHeader({
 						type="button"
 						onClick={onToggleDarkMode}
 						title={darkMode ? "Switch to light mode" : "Switch to dark mode"}
-						className="theme-toggle-btn inline-flex h-10 w-10 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-700 transition hover:bg-slate-100"
+						className={`theme-toggle-btn inline-flex h-10 w-10 items-center justify-center rounded-lg border transition ${!user && darkMode ? "border-slate-600 bg-slate-800 text-slate-100 hover:bg-slate-700" : "border-slate-200 bg-white text-slate-700 hover:bg-slate-100"}`}
 					>
 						{darkMode ? <SunMedium size={16} /> : <MoonStar size={16} />}
 					</button>
@@ -301,7 +294,7 @@ export default function TopNavHeader({
 												) : (
 													notifications.map((item) => {
 														const loginAlert = isLoginAlert(item.message);
-														const itemRead = item?.read === true || isSeenBeforeLastRefresh(item);
+														const itemRead = item?.read === true;
 														return (
 															<div key={item.id} className={`border-b border-slate-100 px-3 py-2.5 ${itemRead ? "bg-white" : "bg-amber-50/50"}`}>
 																<button
@@ -437,7 +430,7 @@ export default function TopNavHeader({
 										<p className="rounded-lg bg-white px-2 py-2 text-xs text-slate-500">No notifications yet.</p>
 									) : (
 										notifications.slice(0, 8).map((item) => (
-											<div key={`mobile-notice-${item.id}`} className={`rounded-lg bg-white px-2 py-2 text-xs ${item?.read === true || isSeenBeforeLastRefresh(item) ? "text-slate-600" : "font-semibold text-slate-800"}`}>
+											<div key={`mobile-notice-${item.id}`} className={`rounded-lg bg-white px-2 py-2 text-xs ${item?.read === true ? "text-slate-600" : "font-semibold text-slate-800"}`}>
 												<button type="button" onClick={() => onMarkNotificationRead?.(item.id)} className="w-full text-left">
 													<p>{item.message}</p>
 												</button>

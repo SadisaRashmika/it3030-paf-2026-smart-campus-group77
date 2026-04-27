@@ -4,6 +4,7 @@ import AuthModal from "../member4-notifications-oauth/components/AuthModal";
 import TopNavHeader from "../components/TopNavHeader";
 import {
   assignLecturerWork,
+  clearSuspiciousUser,
   approveRecoveryRequest,
   createStaffLogin,
   deactivateUser,
@@ -23,27 +24,46 @@ import {
 } from "../services/authService";
 import ProfileModal from "../member4-notifications-oauth/components/ProfileModal";
 
-const VALID_TABS = new Set(["TAB01", "TAB02", "TAB03", "TAB04", "TAB05", "TAB06", "TAB07"]);
+const VALID_TABS = new Set([
+  "home",
+  "timetable",
+  "bookings",
+  "role-management",
+  "tickets",
+  "ticket-management",
+  "assignments"
+]);
+
+const LEGACY_TAB_ALIASES = {
+  TAB01: "home",
+  TAB02: "timetable",
+  TAB03: "bookings",
+  TAB04: "role-management",
+  TAB05: "tickets",
+  TAB06: "ticket-management",
+  TAB07: "assignments"
+};
 
 const DEFAULT_TAB_BY_PATH = {
-  "/": "TAB01",
-  "/admin": "TAB01",
-  "/lecturer": "TAB01",
-  "/student": "TAB01",
-  "/timetable-manager": "TAB01",
-  "/resource-administator": "TAB01",
-  "/ticket-administrator": "TAB01"
+  "/": "home",
+  "/admin": "home",
+  "/lecturer": "home",
+  "/student": "home",
+  "/timetable-manager": "home",
+  "/resource-administator": "home",
+  "/ticket-administrator": "home"
 };
 
 function getDefaultTab(pathname) {
-  return DEFAULT_TAB_BY_PATH[pathname] || "TAB01";
+  return DEFAULT_TAB_BY_PATH[pathname] || "home";
 }
 
 function resolveActiveTab(pathname, search) {
   const params = new URLSearchParams(search);
-  const fromQuery = params.get("tab");
-  if (fromQuery && VALID_TABS.has(fromQuery)) {
-    return fromQuery;
+  const fromQuery = params.get("tab") || "";
+  const normalizedTab = LEGACY_TAB_ALIASES[fromQuery] || fromQuery;
+  if (normalizedTab && VALID_TABS.has(normalizedTab)) {
+    return normalizedTab;
   }
   return getDefaultTab(pathname);
 }
@@ -271,7 +291,7 @@ export default function MainLayout() {
   }, [role, fetchAdminData]);
 
   useEffect(() => {
-    if (role === "admin" && activeTab === "TAB05") {
+    if (role === "admin" && activeTab === "tickets") {
       fetchRecoveryRequests();
     }
   }, [role, activeTab, fetchRecoveryRequests]);
@@ -283,6 +303,35 @@ export default function MainLayout() {
     }
 
     fetchNotifications();
+  }, [user, fetchNotifications]);
+
+  useEffect(() => {
+    if (!user) {
+      return undefined;
+    }
+
+    const intervalId = window.setInterval(() => {
+      fetchNotifications();
+    }, 10000);
+
+    const handleWindowFocus = () => {
+      fetchNotifications();
+    };
+
+    const handleVisibilityChange = () => {
+      if (!document.hidden) {
+        fetchNotifications();
+      }
+    };
+
+    window.addEventListener("focus", handleWindowFocus);
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    return () => {
+      window.clearInterval(intervalId);
+      window.removeEventListener("focus", handleWindowFocus);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
   }, [user, fetchNotifications]);
 
   const openLogin = (mode) => {
@@ -430,6 +479,11 @@ export default function MainLayout() {
     await fetchAdminData();
   };
 
+  const handleClearSuspiciousUser = async (userId) => {
+    await clearSuspiciousUser(userId);
+    await fetchAdminData();
+  };
+
   const handleApproveRecoveryRequest = async (requestId) => {
     await approveRecoveryRequest(requestId);
     await fetchRecoveryRequests();
@@ -454,8 +508,26 @@ export default function MainLayout() {
     setDarkMode((prev) => !prev);
   };
 
+  const showGuestHomeVideoBackground = !user && location.pathname === "/" && activeTab === "home";
+
   return (
-    <div className="min-h-screen">
+    <div className="relative min-h-screen overflow-hidden">
+      {showGuestHomeVideoBackground ? (
+        <div className="pointer-events-none fixed inset-0 z-0 bg-slate-900">
+          <video
+            className="h-full w-full object-cover"
+            autoPlay
+            loop
+            muted
+            playsInline
+            poster="/assets/home.png"
+          >
+            <source src="/assets/bghome.MP4" type="video/mp4" />
+          </video>
+          <div className="absolute inset-0 bg-black/30" />
+        </div>
+      ) : null}
+
       <TopNavHeader
         activeTab={activeTab}
         onTabClick={handleTabChange}
@@ -475,7 +547,7 @@ export default function MainLayout() {
         onToggleDarkMode={handleToggleDarkMode}
       />
 
-      <main className="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 sm:py-8">
+      <main className="relative z-10 mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 sm:py-8">
         {appNotice ? (
           <div className="mb-4 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">{appNotice}</div>
         ) : null}
@@ -499,6 +571,7 @@ export default function MainLayout() {
             onCreateStaffLogin: handleCreateStaffLogin,
             onDeleteUser: handleDeleteUser,
             onDeactivateUser: handleDeactivateUser,
+            onClearSuspiciousUser: handleClearSuspiciousUser,
             onApproveRecoveryRequest: handleApproveRecoveryRequest,
             onRejectRecoveryRequest: handleRejectRecoveryRequest
           }}

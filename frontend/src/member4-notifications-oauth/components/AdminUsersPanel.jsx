@@ -32,12 +32,14 @@ export default function AdminUsersPanel({
 	suspiciousUsers,
 	loading,
 	onDeleteUser,
-	onDeactivateUser
+	onDeactivateUser,
+	onClearSuspiciousUser
 }) {
 	const [accountFilter, setAccountFilter] = useState("all");
 	const [searchTerm, setSearchTerm] = useState("");
 	const [deletingUserId, setDeletingUserId] = useState(null);
 	const [deactivatingUserId, setDeactivatingUserId] = useState(null);
+	const [clearingSuspiciousUserId, setClearingSuspiciousUserId] = useState(null);
 	const [actionError, setActionError] = useState("");
 	const [showWhySuspicious, setShowWhySuspicious] = useState(false);
 	const [pendingDeleteUser, setPendingDeleteUser] = useState(null);
@@ -130,6 +132,31 @@ export default function AdminUsersPanel({
 			setActionError(error.message || "Unable to deactivate user.");
 		} finally {
 			setDeactivatingUserId(null);
+		}
+	};
+
+	const handleClearSuspiciousUser = async (user) => {
+		if (!onClearSuspiciousUser) {
+			setActionError("No Suspicious action is not available.");
+			return;
+		}
+
+		const shouldClear = window.confirm(
+			`Mark ${user.name || user.userId} (${user.userId}) as No Suspicious? This only clears the suspicious flag.`
+		);
+
+		if (!shouldClear) {
+			return;
+		}
+
+		setActionError("");
+		setClearingSuspiciousUserId(user.id);
+		try {
+			await onClearSuspiciousUser(user.id);
+		} catch (error) {
+			setActionError(error.message || "Unable to clear suspicious flag.");
+		} finally {
+			setClearingSuspiciousUserId(null);
 		}
 	};
 
@@ -277,23 +304,33 @@ export default function AdminUsersPanel({
 												{user.suspiciousReason ? <p className="mt-1 font-semibold text-rose-800">Reason: {user.suspiciousReason}</p> : null}
 											</div>
 										</div>
-										<div className="flex items-center gap-2">
+										<div className="flex flex-col items-stretch gap-2">
 											<button
 												type="button"
-												onClick={() => handleDeactivateUser(user)}
-												disabled={deactivatingUserId === user.id}
-												className="inline-flex items-center gap-1 rounded-md border border-amber-300 bg-white px-2 py-1 font-semibold text-amber-800 transition hover:bg-amber-100 disabled:cursor-not-allowed disabled:opacity-60"
+												onClick={() => handleClearSuspiciousUser(user)}
+												disabled={clearingSuspiciousUserId === user.id}
+												className="inline-flex items-center justify-center gap-1 rounded-md border border-emerald-300 bg-white px-2 py-1 font-semibold text-emerald-700 transition hover:bg-emerald-100 disabled:cursor-not-allowed disabled:opacity-60"
 											>
-												{deactivatingUserId === user.id ? "Deactivating" : "Deactivate"}
+												{clearingSuspiciousUserId === user.id ? "Clearing" : "No Suspicious"}
 											</button>
-											<button
-												type="button"
-												onClick={() => handleDeleteUser(user)}
-												disabled={deletingUserId === user.id}
-												className="inline-flex items-center gap-1 rounded-md border border-rose-300 bg-white px-2 py-1 font-semibold text-rose-700 transition hover:bg-rose-100 disabled:cursor-not-allowed disabled:opacity-60"
-											>
-												<Trash2 size={12} /> {deletingUserId === user.id ? "Deleting" : "Delete"}
-											</button>
+											<div className="flex items-center gap-2">
+												<button
+													type="button"
+													onClick={() => handleDeactivateUser(user)}
+													disabled={deactivatingUserId === user.id}
+													className="inline-flex items-center gap-1 rounded-md border border-amber-300 bg-white px-2 py-1 font-semibold text-amber-800 transition hover:bg-amber-100 disabled:cursor-not-allowed disabled:opacity-60"
+												>
+													{deactivatingUserId === user.id ? "Deactivating" : "Deactivate"}
+												</button>
+												<button
+													type="button"
+													onClick={() => handleDeleteUser(user)}
+													disabled={deletingUserId === user.id}
+													className="inline-flex items-center gap-1 rounded-md border border-rose-300 bg-white px-2 py-1 font-semibold text-rose-700 transition hover:bg-rose-100 disabled:cursor-not-allowed disabled:opacity-60"
+												>
+													<Trash2 size={12} /> {deletingUserId === user.id ? "Deleting" : "Delete"}
+												</button>
+											</div>
 										</div>
 									</div>
 								</div>

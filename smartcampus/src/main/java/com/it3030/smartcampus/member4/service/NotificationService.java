@@ -57,6 +57,33 @@ public class NotificationService {
 	}
 
 	@Transactional
+	public void createSystemNotification(UserAccount user, String message) {
+		if (user == null || user.getId() == null) {
+			return;
+		}
+
+		if (message == null || message.isBlank()) {
+			return;
+		}
+
+		notificationRepository.save(Notification.of(user, message.trim()));
+	}
+
+	@Transactional
+	public void createSystemNotification(String principalOrUserId, String message) {
+		if (principalOrUserId == null || principalOrUserId.isBlank()) {
+			return;
+		}
+
+		if (message == null || message.isBlank()) {
+			return;
+		}
+
+		resolveUserOptional(principalOrUserId).ifPresent(user ->
+				notificationRepository.save(Notification.of(user, message.trim())));
+	}
+
+	@Transactional
 	public NotificationResponse markRead(Long notificationId, String principal) {
 		UserAccount user = resolveUser(principal);
 		Notification notification = notificationRepository.findByIdAndUser_Id(notificationId, user.getId())

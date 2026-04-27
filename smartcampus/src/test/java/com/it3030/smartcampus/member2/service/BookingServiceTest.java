@@ -8,6 +8,7 @@ import com.it3030.smartcampus.member2.exception.BookingConflictException;
 import com.it3030.smartcampus.member2.model.Booking;
 import com.it3030.smartcampus.member2.repository.BookingRepository;
 import com.it3030.smartcampus.member4.model.UserAccount;
+import com.it3030.smartcampus.member4.service.NotificationService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -30,6 +31,9 @@ public class BookingServiceTest {
 
     @Mock
     private ResourceService resourceService;
+
+    @Mock
+    private NotificationService notificationService;
 
     @InjectMocks
     private BookingService bookingService;
