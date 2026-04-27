@@ -28,7 +28,7 @@ public class BootstrapDataService {
 							   String adminUserId,
 							   String email,
 							   String rawPassword) {
-		userRepository.findByEmail(email).ifPresentOrElse(existing -> {
+		userRepository.findByUserId(adminUserId).ifPresentOrElse(existing -> {
 			existing.setName("Koffy Doggy");
 			existing.setPasswordHash(passwordEncoder.encode(rawPassword));
 			existing.setRole(com.it3030.smartcampus.member4.model.Role.ADMIN);
