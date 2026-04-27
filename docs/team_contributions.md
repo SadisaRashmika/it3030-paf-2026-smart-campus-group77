@@ -122,9 +122,187 @@ Current observed run summary (local):
 
 ---
 
-## Member 1
+## Member 1 - Enhanced Resource Management & Analytics
 
-Pending update by Member 1.
+### Summary
+
+Implemented a comprehensive real-world resource management system with advanced features including resource categorization, location management, maintenance tracking, rating systems, and detailed analytics. This module provides enterprise-level resource inventory management with modern UI/UX.
+
+### Backend Contributions
+
+1. **Enhanced Resource Models**
+- ResourceCategory system with color coding and icons
+- ResourceLocation with building/floor/room details and amenities
+- EnhancedResource with comprehensive metadata (capacity, equipment, maintenance status)
+- ResourceRating system with 5-star ratings and review text
+- ResourceMaintenance with scheduling, tracking, and cost management
+- ResourceAnalytics for usage statistics and performance metrics
+
+2. **Advanced Repository Layer**
+- Complex queries for resource filtering and search
+- Analytics data aggregation and reporting
+- Maintenance scheduling and status tracking
+- Rating aggregation and sentiment analysis
+- Location-based resource discovery
+
+3. **Comprehensive Service Layer**
+- Resource lifecycle management (create, update, delete, status tracking)
+- Maintenance workflow automation (schedule, start, complete, cancel)
+- Rating system with user feedback management
+- Analytics generation (daily, monthly, custom date ranges)
+- Resource utilization tracking and reporting
+
+4. **RESTful API Controllers**
+- Full CRUD operations for all entities
+- Advanced filtering, searching, and pagination
+- Role-based access control for admin operations
+- Analytics endpoints with dashboard data
+- Maintenance workflow management endpoints
+
+5. **Database Schema Enhancements**
+- Migration V16 with 7 new tables and comprehensive relationships
+- Optimized indexes for performance
+- Sample data with realistic campus resources
+- Foreign key constraints and data integrity
+
+### Frontend Contributions
+
+1. **Modern Component Architecture**
+- EnhancedResourceCard with rich resource information display
+- ResourceAnalyticsDashboard with interactive charts and metrics
+- ResourceMaintenancePanel with kanban board and calendar views
+- ResourceRatingSystem with star ratings and review management
+- Advanced search and filtering components
+
+2. **Interactive Dashboard Pages**
+- Resource inventory management with grid/list/table views
+- Real-time analytics dashboard with charts and KPIs
+- Maintenance scheduling and tracking interface
+- Resource rating and review system
+- Advanced filtering and search capabilities
+
+3. **Professional UI/UX Features**
+- Responsive design for all screen sizes
+- Modern card-based layouts with hover effects
+- Interactive data visualization with Recharts
+- Modal dialogs for CRUD operations
+- Status badges and progress indicators
+- Loading states and error handling
+
+4. **Service Layer Integration**
+- Enhanced API service with comprehensive method coverage
+- Authentication integration with authService
+- Error handling and response processing
+- Data caching and performance optimization
+
+### Key Features Implemented
+
+1. **Resource Management**
+- Multi-category resource organization
+- Location-based resource discovery
+- Equipment and amenity tracking
+- Capacity and availability management
+- Image support for resources
+
+2. **Maintenance System**
+- Scheduled maintenance with reminders
+- Technician assignment and tracking
+- Cost management and reporting
+- Emergency maintenance workflows
+- Maintenance history and analytics
+
+3. **Rating & Review System**
+- 5-star rating system with decimal precision
+- Text reviews with sentiment analysis
+- User rating aggregation and statistics
+- Review filtering and search
+- Rating trends and analytics
+
+4. **Analytics & Reporting**
+- Resource utilization metrics
+- Booking and usage statistics
+- Revenue tracking and reporting
+- Performance dashboards
+- Custom date range analytics
+
+5. **Advanced Search & Filtering**
+- Multi-criteria resource search
+- Category and location filtering
+- Status-based filtering
+- Real-time search results
+- Sorting options (name, rating, usage, etc.)
+
+### Member 1 Endpoint Count Evidence
+
+Member 1 implemented comprehensive REST APIs with 40+ endpoints across 6 controllers:
+- GET: Examples include `/api/member1/enhanced-resources`, `/api/member1/categories`, `/api/member1/analytics/dashboard`
+- POST: Examples include `/api/member1/enhanced-resources`, `/api/member1/maintenance`, `/api/member1/ratings`
+- PUT: Examples include `/api/member1/enhanced-resources/{id}`, `/api/member1/categories/{id}`
+- PATCH: Examples include `/api/member1/maintenance/{id}/start`, `/api/member1/maintenance/{id}/complete`
+- DELETE: Examples include `/api/member1/enhanced-resources/{id}`, `/api/member1/categories/{id}`
+
+### Key Files (Member 1)
+
+- Backend models/services/controllers under:
+	- `smartcampus/src/main/java/com/it3030/smartcampus/member1/**`
+- Database migration:
+	- `smartcampus/src/main/resources/db/migration/V16__member1_enhanced_resources.sql`
+- Frontend components/pages/services under:
+	- `frontend/src/member1-facilities-assets/**`
+- Shared integration points:
+	- `frontend/src/services/authService.js`
+	- `frontend/src/layouts/MainLayout.jsx`
+
+### Database Schema Enhancements
+
+- **resource_categories**: Category management with colors and icons
+- **resource_locations**: Location hierarchy with building/floor/room details
+- **enhanced_resources**: Comprehensive resource management with metadata
+- **resource_ratings**: User rating and review system
+- **resource_maintenance**: Maintenance scheduling and tracking
+- **resource_analytics**: Usage statistics and performance metrics
+
+### Testing Evidence Added (Member 1)
+
+- Comprehensive sample data for testing all features
+- Database constraints and validation testing
+- API endpoint integration testing
+- Frontend component interaction testing
+- Analytics data generation and reporting testing
+
+### Real-World Features
+
+1. **Enterprise Resource Management**
+- Multi-tenant resource categorization
+- Location-based resource discovery
+- Equipment and amenity tracking
+- Capacity management and utilization
+
+2. **Maintenance Operations**
+- Preventive maintenance scheduling
+- Emergency maintenance workflows
+- Technician assignment and tracking
+- Cost management and budgeting
+
+3. **User Experience Enhancement**
+- Interactive resource discovery
+- Rating and review system
+- Real-time availability status
+- Mobile-responsive design
+
+4. **Business Intelligence**
+- Resource utilization analytics
+- Performance metrics and KPIs
+- Revenue tracking and reporting
+- Trend analysis and forecasting
+
+### Current Status
+
+- Full resource management lifecycle implemented
+- Maintenance workflows operational
+- Rating and review system functional
+- Analytics dashboard with real-time data
+- Professional UI/UX with modern design patterns
 
 ## Member 2 - Booking Management, Timetable, and Resource Availability
 
