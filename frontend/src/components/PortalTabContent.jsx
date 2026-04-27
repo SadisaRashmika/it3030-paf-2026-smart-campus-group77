@@ -35,7 +35,7 @@ export default function PortalTabContent({
 	onRejectRecoveryRequest
 }) {
 	if (!user) {
-		if (tab === "TAB01") {
+		if (tab === "home") {
 			return <PortalHomeContent user={user} onLogin={onLogin} onNavigate={onNavigate} />;
 		}
 
@@ -49,11 +49,11 @@ export default function PortalTabContent({
 
 	const role = user.role?.replace("ROLE_", "").toLowerCase();
 
-	if (role === "admin" && tab === "TAB01") {
+	if (role === "admin" && tab === "home") {
 		return <PortalHomeContent user={user} onLogin={onLogin} onNavigate={onNavigate} />;
 	}
 
-	if (role === "admin" && tab === "TAB02") {
+	if (role === "admin" && tab === "timetable") {
 		return (
 			<AdminUsersPanel
 				users={adminUsers}
@@ -66,7 +66,7 @@ export default function PortalTabContent({
 		);
 	}
 
-	if (role === "admin" && tab === "TAB03") {
+	if (role === "admin" && tab === "bookings") {
 		return (
 			<AdminUserManagementPanel
 				users={adminUsers}
@@ -76,11 +76,11 @@ export default function PortalTabContent({
 		);
 	}
 
-	if (role === "admin" && tab === "TAB04") {
+	if (role === "admin" && tab === "role-management") {
 		return <AdminRoleManagementPanel onCreateStaffLogin={onCreateStaffLogin} />;
 	}
 
-	if (role === "admin" && tab === "TAB05") {
+	if (role === "admin" && tab === "tickets") {
 		return (
 			<RecoveryRequestsPanel
 				requests={recoveryRequests}
@@ -91,63 +91,63 @@ export default function PortalTabContent({
 		);
 	}
 
-	if (role === "ticket_administrator" && tab === "TAB01") {
+	if (role === "ticket_administrator" && tab === "home") {
 		return <PortalHomeContent user={user} onLogin={onLogin} onNavigate={onNavigate} />;
 	}
 
-	if (role === "ticket_administrator" && tab === "TAB06") {
+	if (role === "ticket_administrator" && tab === "ticket-management") {
 		return <AdminTicketManagement user={user} />;
 	}
 
-	if (role === "ticket_administrator" && tab === "TAB07") {
+	if (role === "ticket_administrator" && tab === "assignments") {
 		return <AdminTechnicianAssignment user={user} />;
 	}
 
 	if (role === "timetable_manager") {
-		if (tab === "TAB01") {
+		if (tab === "home") {
 			return <PortalHomeContent user={user} onLogin={onLogin} onNavigate={onNavigate} />;
 		}
 
-		if (tab === "TAB02") {
+		if (tab === "timetable") {
 			return <TimetablePage />;
 		}
 
-		if (tab === "TAB03") {
+		if (tab === "bookings") {
 			return <ApprovalsPage user={user} />;
 		}
 	}
 
 	if (role === "resource_administator") {
-		if (tab === "TAB01") {
+		if (tab === "home") {
 			return <PortalHomeContent user={user} onLogin={onLogin} onNavigate={onNavigate} />;
 		}
 
-		if (tab === "TAB02") {
+		if (tab === "timetable") {
 			return <ResourceInventoryPage />;
 		}
 
-		if (tab === "TAB03") {
+		if (tab === "bookings") {
 			return <ResourceAvailabilityPage />;
 		}
 	}
 
-	if (role === "student" && (tab === "TAB06" || tab === "TAB07")) {
+	if (role === "student" && (tab === "ticket-management" || tab === "assignments")) {
 		return <PortalHomeContent user={user} onLogin={onLogin} onNavigate={onNavigate} />;
 	}
 
-	if (tab === "TAB01") {
+	if (tab === "home") {
 		return <PortalHomeContent user={user} onLogin={onLogin} onNavigate={onNavigate} />;
 	}
 
-	if (tab === "TAB02") {
+	if (tab === "timetable") {
 		return <TimetablePage />;
 	}
 
-	if (tab === "TAB03") {
+	if (tab === "bookings") {
 		return <BookingsPage user={user} />;
 	}
 
-	if (tab === "TAB05") {
+	if (tab === "tickets") {
 		return <StudentTicketDashboard user={user} />;
 	}
 

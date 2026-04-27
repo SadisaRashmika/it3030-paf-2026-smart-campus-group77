@@ -24,27 +24,46 @@ import {
 } from "../services/authService";
 import ProfileModal from "../member4-notifications-oauth/components/ProfileModal";
 
-const VALID_TABS = new Set(["TAB01", "TAB02", "TAB03", "TAB04", "TAB05", "TAB06", "TAB07"]);
+const VALID_TABS = new Set([
+  "home",
+  "timetable",
+  "bookings",
+  "role-management",
+  "tickets",
+  "ticket-management",
+  "assignments"
+]);
+
+const LEGACY_TAB_ALIASES = {
+  TAB01: "home",
+  TAB02: "timetable",
+  TAB03: "bookings",
+  TAB04: "role-management",
+  TAB05: "tickets",
+  TAB06: "ticket-management",
+  TAB07: "assignments"
+};
 
 const DEFAULT_TAB_BY_PATH = {
-  "/": "TAB01",
-  "/admin": "TAB01",
-  "/lecturer": "TAB01",
-  "/student": "TAB01",
-  "/timetable-manager": "TAB01",
-  "/resource-administator": "TAB01",
-  "/ticket-administrator": "TAB01"
+  "/": "home",
+  "/admin": "home",
+  "/lecturer": "home",
+  "/student": "home",
+  "/timetable-manager": "home",
+  "/resource-administator": "home",
+  "/ticket-administrator": "home"
 };
 
 function getDefaultTab(pathname) {
-  return DEFAULT_TAB_BY_PATH[pathname] || "TAB01";
+  return DEFAULT_TAB_BY_PATH[pathname] || "home";
 }
 
 function resolveActiveTab(pathname, search) {
   const params = new URLSearchParams(search);
-  const fromQuery = params.get("tab");
-  if (fromQuery && VALID_TABS.has(fromQuery)) {
-    return fromQuery;
+  const fromQuery = params.get("tab") || "";
+  const normalizedTab = LEGACY_TAB_ALIASES[fromQuery] || fromQuery;
+  if (normalizedTab && VALID_TABS.has(normalizedTab)) {
+    return normalizedTab;
   }
   return getDefaultTab(pathname);
 }
@@ -272,7 +291,7 @@ export default function MainLayout() {
   }, [role, fetchAdminData]);
 
   useEffect(() => {
-    if (role === "admin" && activeTab === "TAB05") {
+    if (role === "admin" && activeTab === "tickets") {
       fetchRecoveryRequests();
     }
   }, [role, activeTab, fetchRecoveryRequests]);

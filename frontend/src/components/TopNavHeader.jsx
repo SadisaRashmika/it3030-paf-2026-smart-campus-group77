@@ -2,21 +2,21 @@ import { Bell, Camera, ChevronDown, LogOut, Menu, MoonStar, ShieldAlert, SunMedi
 import { useEffect, useRef, useState } from "react";
 
 const tabs = [
-	{ key: "TAB01", label: "Home", public: true },
-	{ key: "TAB02", label: "Timetable", public: false },
-	{ key: "TAB03", label: "Resource", public: false },
-	{ key: "TAB04", label: "Jobs", public: false },
-	{ key: "TAB05", label: "Ticket", public: false },
-	{ key: "TAB06", label: "Ticket Mgmt", public: false },
-	{ key: "TAB07", label: "Assignments", public: false }
+	{ key: "home", label: "Home", public: true },
+	{ key: "timetable", label: "Timetable", public: false },
+	{ key: "bookings", label: "Resource", public: false },
+	{ key: "role-management", label: "Jobs", public: false },
+	{ key: "tickets", label: "Ticket", public: false },
+	{ key: "ticket-management", label: "Ticket Mgmt", public: false },
+	{ key: "assignments", label: "Assignments", public: false }
 ];
 
-const TIMETABLE_MANAGER_TAB_KEYS = new Set(["TAB01", "TAB02", "TAB03"]);
-const ADMIN_TAB_KEYS = new Set(["TAB01", "TAB02", "TAB03", "TAB04", "TAB05"]);
-const LECTURER_TAB_KEYS = new Set(["TAB01", "TAB02", "TAB03", "TAB05"]);
-const STUDENT_TAB_KEYS = new Set(["TAB01", "TAB02", "TAB03", "TAB05"]);
-const RESOURCE_ADMINISTATOR_TAB_KEYS = new Set(["TAB01", "TAB02", "TAB03"]);
-const TICKET_ADMINISTRATOR_TAB_KEYS = new Set(["TAB01", "TAB06", "TAB07"]);
+const TIMETABLE_MANAGER_TAB_KEYS = new Set(["home", "timetable", "bookings"]);
+const ADMIN_TAB_KEYS = new Set(["home", "timetable", "bookings", "role-management", "tickets"]);
+const LECTURER_TAB_KEYS = new Set(["home", "timetable", "bookings", "tickets"]);
+const STUDENT_TAB_KEYS = new Set(["home", "timetable", "bookings", "tickets"]);
+const RESOURCE_ADMINISTATOR_TAB_KEYS = new Set(["home", "timetable", "bookings"]);
+const TICKET_ADMINISTRATOR_TAB_KEYS = new Set(["home", "ticket-management", "assignments"]);
 
 export default function TopNavHeader({
 	activeTab,
@@ -117,77 +117,77 @@ export default function TopNavHeader({
 	const displayName = user?.name?.trim() || user?.userId || "SmartCampus User";
 	const tabLabelForRole = (tab) => {
 		if (isTimetableManager) {
-			if (tab.key === "TAB01") {
+			if (tab.key === "home") {
 				return "Home";
 			}
-			if (tab.key === "TAB02") {
+			if (tab.key === "timetable") {
 				return "Timetable";
 			}
-			if (tab.key === "TAB03") {
+			if (tab.key === "bookings") {
 				return "Approvals";
 			}
 		}
 
 		if (isResourceAdministator) {
-			if (tab.key === "TAB01") {
+			if (tab.key === "home") {
 				return "Home";
 			}
-			if (tab.key === "TAB02") {
+			if (tab.key === "timetable") {
 				return "Inventory";
 			}
-			if (tab.key === "TAB03") {
+			if (tab.key === "bookings") {
 				return "Availability";
 			}
 		}
 
 		if (roleKey === "admin") {
-			if (tab.key === "TAB01") {
+			if (tab.key === "home") {
 				return "Home";
 			}
-			if (tab.key === "TAB02") {
+			if (tab.key === "timetable") {
 				return "Activity";
 			}
-			if (tab.key === "TAB03") {
+			if (tab.key === "bookings") {
 				return "User Management";
 			}
-			if (tab.key === "TAB04") {
+			if (tab.key === "role-management") {
 				return "Role Management";
 			}
-			if (tab.key === "TAB05") {
+			if (tab.key === "tickets") {
 				return "Recovery Tickets";
 			}
-			if (tab.key === "TAB06") {
+			if (tab.key === "ticket-management") {
 				return "Ticket Mgmt";
 			}
-			if (tab.key === "TAB07") {
+			if (tab.key === "assignments") {
 				return "Assignments";
 			}
 			return tab.label;
 		}
 
 		if (isTicketAdministrator) {
-			if (tab.key === "TAB01") {
+			if (tab.key === "home") {
 				return "Home";
 			}
-			if (tab.key === "TAB06") {
-				return "Ticket Mgmt";
+			if (tab.key === "ticket-management") {
+				return "Ticket Management";
 			}
-			if (tab.key === "TAB07") {
+			if (tab.key === "assignments") {
 				return "Assignments";
 			}
 		}
 
 		if (roleKey === "lecturer" || roleKey === "student") {
-			if (tab.key === "TAB01") {
+			if (tab.key === "home") {
 				return "Home";
 			}
-			if (tab.key === "TAB02") {
+			if (tab.key === "timetable") {
 				return "Timetable";
 			}
-			if (tab.key === "TAB03") {
+			if (tab.key === "bookings") {
 				return "Bookings";
 			}
-			if (tab.key === "TAB05") {
+			if (tab.key === "tickets") {
 				return "Tickets";
 			}
 		}
