@@ -35,6 +35,7 @@ const advantages = [
 ];
 
 export default function PortalHomeContent({ user, onLogin, onNavigate }) {
+	const isGuest = !user;
 	const role = (user?.role || "").replace("ROLE_", "").toLowerCase();
 	const welcomeRoleLabel = role === "lecturer"
 		? "Lecturer"
@@ -49,25 +50,25 @@ export default function PortalHomeContent({ user, onLogin, onNavigate }) {
 					: role === "student"
 						? "Student"
 						: "User";
-	const heroImage = !user
-		? { src: "/assets/home.png", alt: "SmartCampus home illustration" }
-		: role === "admin"
+	const heroImage = user
+		? role === "admin"
 			? { src: "/assets/admin.png", alt: "Admin dashboard illustration" }
 			: role === "lecturer"
 				? { src: "/assets/lecturer.png", alt: "Lecturer dashboard illustration" }
 				: role === "student"
 					? { src: "/assets/student.png", alt: "Student dashboard illustration" }
-					: null;
+					: null
+		: null;
 
 	return (
-		<section className="space-y-6">
-			<div className="dashboard-welcome-card glass relative overflow-hidden rounded-3xl border border-slate-200 p-7 shadow-glass sm:p-10">
-				<div className="dashboard-welcome-glow pointer-events-none absolute -right-20 -top-20 h-56 w-56 rounded-full bg-amber-100/70 blur-3xl" />
-				<div className="dashboard-welcome-glow pointer-events-none absolute -bottom-20 -left-20 h-56 w-56 rounded-full bg-orange-100/60 blur-3xl" />
+		<section className={isGuest ? "flex min-h-[calc(100vh-10rem)] flex-col justify-between gap-8" : "space-y-6"}>
+			<div className={isGuest ? "relative" : "dashboard-welcome-card relative overflow-hidden rounded-3xl p-7 sm:p-10 glass border border-slate-200 shadow-glass"}>
+				{!isGuest ? <div className="dashboard-welcome-glow pointer-events-none absolute -right-20 -top-20 h-56 w-56 rounded-full bg-amber-100/70 blur-3xl" /> : null}
+				{!isGuest ? <div className="dashboard-welcome-glow pointer-events-none absolute -bottom-20 -left-20 h-56 w-56 rounded-full bg-orange-100/60 blur-3xl" /> : null}
 
-				<div className="relative flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
-					<div className="max-w-3xl space-y-4">
-						<span className="inline-flex items-center gap-2 rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-xs font-bold uppercase tracking-wide text-amber-700">
+				<div className={`relative ${isGuest ? "space-y-4" : "flex flex-col gap-6 md:flex-row md:items-center md:justify-between"}`}>
+					<div className={`${isGuest ? "max-w-4xl space-y-4" : "max-w-3xl space-y-4"}`}>
+						<span className={`inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wide ${isGuest ? "guest-hero-text-lightlike" : "rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-amber-700"}`}>
 							<Sparkles size={13} /> University Support Platform
 						</span>
 
@@ -82,10 +83,10 @@ export default function PortalHomeContent({ user, onLogin, onNavigate }) {
 							</>
 						) : (
 							<>
-								<h1 className="font-display text-4xl font-bold leading-tight text-slate-900 sm:text-6xl">
+								<h1 className={`font-display text-4xl font-bold leading-tight sm:text-6xl ${isGuest ? "guest-hero-text guest-hero-title" : "text-slate-900"}`}>
 									One portal for students, lecturers, and admins.
 								</h1>
-								<p className="max-w-xl text-sm leading-relaxed text-slate-600 sm:text-base">
+								<p className={`max-w-xl text-sm leading-relaxed sm:text-base ${isGuest ? "guest-hero-text-lightlike" : "text-slate-600"}`}>
 									Manage timetable, resources, internships, and academic support in one polished experience.
 								</p>
 							</>
@@ -96,8 +97,8 @@ export default function PortalHomeContent({ user, onLogin, onNavigate }) {
 								<UserCheck size={14} /> Logged in as {role}
 							</span>
 						) : (
-							<p className="pt-1 text-sm font-medium text-slate-500">
-								Use the login button in the header to sign in or activate your account.
+							<p className={`pt-1 text-sm font-medium ${isGuest ? "guest-hero-text-lightlike" : "text-slate-500"}`}>
+								{/* Use the login button in the header to sign in or activate your account. */}
 							</p>
 						)}
 					</div>
@@ -114,10 +115,10 @@ export default function PortalHomeContent({ user, onLogin, onNavigate }) {
 				</div>
 			</div>
 
-			<div className="space-y-3">
+			<div className={isGuest ? "mt-auto space-y-3" : "space-y-3"}>
 				<div className="flex items-center justify-between">
-					<h2 className="text-sm font-extrabold uppercase tracking-[0.14em] text-slate-700">Main Advantages</h2>
-					<p className="text-xs font-medium text-slate-500">For lecturers and students</p>
+					<h2 className={`text-sm font-extrabold uppercase tracking-[0.14em] ${isGuest ? "guest-hero-text-lightlike" : "text-slate-700"}`}>Main Advantages</h2>
+					<p className={`text-xs font-medium ${isGuest ? "guest-hero-text-lightlike" : "text-slate-500"}`}>For lecturers and students</p>
 				</div>
 
 				<div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
@@ -127,13 +128,13 @@ export default function PortalHomeContent({ user, onLogin, onNavigate }) {
 						return (
 							<div
 								key={item.title}
-								className="rounded-2xl border border-slate-200 bg-white p-5 text-left shadow-sm transition hover:-translate-y-0.5 hover:border-blue-200 hover:shadow-md"
+								className={`rounded-2xl p-5 text-left shadow-sm transition hover:-translate-y-0.5 hover:shadow-md ${isGuest ? "guest-adv-card border border-white/40 bg-white/20 backdrop-blur-xl hover:border-white/70" : "border border-slate-200 bg-white hover:border-blue-200"}`}
 							>
 								<span className={`mb-4 inline-flex h-10 w-10 items-center justify-center rounded-xl ${item.iconClass}`}>
 									<Icon size={18} />
 								</span>
-								<h3 className="text-sm font-bold text-slate-900">{item.title}</h3>
-								<p className="mt-2 text-xs leading-relaxed text-slate-600">{item.description}</p>
+								<h3 className={`text-sm font-bold ${isGuest ? "text-white" : "text-slate-900"}`}>{item.title}</h3>
+								<p className={`mt-2 text-xs leading-relaxed ${isGuest ? "text-slate-100" : "text-slate-600"}`}>{item.description}</p>
 							</div>
 						);
 					})}

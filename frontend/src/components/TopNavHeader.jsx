@@ -201,9 +201,12 @@ export default function TopNavHeader({
 		.map((part) => part[0]?.toUpperCase() || "")
 		.join("") || "SC";
 	const profilePhotoUrl = user?.profilePictureDataUrl?.trim() || "";
+	const guestNavbarClass = !user && darkMode
+		? "border-slate-700 bg-slate-900"
+		: "border-slate-200 bg-white/95 backdrop-blur-xl";
 
 	return (
-		<header className="sticky top-0 z-30 border-b border-slate-200 bg-white/95 backdrop-blur-xl">
+		<header className={`sticky top-0 z-30 border-b ${guestNavbarClass}`}>
 			<div className="mx-auto flex h-20 w-full max-w-7xl items-center justify-between gap-3 px-4 sm:px-6">
 				<div className="flex items-center gap-3 sm:gap-6">
 					<div className="flex items-center gap-3">
@@ -240,7 +243,7 @@ export default function TopNavHeader({
 						type="button"
 						onClick={onToggleDarkMode}
 						title={darkMode ? "Switch to light mode" : "Switch to dark mode"}
-						className="theme-toggle-btn inline-flex h-10 w-10 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-700 transition hover:bg-slate-100"
+						className={`theme-toggle-btn inline-flex h-10 w-10 items-center justify-center rounded-lg border transition ${!user && darkMode ? "border-slate-600 bg-slate-800 text-slate-100 hover:bg-slate-700" : "border-slate-200 bg-white text-slate-700 hover:bg-slate-100"}`}
 					>
 						{darkMode ? <SunMedium size={16} /> : <MoonStar size={16} />}
 					</button>

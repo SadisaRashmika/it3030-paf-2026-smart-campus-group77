@@ -508,8 +508,26 @@ export default function MainLayout() {
     setDarkMode((prev) => !prev);
   };
 
+  const showGuestHomeVideoBackground = !user && location.pathname === "/" && activeTab === "home";
+
   return (
-    <div className="min-h-screen">
+    <div className="relative min-h-screen overflow-hidden">
+      {showGuestHomeVideoBackground ? (
+        <div className="pointer-events-none fixed inset-0 z-0 bg-slate-900">
+          <video
+            className="h-full w-full object-cover"
+            autoPlay
+            loop
+            muted
+            playsInline
+            poster="/assets/home.png"
+          >
+            <source src="/assets/bghome.MP4" type="video/mp4" />
+          </video>
+          <div className="absolute inset-0 bg-black/30" />
+        </div>
+      ) : null}
+
       <TopNavHeader
         activeTab={activeTab}
         onTabClick={handleTabChange}
@@ -529,7 +547,7 @@ export default function MainLayout() {
         onToggleDarkMode={handleToggleDarkMode}
       />
 
-      <main className="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 sm:py-8">
+      <main className="relative z-10 mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 sm:py-8">
         {appNotice ? (
           <div className="mb-4 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">{appNotice}</div>
         ) : null}
